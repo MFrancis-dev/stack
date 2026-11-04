@@ -1,0 +1,4 @@
+# 🔍 K0.5: pin the toolchain cargo-near currently recommends.
+[toolchain]
+channel = "stable"
+targets = ["wasm32-unknown-unknown"]

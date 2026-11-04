@@ -1,0 +1,273 @@
+# ARCHITECTURE — Stack (track 01)
+
+> Companion to `PRD.md`. Short version: `ARCHITECTURE_ESSENTIALS.md`. File layout: `project_structure.md`. Remaining work: `ROADMAP.md`.
+> Items marked **[verify]** must be confirmed against current docs before coding against them.
+> Every contribution updates `ROADMAP.md`.
+
+---
+
+## 1. Overview
+
+```
+ User wallet (any chain)            Stack (one Next.js app + worker script)
+ ───────────────────────            ───────────────────────────────────────
+ funds vault ──► 1Click deposit ─┐  App: onboarding, funding quotes, plan UI
+                                 │  Worker: deposit poller, scheduler, buy poller
+                                 │        └──► DB (PGlite local / Postgres hosted)
+                                 ▼
+                    NEAR Intents ──► USDC ──► ┌──────────────────────────────┐
+                                              │ NEAR                         │
+                                              │ factory.stack.near           │
+            keeper txs (create, buy) ───────► │  └─ v<hash>.factory… (Vault) │
+            owner wallet txs (plan, withdraw)►│     holds the owner's USDC   │
+                                              └──────────────┬───────────────┘
+                                                             │ scheduled buy (bounded)
+                                                             ▼
+                                         1Click deposit → NEAR Intents (solvers)
+                                                             │
+                                                             ▼
+                                 Owner's own BTC / ETH / NEAR address
+```
+
+### Money flow
+1. **Fund:** any token (any chain) → 1Click → **USDC to the vault**. Or a direct USDC transfer.
+2. **Buy:** vault → USDC to a 1Click deposit address (bounded on-chain) → **target asset to the owner's address**.
+3. **Refunds:** funding refunds → the user's origin address; buy refunds → **back to the vault**.
+4. **Withdraw:** vault → USDC to the owner's NEAR account.
+
+Everything in a vault belongs to its owner. There is no split and no shared balance, so the contract needs no locks and no refund bookkeeping.
+
+---
+
+## 2. Tech stack
+
+| Layer | Choice |
+|---|---|
+| Contracts | **Rust**, `near-sdk` 5.x, `cargo-near`; tests with `near-workspaces` (local sandbox) |
+| App | **Next.js 15** (App Router) + TypeScript strict, Tailwind, shadcn/ui, TanStack Query, zod |
+| Wallet | wallet selector **[verify package]**: NEP-413 sign-in + owner transactions |
+| NEAR JS | near-api-js / @near-js/* **[verify]**: RPC views, keeper transactions |
+| 1Click | `@defuse-protocol/one-click-sdk-typescript` ≥ 0.1.24 |
+| DB | Drizzle: **PGlite** local/demo, **Postgres** when `DATABASE_URL` is set |
+| Worker | `worker/index.ts` via `tsx`, interval loops, long-running host |
+| Tests | cargo test + near-workspaces, vitest, Playwright |
+| Package manager | pnpm (single app + `contracts/` Cargo workspace) |
+
+---
+
+## 3. Contracts
+
+### 3.1 Accounts
+| Account | Role |
+|---|---|
+| `factory.stack.near` (placeholder) | Creates vaults (keeper only), pays storage |
+| `v<sha256(owner)[0..16]>.factory.stack.near` | One vault per owner |
+| `keeper.stack.near` | Backend signer: `create_vault_for`, `execute_buy`. Gas-only balance, no user funds |
+| USDC | Native USDC NEP-141; id from 1Click `/v0/tokens` **[verify]** |
+
+### 3.2 Factory
+```rust
+pub struct Factory {
+    admin: AccountId,        // can publish new vault code hashes only (see B12)
+    keeper: AccountId,
+    usdc: AccountId,
+    vault_code: VaultCode,   // global contract hash [verify availability] or embedded wasm
+    vaults: LookupMap<AccountId, AccountId>,
+    created_today: (u64 /*day*/, u32 /*count*/),
+    daily_cap: u32,
+}
+```
+| Method | Caller | Behaviour |
+|---|---|---|
+| `create_vault_for(owner)` | keeper | One per owner; daily cap; create sub-account; deploy code; `vault.new(owner, keeper, usdc)`; `storage_deposit` on USDC for the vault |
+| `get_vault(owner)` | view | |
+
+### 3.3 Vault
+```rust
+pub struct Vault {
+    owner: AccountId,
+    keeper: AccountId,
+    usdc: AccountId,
+    target_asset: Option<String>,        // 1Click assetId, e.g. BTC [verify id]
+    destination_address: Option<String>, // owner's address on the target chain
+    amount_per_run: u128,                // USDC base units
+    interval_s: u64,
+    max_cost_bps: u16,
+    paused: bool,                        // true at creation
+    last_run_at_s: u64,
+}
+```
+| Method | Caller | Deposit | Behaviour |
+|---|---|---|---|
+| `new(owner, keeper, usdc)` | factory | – | paused, no plan |
+| `ft_on_transfer(sender, amount, msg)` | any NEP-141 | – | Accept (return `"0"`); emit `deposited`. Non-USDC tokens are kept and recoverable |
+| `set_plan(target_asset, destination_address, amount_per_run, interval_s, max_cost_bps)` | owner | **1 yocto** | Validates ranges; emits `plan_updated` |
+| `resume()` | owner | **1 yocto** | Requires a complete plan |
+| `pause()` | owner | – | Always available |
+| `execute_buy(quote_ref, deposit_address, amount)` | keeper | storage deposit if needed | Requires `!paused`, plan set, `now ≥ last_run_at_s + interval_s`, `amount ≤ amount_per_run`. Sets `last_run_at_s = now`; registers `deposit_address` on USDC if needed **[verify whether 1Click pre-registers]**; `ft_transfer(deposit_address, amount)`; callback: on failure restore `last_run_at_s`, emit `buy_failed` |
+| `withdraw(amount)` | owner | **1 yocto** | `ft_transfer(owner, amount)` USDC |
+| `recover_token(token, amount)` | owner | **1 yocto** | Send any other NEP-141 to the owner |
+| `get_state()` | view | – | Plan, paused, `next_run_at_s` |
+
+Balance is read with `ft_balance_of(vault)` by the app; the contract doesn't track it. An `execute_buy` larger than the balance simply fails in the USDC contract and the callback restores state.
+
+### 3.4 Invariants (each has a test)
+- I1. Vault USDC leaves only to `owner` (`withdraw`) or to a deposit address via `execute_buy`.
+- I2. At most one `execute_buy` per `interval_s`, each ≤ `amount_per_run`.
+- I3. No buy while paused or without a complete plan.
+- I4. `set_plan`, `resume`, `withdraw`, `recover_token` require owner + 1 yocto; `pause` requires owner only.
+- I5. Factory admin and keeper have no path to vault funds other than I2.
+- I6. A failed transfer leaves the vault able to run at the next interval.
+- I7. A new vault is paused with no plan.
+
+### 3.5 Events (NEP-297)
+`vault_created`, `deposited`, `plan_updated`, `paused`, `resumed`, `buy_sent`, `buy_failed`, `withdrawn`, `token_recovered`.
+
+### 3.6 Known trust assumption (README)
+The keeper chooses `deposit_address`. A stolen keeper key could redirect at most one `amount_per_run` per interval per vault until the owner pauses. Off-chain: the worker verifies the quote signature and that its recipient/asset match `get_state()` before calling `execute_buy`. Stretch: verify the signature in the contract.
+
+---
+
+## 4. App and worker
+
+### 4.1 API routes
+| Route | Auth | Purpose |
+|---|---|---|
+| `POST /api/session` | NEP-413 | Sign in |
+| `POST /api/onboard` | session | Keeper `create_vault_for(owner)` (once) |
+| `GET /api/vault` | session | `get_state()` + `ft_balance_of` + next run |
+| `GET /api/tokens` | public | Cached token list |
+| `POST /api/fund/quote` | session, rate-limited | `{originAsset, amount, refundTo, dry}` → preview or FundingAttempt |
+| `POST /api/fund/:id/submit-tx` · `GET /api/fund/:id/status` | session | |
+| `POST /api/plan/preview` | session | Dry buy quote → expected cost % for a buy size |
+| `GET /api/buys` | session | History |
+| `GET /api/export.csv` | session | CSV |
+| `POST /api/demo/:action` | demo session | `fast-forward`, `reset` |
+
+Owner contract calls (`set_plan`, `resume`, `pause`, `withdraw`, `recover_token`) are wallet transactions built in the browser; no server involvement.
+
+### 4.2 1Click requests
+
+Funding (`EXACT_INPUT`): origin = user's asset, destination = USDC on NEAR, recipient = vault, refundTo = user's origin address, `recipientType: DESTINATION_CHAIN`, `refundType: ORIGIN_CHAIN`.
+
+Buy (`EXACT_INPUT`): origin = USDC on NEAR, amount = run amount, destination = `target_asset`, recipient = `destination_address`, refundTo = **vault**, `slippageTolerance = max_cost_bps`, deadline now + 10 min.
+
+Rules: `verifyQuoteSignature()` before using `depositAddress`; ids/decimals from `/v0/tokens`; `/v0/deposit/submit` after sending; poll `/v0/status`.
+
+**Cost check:** `cost_bps = (1 − amountOutUsd / amountInUsd) × 10_000` from the quote **[verify field names]**. Over `max_cost_bps` → `skipped_cost`, no transaction.
+
+### 4.3 Status mapping **[verify enum]**
+| 1Click | FundingAttempt | Buy |
+|---|---|---|
+| PENDING_DEPOSIT | awaiting_deposit | sent |
+| KNOWN_DEPOSIT_TX | detected | sent |
+| PROCESSING | processing | processing |
+| SUCCESS | credited | success |
+| INCOMPLETE_DEPOSIT | underpaid | failed (alert) |
+| REFUNDED | refunded | refunded (USDC back in vault) |
+| FAILED | failed | failed |
+| deadline, no deposit | expired | expired |
+| no route / API down | – | no_quote (retry next loop) |
+
+### 4.4 Worker loops
+| Loop | Every | Does |
+|---|---|---|
+| `pollFunding` | 5 s | Non-terminal funding attempts → status |
+| `scheduleBuys` | 60 s | Due vaults (`get_state`, balance) → quote → verify → plan match → cost check → `execute_buy` → submit tx |
+| `pollBuys` | 10 s | In-flight buys → final status, destination tx |
+| `expireQuotes` | 60 s | |
+Alert when the keeper's NEAR balance is low.
+
+---
+
+## 5. Data model (amounts numeric(78,0) base units)
+
+```sql
+users (id uuid pk, near_account_id text unique not null, vault_account_id text unique,
+       is_demo boolean default false, created_at timestamptz default now())
+
+funding_attempts (id uuid pk, user_id uuid fk, origin_asset text not null, amount_in numeric(78,0) not null,
+       expected_out numeric(78,0) not null, refund_to text not null, deposit_address text unique not null,
+       quote_deadline timestamptz not null, quote_signature text not null, quote_raw jsonb not null,
+       oneclick_status text, status text not null, deposit_tx_hash text, created_at timestamptz default now(),
+       updated_at timestamptz default now())
+
+buys (id uuid pk, user_id uuid fk, quote_ref text unique not null, amount_in numeric(78,0) not null,
+       target_asset text not null, destination_address text not null, cost_bps int,
+       amount_in_usd numeric, amount_out numeric(78,0), deposit_address text unique,
+       quote_signature text, quote_raw jsonb, near_tx_hash text, oneclick_status text,
+       status text not null,          -- skipped_cost|no_quote|sent|processing|success|refunded|failed|expired
+       destination_tx_hash text, created_at timestamptz default now(), completed_at timestamptz)
+```
+On-chain vault = truth for plan and balance. DB = history and metadata.
+
+---
+
+## 6. Flows
+- **Onboard:** sign in (NEP-413) → `POST /api/onboard` → vault created paused → dashboard.
+- **Plan:** form → `POST /api/plan/preview` (cost %) → wallet tx `set_plan` + `resume` (one batched tx).
+- **Fund:** pick asset + amount + refund address → dry preview → real quote → verify → send → poll → credited.
+- **Buy:** scheduler (4.4) → history row → poll to final.
+- **Withdraw / recover:** wallet tx.
+
+---
+
+## 7. Security
+| Threat | Control |
+|---|---|
+| Stolen keeper key | I2 bounds, owner pause, signature + plan match off-chain |
+| Stolen sign-in key | Can't attach 1 yocto → worst case `pause()` |
+| Factory spam | Session, one vault per account, daily cap |
+| Tampered quote | `verifyQuoteSignature()` |
+| Admin rug | No admin path to funds (I5) |
+| Secrets | `.env` only |
+
+---
+
+## 8. Demo and dry-run
+`pnpm demo`: PGlite + seed (vault with plan, deposits, 3 weeks of buys including `skipped_cost`), `DemoVaultClient` + demo quote/status providers behind `lib/core/adapters.ts`; "fast-forward 30 days"; real dry quotes when online, recorded fixtures offline. No secrets, no funds.
+
+---
+
+## 9. Configuration
+```
+NEAR_RPC_URL=
+FACTORY_ACCOUNT_ID=
+USDC_CONTRACT_ID=
+KEEPER_ACCOUNT_ID=
+KEEPER_PRIVATE_KEY=
+ONECLICK_BASE_URL=https://1click.chaindefuser.com
+ONECLICK_JWT=
+DATABASE_URL=                # empty → PGlite
+SESSION_SECRET=
+PUBLIC_APP_URL=
+```
+
+---
+
+## 10. Testing
+- Contracts: unit + near-workspaces for I1–I7, failed-transfer callback, deposit-address registration, stray-token recovery, daily cap.
+- TS: cost check, status mapping, plan-match check, signature fixtures, NEP-413.
+- E2E: PRD §8 journey in demo mode.
+- Manual: one small real deposit + buy for the video (human approval).
+
+---
+
+## 11. Design review: hard questions
+
+### What would break?
+| # | Break | Fix |
+|---|---|---|
+| K-B1 | Every buy fails: deposit address not registered on USDC | Register before `ft_transfer` 🔍 |
+| K-B2 | Callback out of gas | Explicit gas; state restored; no locks to get stuck |
+| K-B3 | Small BTC buys mostly fees | Cost shown at plan time; cost guard skips |
+| K-B4 | AI screener can't run it | `pnpm demo`: zero secrets, PGlite |
+| K-B5 | Vault creation too expensive / spammed | Global contracts 🔍; daily cap |
+| K-B6 | Funding quote expires on slow chains | Deadline per origin chain |
+| K-B7 | Contract bug can't be fixed | Owner-approved upgrade (⛔ pending) |
+
+### Edge cases
+Destination typo → validate, typed twice, chain named · NEAR target → owner registered on `wrap.near` · withdraw during a buy → buy transfer fails, retried next interval · stray tokens → `recover_token` · balance < buy amount → remainder only if it passes the cost check · paused with buy in flight → completes, UI says so · plan changed mid-interval → next buy uses the new plan · 1Click no route → `no_quote`.
+
+### Overengineering avoided
+No savings/spending split · no locks · no refund bookkeeping · no relayer · single app · no reconcile job.
