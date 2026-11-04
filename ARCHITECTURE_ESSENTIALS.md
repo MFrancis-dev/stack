@@ -17,17 +17,25 @@ Separate repo from **Settle** (track 08). Never import Settle code; README names
 - PGlite local/demo, Postgres when `DATABASE_URL` is set
 
 ## ⛔ Pending — don't build until the human decides
-- Owner-approved vault upgrades (K-B7)
+- **KD-5** Owner-approved vault upgrades (K-B7)
+- **KD-6** MVP target assets (recommended: BTC native, ETH on Ethereum, NEAR; ids in ARCHITECTURE §12)
+- **KD-8** Vault deploy: regular deploy (~1.1 NEAR locked per vault, recommended for the hackathon) vs global contract by hash (~11 NEAR burned once). **Never** a global contract by account.
 
-## 🔍 Verify before coding against
-1. 1Click storage-registers NEAR deposit addresses? (K-B1)
-2. Quote USD fields for the cost check
-3. `/v0/status` enum · deposits after deadline
-4. USDC id/decimals + BTC/ETH asset ids (from `/v0/tokens`)
-5. Global contracts (K-B5) · wallet selector package
+## ✅ Verified 2026-11-04 (details: ARCHITECTURE §12)
+- USDC on NEAR `nep141:17208628…133a1` (6 dec) · BTC `nep141:btc.omft.near` · ETH `nep141:eth.omft.near` · NEAR `nep141:wrap.near`. Match on assetId, never symbol.
+- Quote has `amountInUsd`/`amountOutUsd` → cost check works. $10 BTC buy ≈ 15% cost, $100 ≈ 1.6%.
+- Status enum = the 7 values in `lib/core/status.ts`.
+- `refundTo` must exist or 1Click returns "Internal server error".
+- No refund if a NEAR receiver isn't storage-registered → vault on USDC and owner on `wrap.near` **must** be registered.
+- Wallet: `@hot-labs/near-connect` + `near-api-js` (`nep413.verifyMessage`).
+- Global contracts exist (NEP-591) → KD-8.
+
+## 🔍 Still to verify
+1. Does 1Click storage-register NEAR deposit addresses? (K-B1) — **blocked on the partner JWT (K0.8)**
+2. Deposits arriving after the quote deadline
 
 ## Stack
-Rust near-sdk 5.x + cargo-near + near-workspaces · Next.js 15 + TS strict · Tailwind + shadcn/ui · TanStack Query · zod · Drizzle (PGlite/Postgres) · 1Click SDK ≥ 0.1.24 · vitest + Playwright · pnpm
+Rust near-sdk =5.30.0 + cargo-near 0.22 + near-workspaces =0.24.0 · Next.js 15.5 + TS strict · Tailwind + shadcn/ui · TanStack Query · zod · Drizzle (PGlite/Postgres) · 1Click SDK 0.1.26 · `@hot-labs/near-connect` 0.12.0 + `near-api-js` 7.4.0 · vitest + Playwright · pnpm 11 (worker/scripts run with `--conditions=react-server` so `server-only` works)
 
 ## Contract rules (non-negotiable)
 1. USDC leaves only via `withdraw` (to owner) or `execute_buy` (bounded).
