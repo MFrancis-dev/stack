@@ -17,7 +17,7 @@
 | 0. Setup & verification | Nov 4–5 | 80% | in progress (K0.9 blocked on K0.8; K0.8, K0.14 👤) |
 | 1. Contracts | Nov 5–7 | 92% | in progress (K1.13 deploy is 👤) |
 | 2. Core logic (`lib/core`) | Nov 6–7 | 100% | ✅ done |
-| 3. Integrations (1Click, NEAR, DB) | Nov 7–8 | 0% | in progress (schema drafted) |
+| 3. Integrations (1Click, NEAR, DB) | Nov 7–8 | 80% | in progress (K3.5 blocked on K0.8) |
 | 4. API routes | Nov 8–9 | 0% | not started |
 | 5. Worker (scheduler) | Nov 9–10 | 0% | not started |
 | 6. UI | Nov 9–11 | 0% | not started |
@@ -27,7 +27,7 @@
 | 10. README & public repo | Nov 12–13 | 14% | in progress |
 | 11. Launch: video, post, submission | Nov 13–14 | 0% | not started |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~27%** |  |
+| **Overall (MVP)** | | **~33%** | |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
@@ -47,6 +47,7 @@ Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of al
 ## Blockers
 
 - [K0.9] Real (non-dry) 1Click quotes need a partner JWT · 👤 human via K0.8 (partners.near-intents.org) · since 2026-11-04
+- [K3.5] Confirming quote-signature verification needs a real quote → needs the partner JWT (K0.8) · 👤 human · since 2026-11-04
 
 Format: `- [task id] what blocks it · who can unblock · since date`
 
@@ -110,10 +111,11 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 
 ## Phase 3 — Integrations (Nov 7–8)
 
-- [ ] **K3.1** [#39](https://github.com/MFrancis-dev/stack/issues/39) `lib/oneclick`: client, tokens cache, funding + buy quotes (dry/real), verify, status, submit
-- [ ] **K3.2** [#40](https://github.com/MFrancis-dev/stack/issues/40) Fixtures for every status + valid/tampered signatures
-- [ ] **K3.3** [#41](https://github.com/MFrancis-dev/stack/issues/41) `lib/near`: rpc (`get_state`, `ft_balance_of`), nep413 verify, factory + vault bindings, keeper signer (server only), event parsing
-- [~] **K3.4** [#42](https://github.com/MFrancis-dev/stack/issues/42) (2026-11-04: all 3 tables written; migration not generated) `lib/db`: schema (users, funding_attempts, buys) + migration + queries
+- [x] **K3.1** [#39](https://github.com/MFrancis-dev/stack/issues/39) `lib/oneclick`: client, tokens cache, funding + buy quotes (dry/real), verify, status, submit · 2026-11-04: `lib/oneclick`: configure, tokens (10-min cache, stale on outage), funding/buy EXACT_INPUT requests, per-chain deadlines, `requestQuote` (real quotes fail closed on bad signature), status + submit, readable errors
+- [x] **K3.2** [#40](https://github.com/MFrancis-dev/stack/issues/40) Fixtures for every status + valid/tampered signatures · 2026-11-04: real dry-quote fixtures (BTC $100, ETH $10) + status fixtures for all 7 values; tampered/unknown cases tested
+- [x] **K3.3** [#41](https://github.com/MFrancis-dev/stack/issues/41) `lib/near`: rpc (`get_state`, `ft_balance_of`), nep413 verify, factory + vault bindings, keeper signer (server only), event parsing · 2026-11-04: `lib/near`: rpc views, NEP-297 event parsing, vault/factory bindings, keeper signer (server-only), NEP-413 `verifySignIn` (tested with a real signature), `nearVaultClient` adapter
+- [x] **K3.4** [#42](https://github.com/MFrancis-dev/stack/issues/42) (2026-11-04: all 3 tables written; migration not generated) `lib/db`: schema (users, funding_attempts, buys) + migration + queries · 2026-11-04: first migration (`drizzle/0000_…sql`), `db.migrate()` for PGlite + Postgres, queries for users/funding/buys, terminal-status sets; tested on in-memory PGlite
+- [!] **K3.5** [#110](https://github.com/MFrancis-dev/stack/issues/110) 🔍 Verify 1Click quote signatures on real quotes · 2026-11-04: SDK 0.1.26 `verifyQuoteSignature` fails on real unauthenticated dry quotes; real quotes fail closed until verified with the partner JWT (K0.8)
 
 ## Phase 4 — API routes (Nov 8–9)
 
@@ -214,6 +216,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-04 · agent · Phase 3 integrations: 1Click layer (fail-closed signatures), NEAR bindings + NEP-413 sign-in, first DB migration + queries; 66 TS tests; new K3.5 (signature verification) blocked on K0.8 · K3.1–K3.5
 - 2026-11-04 · agent · Phase 2 core logic: money, cost, planMatch, address (checksums), assets, schemas; 33 TS tests · K2.1–K2.6
 - 2026-11-04 · agent · Rewrote `main` history (approved force-push) to drop tool attribution lines from commit messages; every commit's files unchanged · —
 - 2026-11-04 · agent · Phase 1 contracts: vault + factory implemented, mock-ft crate, 49 contract tests passing (unit + near-workspaces sandbox); wasm vault 137 KB / factory 146 KB · K1.1–K1.10, K1.12
