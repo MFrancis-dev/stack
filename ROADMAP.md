@@ -18,7 +18,7 @@
 | 1. Contracts | Nov 5–7 | 92% | in progress (K1.13 deploy is 👤) |
 | 2. Core logic (`lib/core`) | Nov 6–7 | 100% | ✅ done |
 | 3. Integrations (1Click, NEAR, DB) | Nov 7–8 | 80% | in progress (K3.5 blocked on K0.8) |
-| 4. API routes | Nov 8–9 | 0% | not started |
+| 4. API routes | Nov 8–9 | 100% | ✅ done |
 | 5. Worker (scheduler) | Nov 9–10 | 0% | not started |
 | 6. UI | Nov 9–11 | 0% | not started |
 | 7. Demo mode & dry-run | Nov 11 | 0% | not started |
@@ -27,7 +27,7 @@
 | 10. README & public repo | Nov 12–13 | 14% | in progress |
 | 11. Launch: video, post, submission | Nov 13–14 | 0% | not started |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~33%** | |
+| **Overall (MVP)** | | **~40%** | |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
@@ -119,13 +119,13 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 
 ## Phase 4 — API routes (Nov 8–9)
 
-- [ ] **K4.1** [#43](https://github.com/MFrancis-dev/stack/issues/43) Session + `middleware.ts`
-- [ ] **K4.2** [#44](https://github.com/MFrancis-dev/stack/issues/44) `POST /api/onboard` (keeper `create_vault_for`, once)
-- [ ] **K4.3** [#45](https://github.com/MFrancis-dev/stack/issues/45) `GET /api/vault`, `GET /api/tokens`
-- [ ] **K4.4** [#46](https://github.com/MFrancis-dev/stack/issues/46) Funding: quote (dry/real, rate limit), submit-tx, status
-- [ ] **K4.5** [#47](https://github.com/MFrancis-dev/stack/issues/47) `POST /api/plan/preview` (cost % for a buy size) · 2026-11-04: dry quotes need an existing `refundTo` → use the owner's account before the vault exists
-- [ ] **K4.6** [#48](https://github.com/MFrancis-dev/stack/issues/48) `GET /api/buys`, `GET /api/export.csv`
-- [ ] **K4.7** [#49](https://github.com/MFrancis-dev/stack/issues/49) Route tests (happy + validation + auth)
+- [x] **K4.1** [#43](https://github.com/MFrancis-dev/stack/issues/43) Session + `middleware.ts` · 2026-11-04: NEP-413 challenge (signed 5-min cookie) + verify + HMAC session cookie; middleware redirects signed-out page visits
+- [x] **K4.2** [#44](https://github.com/MFrancis-dev/stack/issues/44) `POST /api/onboard` (keeper `create_vault_for`, once) · 2026-11-04: keeper `create_vault_for` once per user (findVault first), rate-limited; 503 with guidance when not configured
+- [x] **K4.3** [#45](https://github.com/MFrancis-dev/stack/issues/45) `GET /api/vault`, `GET /api/tokens` · 2026-11-04: `GET /api/vault` (state + USDC balance), `GET /api/tokens` (public, cached)
+- [x] **K4.4** [#46](https://github.com/MFrancis-dev/stack/issues/46) Funding: quote (dry/real, rate limit), submit-tx, status · 2026-11-04: dry preview (nothing stored) / real attempt with deposit address; submit-tx; status refreshed from 1Click on read incl. expiry; 20/min rate limit
+- [x] **K4.5** [#47](https://github.com/MFrancis-dev/stack/issues/47) `POST /api/plan/preview` (cost % for a buy size) · 2026-11-04: dry quotes need an existing `refundTo` → use the owner's account before the vault exists · 2026-11-04: dry buy quote → cost bps + suggested minimum; example recipients; refund to the user's account before a vault exists
+- [x] **K4.6** [#48](https://github.com/MFrancis-dev/stack/issues/48) `GET /api/buys`, `GET /api/export.csv` · 2026-11-04: `GET /api/buys`; CSV export (UTC, USD value per buy, formula-safe)
+- [x] **K4.7** [#49](https://github.com/MFrancis-dev/stack/issues/49) Route tests (happy + validation + auth) · 2026-11-04: 16 route tests on real handlers (in-memory PGlite, fake 1Click/NEAR, real NEP-413 signature); 84 TS tests total
 
 ## Phase 5 — Worker (Nov 9–10)
 
@@ -163,7 +163,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 - [ ] **K8.4** [#72](https://github.com/MFrancis-dev/stack/issues/72) Balance below buy amount (remainder only if it passes the cost check)
 - [ ] **K8.5** [#73](https://github.com/MFrancis-dev/stack/issues/73) Funding underpaid from an exchange: warning + status
 - [ ] **K8.6** [#74](https://github.com/MFrancis-dev/stack/issues/74) 1Click down / no route → `no_quote`
-- [ ] **K8.7** [#75](https://github.com/MFrancis-dev/stack/issues/75) Rate limits; logs without secrets
+- [~] **K8.7** [#75](https://github.com/MFrancis-dev/stack/issues/75) Rate limits; logs without secrets · 2026-11-04: in-memory rate limits on quote, preview and onboard routes; log hygiene still to review
 - [ ] **K8.8** [#76](https://github.com/MFrancis-dev/stack/issues/76) Re-run all contract invariant tests against the deployed code hash
 
 ## Phase 9 — Deploy & real run (Nov 12)
@@ -216,6 +216,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-04 · agent · Phase 4 API: NEP-413 sessions, onboard, vault, tokens, funding (dry/real/status/submit), plan preview, buys, CSV; services seam for tests/demo; 84 TS tests · K4.1–K4.7, K8.7
 - 2026-11-04 · agent · Phase 3 integrations: 1Click layer (fail-closed signatures), NEAR bindings + NEP-413 sign-in, first DB migration + queries; 66 TS tests; new K3.5 (signature verification) blocked on K0.8 · K3.1–K3.5
 - 2026-11-04 · agent · Phase 2 core logic: money, cost, planMatch, address (checksums), assets, schemas; 33 TS tests · K2.1–K2.6
 - 2026-11-04 · agent · Rewrote `main` history (approved force-push) to drop tool attribution lines from commit messages; every commit's files unchanged · —

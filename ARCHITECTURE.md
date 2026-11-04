@@ -140,7 +140,9 @@ The keeper chooses `deposit_address`. A stolen keeper key could redirect at most
 ### 4.1 API routes
 | Route | Auth | Purpose |
 |---|---|---|
-| `POST /api/session` | NEP-413 | Sign in |
+| `GET /api/session` | public | Challenge: 32-byte nonce + message + recipient (app host), in a signed 5-min cookie |
+| `POST /api/session` | NEP-413 | Verify signature (full-access key, matching nonce/message/recipient) → upsert user → HMAC-signed HTTP-only session cookie (7 days) |
+| `DELETE /api/session` | – | Sign out |
 | `POST /api/onboard` | session | Keeper `create_vault_for(owner)` (once) |
 | `GET /api/vault` | session | `get_state()` + `ft_balance_of` + next run |
 | `GET /api/tokens` | public | Cached token list |
@@ -152,6 +154,9 @@ The keeper chooses `deposit_address`. A stolen keeper key could redirect at most
 | `POST /api/demo/:action` | demo session | `fast-forward`, `reset` |
 
 Owner contract calls (`set_plan`, `resume`, `pause`, `withdraw`, `recover_token`) are wallet transactions built in the browser; no server involvement.
+
+All routes go through `lib/server/adapters.ts#getServices()` (DB, 1Click, NEAR, token list). Real mode builds it from env; tests and demo mode inject their own. A missing real-mode dependency returns **503** with what to set. Errors: 400 validation, 401 session, 404 not yours, 409 no vault yet, 429 rate limit, 502 1Click.
+Sessions: `SESSION_SECRET` (≥ 32 chars) is required in production; locally a per-process secret is used.
 
 ### 4.2 1Click requests
 
