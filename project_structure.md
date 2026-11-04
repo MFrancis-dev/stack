@@ -90,11 +90,12 @@ components/
 ## 5. `lib/`
 ```
 lib/
-├─ core/        # pure: assets.ts (KD-6 ids), money.ts, status.ts, cost.ts (cost_bps), planMatch.ts, address.ts (checksums), adapters.ts, schemas.ts
+├─ core/        # pure: csv.ts, assets.ts (KD-6 ids), money.ts, status.ts, cost.ts (cost_bps), planMatch.ts, address.ts (checksums), adapters.ts, schemas.ts
 ├─ oneclick/    # index.ts (QuoteProvider/StatusProvider), client.ts, tokens.ts, quote.ts (funding + buy, fail-closed verify), status.ts, demo.ts, __fixtures__/ (real dry quotes)
 ├─ near/        # index.ts (VaultClient), rpc.ts, nep413.ts, vault.ts (bindings), factory.ts, keeper.ts (server only), events.ts, demo.ts
 ├─ db/          # schema.ts, client.ts (PGlite/Postgres + migrate()), queries/ (users, fundingAttempts, buys), seed-demo.ts
-└─ server/      # SERVER ONLY: env.ts, session.ts, adapters.ts, rateLimit.ts
+└─ server/      # SERVER ONLY: env.ts, session.ts (NEP-413 challenge + HMAC cookies), adapters.ts (getServices seam), context.ts (current user/vault),
+                #   http.ts (JSON, body parsing, error mapping), rateLimit.ts, routes.test.ts (API tests), testing/ (server-only stub for vitest)
 ```
 
 ## 6. `worker/`

@@ -72,6 +72,12 @@ Rust near-sdk =5.30.0 + cargo-near 0.22 + near-workspaces =0.24.0 · Next.js 15.
 `users` (near_account_id, vault_account_id, is_demo) · `funding_attempts` (deposit_address uniq, quote_raw, signature, status) · `buys` (quote_ref uniq, cost_bps, deposit_address, status)
 On-chain vault = truth for plan + balance.
 
+## API
+- Every route uses `getServices()` (lib/server/adapters.ts); tests/demo inject fakes via `setServicesForTest`
+- Sign-in: GET /api/session challenge → wallet `signMessage` → POST verifies (full-access key) → signed HTTP-only cookie
+- Statuses: 400 · 401 · 404 (not yours) · 409 (no vault) · 429 · 502 (1Click) · 503 (real mode not configured)
+- Funding status refreshes from 1Click on read; plan preview refunds to the user's own account before a vault exists
+
 ## Worker
 `pollFunding` 5 s · `scheduleBuys` 60 s · `pollBuys` 10 s · `expireQuotes` 60 s · alert on low keeper gas
 

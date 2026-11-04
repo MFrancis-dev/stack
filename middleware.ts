@@ -1,16 +1,19 @@
 /**
- * Redirects signed-out users away from (dashboard) routes.
- * Roadmap: S3.1 / K4.1 · Spec: ARCHITECTURE.md (API routes)
- * Status: scaffold — not implemented yet.
+ * Sends signed-out visitors of the app pages to the landing page. Only checks that a session cookie
+ * exists; API routes verify its signature (lib/server/session.ts).
+ * Roadmap: K4.1 · Spec: ARCHITECTURE.md §4.1
  */
 
 import { NextResponse, type NextRequest } from "next/server";
 
-export function middleware(_req: NextRequest) {
-  // TODO: check the session cookie; demo sessions are allowed.
-  return NextResponse.next();
+export function middleware(req: NextRequest) {
+  if (req.cookies.has("stack_session")) return NextResponse.next();
+  const url = req.nextUrl.clone();
+  url.pathname = "/";
+  url.searchParams.set("next", req.nextUrl.pathname);
+  return NextResponse.redirect(url);
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/invoices/:path*", "/settings/:path*", "/fund/:path*", "/plan/:path*", "/history/:path*"],
+  matcher: ["/dashboard/:path*", "/fund/:path*", "/plan/:path*", "/history/:path*", "/settings/:path*"],
 };

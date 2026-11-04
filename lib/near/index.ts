@@ -4,7 +4,7 @@
  */
 
 import type { VaultClient } from "../core/adapters";
-import { createVaultFor } from "./factory";
+import { createVaultFor, getVault } from "./factory";
 import type { NearProvider } from "./rpc";
 import { executeBuy, getUsdcBalance, getVaultState, type KeeperAccount } from "./vault";
 
@@ -15,6 +15,7 @@ export function nearVaultClient(deps: {
   usdcContractId: string;
 }): VaultClient {
   return {
+    findVault: (owner) => getVault(deps.provider, deps.factoryId, owner),
     getState: (vaultAccountId) => getVaultState(deps.provider, vaultAccountId),
     usdcBalance: (vaultAccountId) => getUsdcBalance(deps.provider, deps.usdcContractId, vaultAccountId),
     async createVaultFor(owner) {

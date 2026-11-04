@@ -1,7 +1,6 @@
 /**
  * Interfaces swapped between real and demo implementations.
  * Roadmap: K2.6 · Spec: ARCHITECTURE.md §8
- * Status: scaffold — not implemented yet.
  */
 
 import type { OneClickStatus } from "./status";
@@ -21,6 +20,8 @@ export interface StatusProvider {
 }
 
 export interface VaultClient {
+  /** The owner's vault per the factory, if one exists. */
+  findVault(owner: string): Promise<string | null>;
   getState(vaultAccountId: string): Promise<VaultState>;
   usdcBalance(vaultAccountId: string): Promise<BaseUnits>;
   createVaultFor(owner: string): Promise<{ vaultAccountId: string; txHash: string }>;
