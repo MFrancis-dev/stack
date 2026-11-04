@@ -8,7 +8,7 @@ Spec: `../ARCHITECTURE.md` §3 · Roadmap: Phase 1 (K1.x)
 
 ```bash
 pnpm contracts:build   # cargo near build for vault + factory → target/near/
-pnpm contracts:test    # unit tests + near-workspaces sandbox tests (builds wasm itself)
+pnpm contracts:test    # unit tests + near-workspaces sandbox tests (builds wasm via the `cargo near` CLI)
 ```
 
 - `mock-ft/` — test-only NEP-141/NEP-145 token standing in for USDC.
