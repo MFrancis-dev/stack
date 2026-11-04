@@ -90,7 +90,7 @@ components/
 ## 5. `lib/`
 ```
 lib/
-├─ core/        # pure: money.ts, status.ts, cost.ts (cost_bps), planMatch.ts, address.ts, adapters.ts, schemas.ts
+├─ core/        # pure: assets.ts (KD-6 ids), money.ts, status.ts, cost.ts (cost_bps), planMatch.ts, address.ts (checksums), adapters.ts, schemas.ts
 ├─ oneclick/    # client.ts, tokens.ts, quote.ts (funding + buy, verify), status.ts, demo.ts, __fixtures__/
 ├─ near/        # rpc.ts, nep413.ts, vault.ts (bindings), factory.ts, keeper.ts (server only), events.ts, demo.ts
 ├─ db/          # schema.ts, client.ts (PGlite/Postgres), queries/, seed-demo.ts

@@ -16,7 +16,7 @@
 | D. Design & docs | Nov 4 | 100% | ✅ done |
 | 0. Setup & verification | Nov 4–5 | 80% | in progress (K0.9 blocked on K0.8; K0.8, K0.14 👤) |
 | 1. Contracts | Nov 5–7 | 92% | in progress (K1.13 deploy is 👤) |
-| 2. Core logic (`lib/core`) | Nov 6–7 | 0% | in progress (drafted) |
+| 2. Core logic (`lib/core`) | Nov 6–7 | 100% | ✅ done |
 | 3. Integrations (1Click, NEAR, DB) | Nov 7–8 | 0% | in progress (schema drafted) |
 | 4. API routes | Nov 8–9 | 0% | not started |
 | 5. Worker (scheduler) | Nov 9–10 | 0% | not started |
@@ -27,7 +27,7 @@
 | 10. README & public repo | Nov 12–13 | 14% | in progress |
 | 11. Launch: video, post, submission | Nov 13–14 | 0% | not started |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~20%** | |
+| **Overall (MVP)** | | **~27%** |  |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
@@ -101,12 +101,12 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 
 ## Phase 2 — Core logic `lib/core` (Nov 6–7)
 
-- [ ] **K2.1** [#33](https://github.com/MFrancis-dev/stack/issues/33) `money.ts` · tests
-- [ ] **K2.2** [#34](https://github.com/MFrancis-dev/stack/issues/34) `cost.ts`: `cost_bps` from quote USD values · tests
-- [ ] **K2.3** [#35](https://github.com/MFrancis-dev/stack/issues/35) `planMatch.ts`: quote recipient/asset/amount vs `get_state()` · tests incl. mismatches
-- [~] **K2.4** [#36](https://github.com/MFrancis-dev/stack/issues/36) (2026-11-04: unions + both mappings written) `status.ts`: funding + buy unions and mapping · tests for every status
-- [ ] **K2.5** [#37](https://github.com/MFrancis-dev/stack/issues/37) `address.ts`: validators for BTC, ETH (per chain), NEAR · tests
-- [~] **K2.6** [#38](https://github.com/MFrancis-dev/stack/issues/38) (2026-11-04: interfaces + schemas drafted) `adapters.ts` interfaces (`QuoteProvider`, `StatusProvider`, `VaultClient`), `schemas.ts`
+- [x] **K2.1** [#33](https://github.com/MFrancis-dev/stack/issues/33) `money.ts` · tests · 2026-11-04: bigint `toBaseUnits`/`formatAmount`/`parseScaled`, tests incl. 0, 1 unit, > 2^64
+- [x] **K2.2** [#34](https://github.com/MFrancis-dev/stack/issues/34) `cost.ts`: `cost_bps` from quote USD values · tests · 2026-11-04: `costBps` (rounded up, null when unknown) + `checkCost`, tested with real quote numbers
+- [x] **K2.3** [#35](https://github.com/MFrancis-dev/stack/issues/35) `planMatch.ts`: quote recipient/asset/amount vs `get_state()` · tests incl. mismatches · 2026-11-04: `quoteMatchesPlan` checks paused/plan, dry, deposit address, origin USDC, asset, recipient, refundTo = vault, amount ≤ per-run
+- [x] **K2.4** [#36](https://github.com/MFrancis-dev/stack/issues/36) (2026-11-04: unions + both mappings written) `status.ts`: funding + buy unions and mapping · tests for every status · 2026-11-04: unions + both mappings, tested against the 7-value SDK enum
+- [x] **K2.5** [#37](https://github.com/MFrancis-dev/stack/issues/37) `address.ts`: validators for BTC, ETH (per chain), NEAR · tests · 2026-11-04: checksummed: BTC bech32/bech32m + base58check, EVM EIP-55, NEAR named/implicit (BIP-173/350, EIP-55 vectors); adds `@noble/hashes` 2.2.0 + `@scure/base` 2.4.0
+- [x] **K2.6** [#38](https://github.com/MFrancis-dev/stack/issues/38) (2026-11-04: interfaces + schemas drafted) `adapters.ts` interfaces (`QuoteProvider`, `StatusProvider`, `VaultClient`), `schemas.ts` · 2026-11-04: adapters (QuoteSummary echoes originAsset/refundTo), schemas (plan form: address twice + checksum + on-chain limits), `assets.ts` with KD-6 ids
 
 ## Phase 3 — Integrations (Nov 7–8)
 
@@ -214,6 +214,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-04 · agent · Phase 2 core logic: money, cost, planMatch, address (checksums), assets, schemas; 33 TS tests · K2.1–K2.6
 - 2026-11-04 · agent · Rewrote `main` history (approved force-push) to drop tool attribution lines from commit messages; every commit's files unchanged · —
 - 2026-11-04 · agent · Phase 1 contracts: vault + factory implemented, mock-ft crate, 49 contract tests passing (unit + near-workspaces sandbox); wasm vault 137 KB / factory 146 KB · K1.1–K1.10, K1.12
 - 2026-11-04 · agent · Decisions accepted by the human: KD-5 no upgrades, KD-6 BTC/ETH/NEAR, KD-7 name Stack, KD-8 regular deploy; K1.11 dropped; update-log actor made neutral · K0.1, K0.10, K1.11
