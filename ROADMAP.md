@@ -214,6 +214,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-04 · agent · Rewrote `main` history (approved force-push) to drop tool attribution lines from commit messages; every commit's files unchanged · —
 - 2026-11-04 · agent · Phase 1 contracts: vault + factory implemented, mock-ft crate, 49 contract tests passing (unit + near-workspaces sandbox); wasm vault 137 KB / factory 146 KB · K1.1–K1.10, K1.12
 - 2026-11-04 · agent · Decisions accepted by the human: KD-5 no upgrades, KD-6 BTC/ETH/NEAR, KD-7 name Stack, KD-8 regular deploy; K1.11 dropped; update-log actor made neutral · K0.1, K0.10, K1.11
 - 2026-11-04 · agent · CI green on main (web, contracts, gitleaks) · K0.7
