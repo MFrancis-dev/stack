@@ -1,7 +1,6 @@
 /**
  * Domain types shared by server, worker and UI. Pure — no I/O.
  * Roadmap: K2.x · Spec: ARCHITECTURE.md §3–5
- * Status: scaffold — not implemented yet.
  */
 
 /** Amount in an asset's smallest unit, as a decimal string. Never a float. */
@@ -40,12 +39,16 @@ export interface PlanInput {
   maxCostBps: number;
 }
 
-/** What we keep from a verified 1Click quote. */
+/** What we keep from a verified 1Click quote (request fields echoed so plan checks can compare them). */
 export interface QuoteSummary {
   dry: boolean;
+  originAsset: AssetId;
+  refundTo: string;
   depositAddress: string | null;
   amountIn: BaseUnits;
   amountOut: BaseUnits;
+  minAmountOut: BaseUnits | null;
+  timeEstimateS: number | null;
   amountInUsd: string | null;
   amountOutUsd: string | null;
   recipient: string;
