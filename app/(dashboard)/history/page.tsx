@@ -1,14 +1,31 @@
+"use client";
+
 /**
- * Deposits, buys, skips with reason, withdrawals, tx links, CSV.
+ * Every buy with its result, reason and proof, plus the CSV export (USD value per buy, for tax).
  * Roadmap: K6.6
- * Status: scaffold — not implemented yet.
  */
 
-export default function Page() {
+import { BuyTable } from "@/components/history/BuyTable";
+import { Notice } from "@/components/ui/Notice";
+import { useBuys, useVault } from "@/lib/client/hooks";
+
+export default function HistoryPage() {
+  const vault = useVault();
+  const signedIn = !!(vault.data?.signedIn && vault.data.vaultAccountId);
+  const buys = useBuys(signedIn);
+  if (!signedIn) return null;
   return (
-    <main className="mx-auto max-w-3xl p-6">
-      <h1 className="text-2xl font-semibold">History</h1>
-      <p className="text-sm text-neutral-500">Not built yet (K6.6).</p>
-    </main>
+    <div className="grid gap-8">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="grid gap-2">
+          <h1 className="text-4xl font-bold">History</h1>
+          <p className="max-w-2xl text-lg text-sage">Every buy, including the ones that were skipped and why. Skipped buys never spend anything.</p>
+        </div>
+        <a href="/api/export.csv" className="inline-flex min-h-11 items-center rounded-md px-4 font-bold ring-1 ring-inset ring-mist hover:bg-paper-deep" download>
+          Download CSV
+        </a>
+      </div>
+      {buys.isError ? <Notice tone="error">{buys.error.message}</Notice> : <BuyTable buys={buys.data ?? []} />}
+    </div>
   );
 }

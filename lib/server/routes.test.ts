@@ -4,6 +4,7 @@ import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as buysRoute from "@/app/api/buys/route";
 import * as csvRoute from "@/app/api/export.csv/route";
 import * as fundQuoteRoute from "@/app/api/fund/quote/route";
+import * as fundListRoute from "@/app/api/fund/route";
 import * as fundStatusRoute from "@/app/api/fund/[id]/status/route";
 import * as submitTxRoute from "@/app/api/fund/[id]/submit-tx/route";
 import * as onboardRoute from "@/app/api/onboard/route";
@@ -242,6 +243,15 @@ describe("funding (K4.4)", () => {
     const { attempt } = await (await fundQuoteRoute.POST(req("/api/fund/quote", { method: "POST", cookie, body: body(false) }))).json();
     oneClickStatus = "PENDING_DEPOSIT";
     expect(await (await fundStatusRoute.GET(req(`/api/fund/${attempt.id}/status`, { cookie }), params(attempt.id))).json()).toMatchObject({ status: "expired" });
+  });
+
+  it("lists the user's own funding attempts", async () => {
+    const cookie = await onboarded();
+    await fundQuoteRoute.POST(req("/api/fund/quote", { method: "POST", cookie, body: body(false) }));
+    const mine = await (await fundListRoute.GET(req("/api/fund", { cookie }))).json();
+    expect(mine.attempts).toHaveLength(1);
+    const other = await signIn("bob.near");
+    expect((await (await fundListRoute.GET(req("/api/fund", { cookie: other }))).json()).attempts).toHaveLength(0);
   });
 
   it("forwards the deposit tx hash", async () => {

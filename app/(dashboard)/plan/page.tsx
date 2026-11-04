@@ -1,14 +1,26 @@
+"use client";
+
 /**
- * Target, address typed twice + chain name, amount, interval, max cost, cost preview, pause/resume.
- * Roadmap: K6.3–K6.4
- * Status: scaffold — not implemented yet.
+ * Savings plan: target, address (twice), amount, schedule, fee limit, live cost estimate.
+ * Roadmap: K6.3, K6.4
  */
 
-export default function Page() {
+import { PlanForm } from "@/components/plan/PlanForm";
+import { useVault } from "@/lib/client/hooks";
+
+export default function PlanPage() {
+  const vault = useVault();
+  const v = vault.data?.signedIn ? vault.data : null;
+  if (!v?.state || !v.vaultAccountId) return null;
   return (
-    <main className="mx-auto max-w-3xl p-6">
-      <h1 className="text-2xl font-semibold">Savings plan</h1>
-      <p className="text-sm text-neutral-500">Not built yet (K6.3–K6.4).</p>
-    </main>
+    <div className="grid max-w-3xl gap-8">
+      <div className="grid gap-2">
+        <h1 className="text-4xl font-bold">{v.state.targetAsset ? "Your plan" : "Set your plan"}</h1>
+        <p className="text-lg text-sage">
+          Your vault follows these rules on its own. You can change them or pause at any time; only your wallet can.
+        </p>
+      </div>
+      <PlanForm vaultId={v.vaultAccountId} accountId={v.accountId} state={v.state} />
+    </div>
   );
 }

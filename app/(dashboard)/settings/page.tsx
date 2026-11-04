@@ -1,14 +1,26 @@
+"use client";
+
 /**
- * Withdraw USDC, recover stray tokens.
- * Roadmap: K6.7
- * Status: scaffold — not implemented yet.
+ * Withdraw, recover stray tokens, see your vault account. Roadmap: K6.7
  */
 
-export default function Page() {
+import { RecoverTokenForm, WithdrawForm } from "@/components/vault/WithdrawForm";
+import { useVault } from "@/lib/client/hooks";
+
+export default function SettingsPage() {
+  const vault = useVault();
+  const v = vault.data?.signedIn ? vault.data : null;
+  if (!v?.vaultAccountId || !v.usdcBalance) return null;
   return (
-    <main className="mx-auto max-w-3xl p-6">
-      <h1 className="text-2xl font-semibold">Settings</h1>
-      <p className="text-sm text-neutral-500">Not built yet (K6.7).</p>
-    </main>
+    <div className="grid gap-14">
+      <div className="grid gap-2">
+        <h1 className="text-4xl font-bold">Settings</h1>
+        <p className="text-lg text-sage">
+          Your vault is <span className="break-all font-bold text-ink">{v.vaultAccountId}</span>. Only {v.accountId} can withdraw from it.
+        </p>
+      </div>
+      <WithdrawForm vaultId={v.vaultAccountId} accountId={v.accountId} usdcBalance={v.usdcBalance} />
+      <RecoverTokenForm vaultId={v.vaultAccountId} />
+    </div>
   );
 }
