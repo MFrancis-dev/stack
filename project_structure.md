@@ -33,12 +33,13 @@ app/, worker/ ──► lib/server ──► lib/db, lib/oneclick, lib/near ─�
 ## 2. `contracts/`
 ```
 contracts/
-├─ Cargo.toml                    # workspace: factory, vault, tests
+├─ Cargo.toml                    # workspace: factory, vault, mock-ft, tests
 ├─ rust-toolchain.toml
 ├─ factory/src/
-│  ├─ lib.rs                     # state, create_vault_for, get_vault, daily cap
-│  ├─ deploy.rs                  # sub-account + vault code deploy
-│  └─ storage.rs                 # USDC storage_deposit for the vault
+│  ├─ lib.rs                     # state, set_vault_code, create_vault_for, views, daily cap, events
+│  ├─ deploy.rs                  # sub-account + vault code deploy, on_vault_deployed
+│  ├─ storage.rs                 # USDC storage_deposit, on_vault_registered, retry_registration
+│  └─ tests.rs                   # unit tests
 ├─ vault/src/
 │  ├─ lib.rs                     # state, new, get_state
 │  ├─ plan.rs                    # set_plan, resume, pause
@@ -46,12 +47,13 @@ contracts/
 │  ├─ owner.rs                   # withdraw, recover_token
 │  ├─ receive.rs                 # ft_on_transfer
 │  ├─ events.rs                  # NEP-297
-│  └─ ft.rs                      # NEP-141 ext interface
+│  ├─ ft.rs                      # NEP-141 / NEP-145 ext interface
+│  └─ tests.rs                   # unit tests (rules, guards, callbacks)
+├─ mock-ft/src/lib.rs            # test-only NEP-141 + NEP-145 token standing in for USDC
 ├─ tests/src/                    # near-workspaces
-│  ├─ setup.rs                   # mock USDC + factory + vault
-│  ├─ invariants.rs              # I1–I7
-│  ├─ buy.rs · owner.rs · factory.rs · recover.rs
-│  └─ ../res/mock_ft.wasm
+│  ├─ setup.rs                   # builds wasm (compile_project), mock USDC + factory + alice's vault
+│  ├─ invariants.rs              # I1–I7 + private callbacks
+│  └─ buy.rs · owner.rs · factory.rs · recover.rs
 └─ README.md                     # build, test, method list
 ```
 Unit tests next to code (`#[cfg(test)]`); cross-contract tests in `contracts/tests/`. Built wasm in `target/`, not committed.

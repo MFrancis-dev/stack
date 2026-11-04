@@ -68,10 +68,10 @@ Everything in a vault belongs to its owner. There is no split and no shared bala
 ### 3.2 Factory
 ```rust
 pub struct Factory {
-    admin: AccountId,        // can publish new vault code hashes only (see B12)
+    admin: AccountId,        // uploads vault code for FUTURE vaults only; no path to funds (I5)
     keeper: AccountId,
     usdc: AccountId,
-    vault_code: VaultCode,   // embedded vault wasm — regular deploy (KD-8)
+    vault_code: LazyOption<Vec<u8>>, // vault wasm uploaded once by the admin; regular deploy (KD-8)
     vaults: LookupMap<AccountId, AccountId>,
     created_today: (u64 /*day*/, u32 /*count*/),
     daily_cap: u32,
@@ -79,8 +79,10 @@ pub struct Factory {
 ```
 | Method | Caller | Behaviour |
 |---|---|---|
-| `create_vault_for(owner)` | keeper | One per owner; daily cap; create sub-account; deploy code; `vault.new(owner, keeper, usdc)`; `storage_deposit` on USDC for the vault |
-| `get_vault(owner)` | view | |
+| `set_vault_code()` | admin | Raw wasm as the call input (not JSON). Emits `vault_code_updated {sha256, size}`. Affects only vaults created afterwards |
+| `create_vault_for(owner)` | keeper | One per owner; daily cap. Batch: create `v<sha256(owner)[0..16]>.<factory>` → fund (code storage + 0.1 NEAR) → deploy → `new(owner, keeper, usdc)`. Then `on_vault_deployed`: on failure forget the vault and free the day's slot; on success `storage_deposit` the vault on USDC (registration_only) → `on_vault_registered` emits `vault_created` or `vault_registration_failed` |
+| `retry_registration(owner)` | keeper | Re-run the USDC registration for an existing vault |
+| `get_vault(owner)` · `get_vault_code_hash()` · `get_config()` | view | Code hash lets anyone compare it with a vault's on-chain code hash |
 
 ### 3.3 Vault
 ```rust
@@ -104,9 +106,9 @@ pub struct Vault {
 | `set_plan(target_asset, destination_address, amount_per_run, interval_s, max_cost_bps)` | owner | **1 yocto** | Validates ranges; emits `plan_updated` |
 | `resume()` | owner | **1 yocto** | Requires a complete plan |
 | `pause()` | owner | – | Always available |
-| `execute_buy(quote_ref, deposit_address, amount)` | keeper | storage deposit if needed | Requires `!paused`, plan set, `now ≥ last_run_at_s + interval_s`, `amount ≤ amount_per_run`. Sets `last_run_at_s = now`; registers `deposit_address` on USDC if needed **[verify whether 1Click pre-registers]**; `ft_transfer(deposit_address, amount)`; callback: on failure restore `last_run_at_s`, emit `buy_failed` |
+| `execute_buy(quote_ref, deposit_address, amount)` | keeper | storage deposit if needed | Requires `!paused`, plan set, `now ≥ last_run_at_s + interval_s`, `amount ≤ amount_per_run`. Sets `last_run_at_s = now`. If the keeper attaches NEAR, first `storage_deposit(deposit_address, registration_only)` with it (refunded if already registered); with no deposit, an unregistered address makes the transfer fail cleanly. Then `ft_transfer(deposit_address, amount)`; callback `on_buy_transfer`: success → `buy_sent`; failure → restore `last_run_at_s`, `buy_failed`. **[verify whether 1Click pre-registers, K0.9]** |
 | `withdraw(amount)` | owner | **1 yocto** | `ft_transfer(owner, amount)` USDC |
-| `recover_token(token, amount)` | owner | **1 yocto** | Send any other NEP-141 to the owner |
+| `recover_token(token, amount)` | owner | **1 yocto** | Send any other NEP-141 to the owner; refuses USDC (use `withdraw`) |
 | `get_state()` | view | – | Plan, paused, `next_run_at_s` |
 
 Balance is read with `ft_balance_of(vault)` by the app; the contract doesn't track it. An `execute_buy` larger than the balance simply fails in the USDC contract and the callback restores state.
@@ -121,7 +123,12 @@ Balance is read with `ft_balance_of(vault)` by the app; the contract doesn't tra
 - I7. A new vault is paused with no plan.
 
 ### 3.5 Events (NEP-297)
-`vault_created`, `deposited`, `plan_updated`, `paused`, `resumed`, `buy_sent`, `buy_failed`, `withdrawn`, `token_recovered`.
+Vault (`standard: stack_vault`): `deposited`, `plan_updated`, `paused`, `resumed`, `buy_sent`, `buy_failed`, `withdrawn`, `withdraw_failed`, `token_recovered`.
+Factory (`standard: stack_factory`): `vault_code_updated`, `vault_created`, `vault_create_failed`, `vault_registration_failed`.
+
+Plan limits enforced on-chain: `interval_s ≥ 60`, `0 < max_cost_bps ≤ 5000`, `amount_per_run > 0`, string fields ≤ 128 chars.
+
+**Callback rule:** a callback awaiting a call that returns data (e.g. `storage_deposit` → StorageBalance) must read `env::promise_result_checked` instead of `#[callback_result] Result<(), _>`, which would panic on deserialization.
 
 ### 3.6 Known trust assumption (README)
 The keeper chooses `deposit_address`. A stolen keeper key could redirect at most one `amount_per_run` per interval per vault until the owner pauses. Off-chain: the worker verifies the quote signature and that its recipient/asset match `get_state()` before calling `execute_buy`. Stretch: verify the signature in the contract.
