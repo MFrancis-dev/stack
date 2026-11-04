@@ -71,7 +71,7 @@ pub struct Factory {
     admin: AccountId,        // can publish new vault code hashes only (see B12)
     keeper: AccountId,
     usdc: AccountId,
-    vault_code: VaultCode,   // embedded wasm (regular deploy) unless KD-8 picks a global contract by hash (§12)
+    vault_code: VaultCode,   // embedded vault wasm — regular deploy (KD-8)
     vaults: LookupMap<AccountId, AccountId>,
     created_today: (u64 /*day*/, u32 /*count*/),
     daily_cap: u32,
@@ -266,7 +266,7 @@ PUBLIC_APP_URL=
 | K-B4 | AI screener can't run it | `pnpm demo`: zero secrets, PGlite |
 | K-B5 | Vault creation too expensive / spammed | Regular deploy locks ~1.1 NEAR per 110 KB vault (recoverable); global contract burns ~11 NEAR once. Decision KD-8. Daily cap; shrink wasm |
 | K-B6 | Funding quote expires on slow chains | Deadline per origin chain; 1Click docs: Bitcoin deposits may need ~1 hour |
-| K-B7 | Contract bug can't be fixed | Owner-approved upgrade (⛔ pending) |
+| K-B7 | Contract bug can't be fixed | Accepted (KD-5): vaults are immutable; owners withdraw and open a new vault from a fixed factory |
 
 ### Edge cases
 Destination typo → validate, typed twice, chain named · NEAR target → owner registered on `wrap.near` · withdraw during a buy → buy transfer fails, retried next interval · stray tokens → `recover_token` · balance < buy amount → remainder only if it passes the cost check · paused with buy in flight → completes, UI says so · plan changed mid-interval → next buy uses the new plan · 1Click no route → `no_quote`.

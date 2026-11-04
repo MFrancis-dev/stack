@@ -15,11 +15,13 @@ Separate repo from **Settle** (track 08). Never import Settle code; README names
 - Everything in a vault is the owner's savings: no split, no locks, buy refunds return to the vault
 - Single Next.js app + `worker/` + `contracts/` (no monorepo)
 - PGlite local/demo, Postgres when `DATABASE_URL` is set
+- **KD-5** No vault upgrades: vaults are immutable; owners withdraw and open a new vault instead
+- **KD-6** Targets: BTC `nep141:btc.omft.near`, ETH `nep141:eth.omft.near`, NEAR `nep141:wrap.near`
+- **KD-7** Name: Stack
+- **KD-8** Regular deploy: factory embeds the vault wasm (~1.1 NEAR locked per vault). Never a global contract by account
 
 ## ⛔ Pending — don't build until the human decides
-- **KD-5** Owner-approved vault upgrades (K-B7)
-- **KD-6** MVP target assets (recommended: BTC native, ETH on Ethereum, NEAR; ids in ARCHITECTURE §12)
-- **KD-8** Vault deploy: regular deploy (~1.1 NEAR locked per vault, recommended for the hackathon) vs global contract by hash (~11 NEAR burned once). **Never** a global contract by account.
+_None._
 
 ## ✅ Verified 2026-11-04 (details: ARCHITECTURE §12)
 - USDC on NEAR `nep141:17208628…133a1` (6 dec) · BTC `nep141:btc.omft.near` · ETH `nep141:eth.omft.near` · NEAR `nep141:wrap.near`. Match on assetId, never symbol.
