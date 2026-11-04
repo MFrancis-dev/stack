@@ -15,7 +15,7 @@
 |---|---|---|---|
 | D. Design & docs | Nov 4 | 100% | ✅ done |
 | 0. Setup & verification | Nov 4–5 | 80% | in progress (K0.9 blocked on K0.8; K0.8, K0.14 👤) |
-| 1. Contracts | Nov 5–7 | 0% | in progress (state drafted) |
+| 1. Contracts | Nov 5–7 | 92% | in progress (K1.13 deploy is 👤) |
 | 2. Core logic (`lib/core`) | Nov 6–7 | 0% | in progress (drafted) |
 | 3. Integrations (1Click, NEAR, DB) | Nov 7–8 | 0% | in progress (schema drafted) |
 | 4. API routes | Nov 8–9 | 0% | not started |
@@ -27,7 +27,7 @@
 | 10. README & public repo | Nov 12–13 | 14% | in progress |
 | 11. Launch: video, post, submission | Nov 13–14 | 0% | not started |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~13%** | |
+| **Overall (MVP)** | | **~20%** | |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
@@ -61,7 +61,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 | KD-5 [#2](https://github.com/MFrancis-dev/stack/issues/2) | Owner-approved vault upgrades in MVP? → **No.** Vaults are immutable; an owner can always withdraw and open a new vault | ✅ decided 2026-11-04 |
 | KD-6 [#3](https://github.com/MFrancis-dev/stack/issues/3) | MVP target assets → **BTC (native) `nep141:btc.omft.near`, ETH (Ethereum) `nep141:eth.omft.near`, NEAR `nep141:wrap.near`** | ✅ decided 2026-11-04 |
 | KD-7 [#4](https://github.com/MFrancis-dev/stack/issues/4) | Working name → **"Stack" is final** | ✅ decided 2026-11-04 |
-| KD-8 [#106](https://github.com/MFrancis-dev/stack/issues/106) | Vault deploy → **regular deploy** (factory embeds the vault wasm; ~1.1 NEAR locked per vault, recoverable). Never a global contract by account | ✅ decided 2026-11-04 |
+| KD-8 [#106](https://github.com/MFrancis-dev/stack/issues/106) | Vault deploy → **regular deploy** (admin uploads the vault wasm to the factory once; ~1.5 NEAR locked per 137 KB vault, recoverable). Never a global contract by account | ✅ decided 2026-11-04 |
 
 ---
 
@@ -85,18 +85,18 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 
 ## Phase 1 — Contracts (Nov 5–7) — **critical path**
 
-- [~] **K1.1** [#20](https://github.com/MFrancis-dev/stack/issues/20) (2026-11-04: `Vault` + `VaultView` structs and `new` written; `get_state` stubbed) Vault state + `new` + `get_state` (paused, no plan)
-- [ ] **K1.2** [#21](https://github.com/MFrancis-dev/stack/issues/21) `set_plan` (1 yocto, range checks), `resume` (1 yocto, plan required), `pause` (owner)
-- [ ] **K1.3** [#22](https://github.com/MFrancis-dev/stack/issues/22) `ft_on_transfer` (accept any NEP-141, event)
-- [ ] **K1.4** [#23](https://github.com/MFrancis-dev/stack/issues/23) `execute_buy`: keeper, bounds, deposit-address storage registration, `ft_transfer`, failure callback restoring `last_run_at_s`
-- [ ] **K1.5** [#24](https://github.com/MFrancis-dev/stack/issues/24) `withdraw`, `recover_token` (owner, 1 yocto)
-- [ ] **K1.6** [#25](https://github.com/MFrancis-dev/stack/issues/25) NEP-297 events for every state change
-- [~] **K1.7** [#26](https://github.com/MFrancis-dev/stack/issues/26) (2026-11-04: `Factory` state, `new`, `get_vault` written; `create_vault_for` stubbed) Factory: `create_vault_for` (keeper, one per owner, daily cap), deploy (global or embedded), USDC storage for the vault, `get_vault` · 2026-11-04: USDC storage registration for the vault is **mandatory**: Intents gives no refund to an unregistered receiver (§12). Deploy method per KD-8
-- [ ] **K1.8** [#27](https://github.com/MFrancis-dev/stack/issues/27) near-workspaces setup with mock USDC
-- [ ] **K1.9** [#28](https://github.com/MFrancis-dev/stack/issues/28) Tests: I1–I7 one each
-- [ ] **K1.10** [#29](https://github.com/MFrancis-dev/stack/issues/29) Tests: failed transfer callback, insufficient balance, stray token recovery, daily cap, unauthorized callers
+- [x] **K1.1** [#20](https://github.com/MFrancis-dev/stack/issues/20) (2026-11-04: `Vault` + `VaultView` structs and `new` written; `get_state` stubbed) Vault state + `new` + `get_state` (paused, no plan) · 2026-11-04: state, `new`, `get_state` (next_run_at_s) + unit tests
+- [x] **K1.2** [#21](https://github.com/MFrancis-dev/stack/issues/21) `set_plan` (1 yocto, range checks), `resume` (1 yocto, plan required), `pause` (owner) · 2026-11-04: range checks (interval ≥ 60 s, 0 < cost ≤ 5000 bps), set_plan never unpauses
+- [x] **K1.3** [#22](https://github.com/MFrancis-dev/stack/issues/22) `ft_on_transfer` (accept any NEP-141, event) · 2026-11-04: accepts any NEP-141, emits `deposited`
+- [x] **K1.4** [#23](https://github.com/MFrancis-dev/stack/issues/23) `execute_buy`: keeper, bounds, deposit-address storage registration, `ft_transfer`, failure callback restoring `last_run_at_s` · 2026-11-04: bounds, optional storage_deposit for the deposit address, `on_buy_transfer` restores schedule on failure
+- [x] **K1.5** [#24](https://github.com/MFrancis-dev/stack/issues/24) `withdraw`, `recover_token` (owner, 1 yocto) · 2026-11-04: `withdraw` (always available), `recover_token` (refuses USDC), both with result events
+- [x] **K1.6** [#25](https://github.com/MFrancis-dev/stack/issues/25) NEP-297 events for every state change · 2026-11-04: NEP-297 `stack_vault` + `stack_factory` events
+- [x] **K1.7** [#26](https://github.com/MFrancis-dev/stack/issues/26) (2026-11-04: `Factory` state, `new`, `get_vault` written; `create_vault_for` stubbed) Factory: `create_vault_for` (keeper, one per owner, daily cap), deploy (global or embedded), USDC storage for the vault, `get_vault` · 2026-11-04: USDC storage registration for the vault is **mandatory**: Intents gives no refund to an unregistered receiver (§12). Deploy method per KD-8 · 2026-11-04: admin uploads code once (`set_vault_code`, future vaults only), keeper `create_vault_for`, rollback on failed deploy, chained USDC registration + `retry_registration`
+- [x] **K1.8** [#27](https://github.com/MFrancis-dev/stack/issues/27) near-workspaces setup with mock USDC · 2026-11-04: near-workspaces sandbox + `compile_project` + `mock-ft` crate
+- [x] **K1.9** [#28](https://github.com/MFrancis-dev/stack/issues/28) Tests: I1–I7 one each · 2026-11-04: I1–I7 + private callbacks, all passing on the sandbox
+- [x] **K1.10** [#29](https://github.com/MFrancis-dev/stack/issues/29) Tests: failed transfer callback, insufficient balance, stray token recovery, daily cap, unauthorized callers · 2026-11-04: deposit-address registration, insufficient balance, factory rules, recovery, withdraw, non-owner — 49 contract tests total (24 vault unit, 9 factory unit, 16 sandbox)
 - [-] **K1.11** [#30](https://github.com/MFrancis-dev/stack/issues/30) If KD-5 = yes: owner-approved `upgrade_to(hash)` + tests · 2026-11-04: dropped: KD-5 = no upgrades in MVP
-- [ ] **K1.12** [#31](https://github.com/MFrancis-dev/stack/issues/31) `contracts/README.md`: methods, build, test
+- [x] **K1.12** [#31](https://github.com/MFrancis-dev/stack/issues/31) `contracts/README.md`: methods, build, test · 2026-11-04: `contracts/README.md` build/test/deploy order; method tables in ARCHITECTURE §3
 - [ ] **K1.13** [#32](https://github.com/MFrancis-dev/stack/issues/32) 👤 Approve deployment; deploy factory (+ global vault code if used); record account ids
 
 ## Phase 2 — Core logic `lib/core` (Nov 6–7)
@@ -214,6 +214,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-04 · agent · Phase 1 contracts: vault + factory implemented, mock-ft crate, 49 contract tests passing (unit + near-workspaces sandbox); wasm vault 137 KB / factory 146 KB · K1.1–K1.10, K1.12
 - 2026-11-04 · agent · Decisions accepted by the human: KD-5 no upgrades, KD-6 BTC/ETH/NEAR, KD-7 name Stack, KD-8 regular deploy; K1.11 dropped; update-log actor made neutral · K0.1, K0.10, K1.11
 - 2026-11-04 · agent · CI green on main (web, contracts, gitleaks) · K0.7
 - 2026-11-04 · agent · Phase 0 verification: live `/v0/tokens` + dry quotes (cost data), SDK status enum, NEAR docs (global contracts, near-connect); added near-connect + near-api-js; db client + check-env + test; react-server condition for worker/scripts; CI workflow; ARCHITECTURE §12 + ESSENTIALS updated; new decision KD-8 · K0.6, K0.7, K0.9, K0.10, K0.11, K0.12, K0.13, K1.7, K4.5, K6.3, K8.2

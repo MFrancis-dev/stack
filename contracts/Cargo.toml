@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["factory", "vault", "tests"]
+members = ["factory", "vault", "mock-ft", "tests"]
 
 [profile.release]
 codegen-units = 1

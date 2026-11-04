@@ -7,6 +7,10 @@
 Spec: `../ARCHITECTURE.md` §3 · Roadmap: Phase 1 (K1.x)
 
 ```bash
-cargo near build   # in factory/ and vault/   (K1.x)
-cargo test         # unit + integration       (K1.9–K1.10)
+pnpm contracts:build   # cargo near build for vault + factory → target/near/
+pnpm contracts:test    # unit tests + near-workspaces sandbox tests (builds wasm via the `cargo near` CLI)
 ```
+
+- `mock-ft/` — test-only NEP-141/NEP-145 token standing in for USDC.
+
+Deploy order (human-approved, K1.13): factory `new(admin, keeper, usdc, daily_cap)` → admin `set_vault_code` with the vault wasm as raw input → keeper `create_vault_for(owner)` per user.

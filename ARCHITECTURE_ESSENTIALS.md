@@ -18,7 +18,7 @@ Separate repo from **Settle** (track 08). Never import Settle code; README names
 - **KD-5** No vault upgrades: vaults are immutable; owners withdraw and open a new vault instead
 - **KD-6** Targets: BTC `nep141:btc.omft.near`, ETH `nep141:eth.omft.near`, NEAR `nep141:wrap.near`
 - **KD-7** Name: Stack
-- **KD-8** Regular deploy: factory embeds the vault wasm (~1.1 NEAR locked per vault). Never a global contract by account
+- **KD-8** Regular deploy: admin uploads the vault wasm to the factory once (`set_vault_code`); ~1.5 NEAR locked per 137 KB vault. Never a global contract by account
 
 ## ⛔ Pending — don't build until the human decides
 _None._
@@ -41,9 +41,10 @@ Rust near-sdk =5.30.0 + cargo-near 0.22 + near-workspaces =0.24.0 · Next.js 15.
 
 ## Contract rules (non-negotiable)
 1. USDC leaves only via `withdraw` (to owner) or `execute_buy` (bounded).
-2. `execute_buy`: keeper · not paused · plan set · once per `interval_s` · `amount ≤ amount_per_run` · register deposit address before `ft_transfer` · callback restores `last_run_at_s` on failure.
+2. `execute_buy`: keeper · not paused · plan set · once per `interval_s` · `amount ≤ amount_per_run` · keeper attaches ~0.013 NEAR so the deposit address gets registered before `ft_transfer` · callback restores `last_run_at_s` on failure.
 3. `set_plan`, `resume`, `withdraw`, `recover_token`: owner + 1 yocto. `pause`: owner, no deposit.
-4. `create_vault_for`: keeper only · one per owner · daily cap.
+4. `create_vault_for`: keeper only · one per owner · daily cap · vault code uploaded once by the admin (`set_vault_code`, future vaults only) · USDC registration chained after deploy.
+6. Callbacks on calls that return data read `env::promise_result_checked`, never `Result<(), _>`.
 5. No admin path to funds. Checked math. Events for every state change.
 
 ## 1Click rules

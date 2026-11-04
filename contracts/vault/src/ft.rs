@@ -1,4 +1,4 @@
-//! NEP-141 cross-contract interface used by the vault.
+//! NEP-141 / NEP-145 cross-contract interface used by the vault.
 use near_sdk::json_types::U128;
 use near_sdk::{ext_contract, AccountId};
 
