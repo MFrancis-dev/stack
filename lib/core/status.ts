@@ -1,7 +1,6 @@
 /**
  * Status unions and 1Click → our status mapping for funding and buys.
  * Roadmap: K2.4 · Spec: ARCHITECTURE.md §4.3
- * Status: scaffold — not implemented yet.
  */
 
 /** 1Click /v0/status values. 🔍 Verify the exact enum (K0.11). */
@@ -75,3 +74,9 @@ export function buyStatusFromOneClick(s: OneClickStatus): BuyStatus {
       return "refunded";
   }
 }
+
+/** Funding attempts the worker stops polling. `underpaid` stays open: 1Click may allow a top-up until the deadline. */
+export const FUNDING_TERMINAL: ReadonlySet<FundingStatus> = new Set(["credited", "refunded", "failed", "expired"]);
+
+/** Buys the worker stops polling. */
+export const BUY_TERMINAL: ReadonlySet<BuyStatus> = new Set(["skipped_cost", "no_quote", "success", "refunded", "failed", "expired"]);

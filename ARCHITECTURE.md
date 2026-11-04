@@ -315,6 +315,7 @@ Top level: `correlationId`, `quote`, `quoteRequest`, `signature`, `timestamp`. `
 - Intents withdrawals to a NEAR account **give no refund if the receiver isn't storage-registered** on the token → the factory must register the vault on USDC (K1.7) and owners must be registered on `wrap.near` before a NEAR plan (K8.2). Non-negotiable.
 - `customRecipientMsg` (marked "highly experimental") delivers with `ft_transfer_call`; not needed by the vault design.
 - Optional `insured: true` adds 0.02%; a LIMIT-order API exists in the SDK (relevant to the "buy the dip" stretch).
+- **Quote signatures (K3.5):** SDK 0.1.26 `verifyQuoteSignature()` returns false for real, untampered unauthenticated dry quotes (the SDK hashes a fixed field list; the API now echoes `confidentiality`, `insured`, `depositMode`). Real quotes therefore **fail closed** until verification is confirmed with a partner JWT.
 - Non-dry quotes without a partner JWT returned "Failed to get quote" → **K0.9 (deposit-address storage) is blocked on K0.8 (JWT)**.
 
 ### Global contracts (docs.near.org, NEP-591)
