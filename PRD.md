@@ -163,7 +163,7 @@ Details: `ARCHITECTURE.md` §11.
 - Q2. Global contracts available for cheap vault deploys?
 - Q3. Quote USD field names for the cost check.
 - Q4. `/v0/status` enum.
-- Q5. Owner-approved upgrade path: MVP or stretch?
+- ~~Q5. Owner-approved upgrade path: MVP or stretch?~~ Decided (KD-5): no upgrades; vaults are immutable.
 
 ---
 

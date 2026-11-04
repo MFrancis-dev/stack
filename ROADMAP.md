@@ -14,7 +14,7 @@
 | Phase | Target dates | Progress | Status |
 |---|---|---|---|
 | D. Design & docs | Nov 4 | 100% | ✅ done |
-| 0. Setup & verification | Nov 4–5 | 67% | in progress (K0.9 blocked on K0.8) |
+| 0. Setup & verification | Nov 4–5 | 80% | in progress (K0.9 blocked on K0.8; K0.8, K0.14 👤) |
 | 1. Contracts | Nov 5–7 | 0% | in progress (state drafted) |
 | 2. Core logic (`lib/core`) | Nov 6–7 | 0% | in progress (drafted) |
 | 3. Integrations (1Click, NEAR, DB) | Nov 7–8 | 0% | in progress (schema drafted) |
@@ -27,7 +27,7 @@
 | 10. README & public repo | Nov 12–13 | 14% | in progress |
 | 11. Launch: video, post, submission | Nov 13–14 | 0% | not started |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~12%** | |
+| **Overall (MVP)** | | **~13%** | |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
@@ -58,16 +58,16 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 | KD-2 | No relayer; owner actions are wallet txs | ✅ decided |
 | KD-3 | No split, no locks; buy refunds return to the vault | ✅ decided |
 | KD-4 | Single Next.js app + worker + `contracts/`; PGlite local/demo, Postgres hosted | ✅ decided |
-| KD-5 [#2](https://github.com/MFrancis-dev/stack/issues/2) | Owner-approved vault upgrades in MVP? | ⛔ open → decide by Nov 6 (affects K1.x) |
-| KD-6 [#3](https://github.com/MFrancis-dev/stack/issues/3) | MVP target assets (BTC, ETH, NEAR) and chains | ⛔ open → K0.10 |
-| KD-7 [#4](https://github.com/MFrancis-dev/stack/issues/4) | Working name "Stack" final? | ⛔ open → K0.1 |
-| KD-8 [#106](https://github.com/MFrancis-dev/stack/issues/106) | Vault deploy: regular deploy (~1.1 NEAR locked per vault, recoverable) vs global contract **by hash** (~11 NEAR burned once). Never by account. Recommended: regular deploy for the hackathon | ⛔ open → decide before K1.7 is finished |
+| KD-5 [#2](https://github.com/MFrancis-dev/stack/issues/2) | Owner-approved vault upgrades in MVP? → **No.** Vaults are immutable; an owner can always withdraw and open a new vault | ✅ decided 2026-11-04 |
+| KD-6 [#3](https://github.com/MFrancis-dev/stack/issues/3) | MVP target assets → **BTC (native) `nep141:btc.omft.near`, ETH (Ethereum) `nep141:eth.omft.near`, NEAR `nep141:wrap.near`** | ✅ decided 2026-11-04 |
+| KD-7 [#4](https://github.com/MFrancis-dev/stack/issues/4) | Working name → **"Stack" is final** | ✅ decided 2026-11-04 |
+| KD-8 [#106](https://github.com/MFrancis-dev/stack/issues/106) | Vault deploy → **regular deploy** (factory embeds the vault wasm; ~1.1 NEAR locked per vault, recoverable). Never a global contract by account | ✅ decided 2026-11-04 |
 
 ---
 
 ## Phase 0 — Setup & verification (Nov 4–5)
 
-- [ ] **K0.1** [#5](https://github.com/MFrancis-dev/stack/issues/5) 👤 Confirm product name
+- [x] **K0.1** [#5](https://github.com/MFrancis-dev/stack/issues/5) 👤 Confirm product name · 2026-11-04: "Stack" confirmed (KD-7)
 - [x] **K0.2** [#6](https://github.com/MFrancis-dev/stack/issues/6) `git init`, `.gitignore`, MIT `LICENSE`, README stub naming Settle (👤 approves first commit) · 2026-11-04: first commit approved and made; README links Settle; PR + issue templates added
 - [x] **K0.3** [#7](https://github.com/MFrancis-dev/stack/issues/7) 👤 Create the GitHub repo + remote · 2026-11-04: created **public** at https://github.com/MFrancis-dev/stack on the human's instruction; `origin` set; `main` pushed
 - [x] **K0.4** [#8](https://github.com/MFrancis-dev/stack/issues/8) (2026-11-04: installed with pnpm 11.17, exact versions pinned (Next 15.5.28, zod 3.25.76, Drizzle 0.36.4, PGlite 0.2.17, 1Click SDK 0.1.26); typecheck, lint, test (11 todo) and `next build` (18 pages, 11 API routes) all pass) Scaffold Next.js 15 + TS strict + Tailwind + shadcn/ui + ESLint/Prettier + vitest + Playwright; scripts per AGENTS.md §5
@@ -76,7 +76,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 - [x] **K0.7** [#11](https://github.com/MFrancis-dev/stack/issues/11) CI: typecheck, lint, test, `cargo test`, gitleaks · 2026-11-04: `.github/workflows/ci.yml` (web: typecheck/lint/test/build · contracts: cargo check + test · gitleaks); first run on `main` green (run 41886755850)
 - [ ] **K0.8** [#12](https://github.com/MFrancis-dev/stack/issues/12) 👤 Register a 1Click partner JWT
 - [!] **K0.9** [#13](https://github.com/MFrancis-dev/stack/issues/13) 🔍 Does 1Click storage-register NEAR deposit addresses? (K-B1) · 2026-11-04: non-dry quotes return "Failed to get quote" without a partner JWT → needs K0.8. Vault registers the deposit address anyway (safe default)
-- [~] **K0.10** [#14](https://github.com/MFrancis-dev/stack/issues/14) 🔍 + ⛔ Asset ids/decimals for USDC (NEAR), BTC, ETH, NEAR from `/v0/tokens` → KD-6 · 2026-11-04: ids/decimals verified (ARCHITECTURE §12): USDC `nep141:17208628…133a1` (6), BTC `nep141:btc.omft.near` (8), ETH `nep141:eth.omft.near` (18), NEAR `nep141:wrap.near` (24). Waiting on KD-6
+- [x] **K0.10** [#14](https://github.com/MFrancis-dev/stack/issues/14) 🔍 + ⛔ Asset ids/decimals for USDC (NEAR), BTC, ETH, NEAR from `/v0/tokens` → KD-6 · 2026-11-04: ids/decimals verified (ARCHITECTURE §12): USDC `nep141:17208628…133a1` (6), BTC `nep141:btc.omft.near` (8), ETH `nep141:eth.omft.near` (18), NEAR `nep141:wrap.near` (24). KD-6 decided: BTC, ETH, NEAR
 - [x] **K0.11** [#15](https://github.com/MFrancis-dev/stack/issues/15) 🔍 Quote USD field names for the cost check; `/v0/status` enum; deposits after deadline · 2026-11-04: quote has `amountInUsd`/`amountOutUsd` (+ minAmountOut, withdrawFee, refundFee, timeEstimate, signature, timestamp); status enum = 7 values already in `status.ts`; `refundTo` must exist; BTC deposits may need ~1 h (deadline). Late-deposit behaviour still unverified
 - [x] **K0.12** [#16](https://github.com/MFrancis-dev/stack/issues/16) 🔍 Global contracts availability + cost per vault (K-B5) · 2026-11-04: NEP-591 available: global publish burns 10 NEAR/100 KB (~11 NEAR for the vault), use < 0.001 NEAR; regular deploy locks ~1.1 NEAR per vault → decision KD-8
 - [x] **K0.13** [#17](https://github.com/MFrancis-dev/stack/issues/17) 🔍 Wallet selector package + NEP-413 + batched owner transactions · 2026-11-04: NEAR docs now recommend `@hot-labs/near-connect` (0.12.0) + `near-api-js` (7.4.0, `nep413.verifyMessage`); both added and pinned
@@ -95,7 +95,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 - [ ] **K1.8** [#27](https://github.com/MFrancis-dev/stack/issues/27) near-workspaces setup with mock USDC
 - [ ] **K1.9** [#28](https://github.com/MFrancis-dev/stack/issues/28) Tests: I1–I7 one each
 - [ ] **K1.10** [#29](https://github.com/MFrancis-dev/stack/issues/29) Tests: failed transfer callback, insufficient balance, stray token recovery, daily cap, unauthorized callers
-- [ ] **K1.11** [#30](https://github.com/MFrancis-dev/stack/issues/30) If KD-5 = yes: owner-approved `upgrade_to(hash)` + tests
+- [-] **K1.11** [#30](https://github.com/MFrancis-dev/stack/issues/30) If KD-5 = yes: owner-approved `upgrade_to(hash)` + tests · 2026-11-04: dropped: KD-5 = no upgrades in MVP
 - [ ] **K1.12** [#31](https://github.com/MFrancis-dev/stack/issues/31) `contracts/README.md`: methods, build, test
 - [ ] **K1.13** [#32](https://github.com/MFrancis-dev/stack/issues/32) 👤 Approve deployment; deploy factory (+ global vault code if used); record account ids
 
@@ -214,10 +214,11 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
-- 2026-11-04 · Claude · CI green on main (web, contracts, gitleaks) · K0.7
-- 2026-11-04 · Claude · Phase 0 verification: live `/v0/tokens` + dry quotes (cost data), SDK status enum, NEAR docs (global contracts, near-connect); added near-connect + near-api-js; db client + check-env + test; react-server condition for worker/scripts; CI workflow; ARCHITECTURE §12 + ESSENTIALS updated; new decision KD-8 · K0.6, K0.7, K0.9, K0.10, K0.11, K0.12, K0.13, K1.7, K4.5, K6.3, K8.2
-- 2026-11-04 · Claude · Created public repo MFrancis-dev/stack and pushed; GitHub labels, phase milestones and one issue per ROADMAP task, decision, stretch item + a hackathon-rules compliance issue · K0.3, K10.6
-- 2026-11-04 · Claude · First commit (approved): README cross-links Settle, PR template with ROADMAP + hackathon-rule checklist, issue template · K0.2, K10.4
-- 2026-11-04 · Claude · Installed deps (pnpm 11, esbuild approved), pinned exact JS + Rust versions, ESM package, lint config allows `_` stub params, build-contracts.sh now builds both wasm; typecheck/lint/test/build/cargo check/wasm build all green · K0.4, K0.5
-- 2026-11-04 · Claude · Scaffolded the repo (126 files): configs, contracts workspace (vault + factory state, method stubs, I1–I7 test stubs), every route/page/component/lib/worker stub with roadmap ids, Drizzle schema, core types + statuses, zod env/schemas, test todos, `git init` (no commit, deps not installed, nothing compiled) · K0.2, K0.4–K0.6, K0.15, K1.1, K1.7, K2.4, K2.6, K3.4
-- 2026-11-04 · Claude · Split from the combined design into its own project; wrote PRD, ARCHITECTURE, ESSENTIALS, AGENTS, CLAUDE, project_structure, ROADMAP · D
+- 2026-11-04 · agent · Decisions accepted by the human: KD-5 no upgrades, KD-6 BTC/ETH/NEAR, KD-7 name Stack, KD-8 regular deploy; K1.11 dropped; update-log actor made neutral · K0.1, K0.10, K1.11
+- 2026-11-04 · agent · CI green on main (web, contracts, gitleaks) · K0.7
+- 2026-11-04 · agent · Phase 0 verification: live `/v0/tokens` + dry quotes (cost data), SDK status enum, NEAR docs (global contracts, near-connect); added near-connect + near-api-js; db client + check-env + test; react-server condition for worker/scripts; CI workflow; ARCHITECTURE §12 + ESSENTIALS updated; new decision KD-8 · K0.6, K0.7, K0.9, K0.10, K0.11, K0.12, K0.13, K1.7, K4.5, K6.3, K8.2
+- 2026-11-04 · agent · Created public repo MFrancis-dev/stack and pushed; GitHub labels, phase milestones and one issue per ROADMAP task, decision, stretch item + a hackathon-rules compliance issue · K0.3, K10.6
+- 2026-11-04 · agent · First commit (approved): README cross-links Settle, PR template with ROADMAP + hackathon-rule checklist, issue template · K0.2, K10.4
+- 2026-11-04 · agent · Installed deps (pnpm 11, esbuild approved), pinned exact JS + Rust versions, ESM package, lint config allows `_` stub params, build-contracts.sh now builds both wasm; typecheck/lint/test/build/cargo check/wasm build all green · K0.4, K0.5
+- 2026-11-04 · agent · Scaffolded the repo (126 files): configs, contracts workspace (vault + factory state, method stubs, I1–I7 test stubs), every route/page/component/lib/worker stub with roadmap ids, Drizzle schema, core types + statuses, zod env/schemas, test todos, `git init` (no commit, deps not installed, nothing compiled) · K0.2, K0.4–K0.6, K0.15, K1.1, K1.7, K2.4, K2.6, K3.4
+- 2026-11-04 · agent · Split from the combined design into its own project; wrote PRD, ARCHITECTURE, ESSENTIALS, AGENTS, CLAUDE, project_structure, ROADMAP · D
