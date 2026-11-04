@@ -1,7 +1,6 @@
 /**
  * Database schema (Drizzle). Amounts are numeric(78,0) base units. On-chain vault is the truth for plan and balance.
  * Roadmap: K3.4 · Spec: ARCHITECTURE.md §5
- * Status: scaffold — not implemented yet.
  */
 
 import { boolean, index, integer, jsonb, numeric, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
@@ -65,6 +64,8 @@ export const buys = pgTable(
     oneclickStatus: text("oneclick_status"),
     status: text("status", { enum: BUY_STATUSES }).notNull(),
     destinationTxHash: text("destination_tx_hash"),
+    /** Why a buy was skipped, refused or failed — shown in history. */
+    note: text("note"),
     createdAt: ts("created_at").notNull().defaultNow(),
     completedAt: ts("completed_at"),
   },

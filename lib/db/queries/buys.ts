@@ -26,3 +26,8 @@ export async function listBuysByUser(db: Db, userId: string, limit = 200): Promi
 export async function listInFlightBuys(db: Db): Promise<Buy[]> {
   return db.select().from(buys).where(inArray(buys.status, ["sent", "processing"]));
 }
+
+/** Most recent buy row for a user (any status), used for in-flight and retry-backoff checks. */
+export async function lastBuyForUser(db: Db, userId: string): Promise<Buy | undefined> {
+  return (await db.select().from(buys).where(eq(buys.userId, userId)).orderBy(desc(buys.createdAt)).limit(1))[0];
+}
