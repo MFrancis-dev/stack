@@ -4,7 +4,7 @@
 
 import { JsonRpcProvider } from "near-api-js";
 
-export type NearProvider = Pick<JsonRpcProvider, "callFunction" | "viewAccessKey">;
+export type NearProvider = Pick<JsonRpcProvider, "callFunction" | "viewAccessKey" | "viewAccount">;
 
 export function createProvider(url: string): JsonRpcProvider {
   return new JsonRpcProvider({ url });

@@ -19,7 +19,7 @@
 | 2. Core logic (`lib/core`) | Nov 6–7 | 100% | ✅ done |
 | 3. Integrations (1Click, NEAR, DB) | Nov 7–8 | 80% | in progress (K3.5 blocked on K0.8) |
 | 4. API routes | Nov 8–9 | 100% | ✅ done |
-| 5. Worker (scheduler) | Nov 9–10 | 0% | not started |
+| 5. Worker (scheduler) | Nov 9–10 | 100% | ✅ done |
 | 6. UI | Nov 9–11 | 0% | not started |
 | 7. Demo mode & dry-run | Nov 11 | 0% | not started |
 | 8. Hardening & edge cases | Nov 11–12 | 0% | not started |
@@ -27,7 +27,7 @@
 | 10. README & public repo | Nov 12–13 | 14% | in progress |
 | 11. Launch: video, post, submission | Nov 13–14 | 0% | not started |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~40%** | |
+| **Overall (MVP)** | | **~48%** | |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
@@ -129,11 +129,11 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 
 ## Phase 5 — Worker (Nov 9–10)
 
-- [ ] **K5.1** [#50](https://github.com/MFrancis-dev/stack/issues/50) `worker/index.ts`, graceful shutdown
-- [ ] **K5.2** [#51](https://github.com/MFrancis-dev/stack/issues/51) `pollFunding` · tests
-- [ ] **K5.3** [#52](https://github.com/MFrancis-dev/stack/issues/52) `scheduleBuys`: due check → quote → verify → plan match → cost check → `execute_buy` → submit · tests for skip, no_quote, mismatch, success
-- [ ] **K5.4** [#53](https://github.com/MFrancis-dev/stack/issues/53) `pollBuys` · tests
-- [ ] **K5.5** [#54](https://github.com/MFrancis-dev/stack/issues/54) `expireQuotes`; low keeper-gas alert
+- [x] **K5.1** [#50](https://github.com/MFrancis-dev/stack/issues/50) `worker/index.ts`, graceful shutdown · 2026-11-04: entry + `startLoops` runner (no overlap, errors logged, SIGINT/SIGTERM wait for ticks); smoke-run OK with no env
+- [x] **K5.2** [#51](https://github.com/MFrancis-dev/stack/issues/51) `pollFunding` · tests · 2026-11-04: status mapping, expiry past deadline, underpaid alert, per-attempt error isolation
+- [x] **K5.3** [#52](https://github.com/MFrancis-dev/stack/issues/52) `scheduleBuys`: due check → quote → verify → plan match → cost check → `execute_buy` → submit · tests for skip, no_quote, mismatch, success · 2026-11-04: due/in-flight/backoff/empty checks, min(per-run, balance), cost → plan match → insert-then-execute → submit; every skip/refusal/failure recorded with a note (new `buys.note`, migration 0001)
+- [x] **K5.4** [#53](https://github.com/MFrancis-dev/stack/issues/53) `pollBuys` · tests · 2026-11-04: final status, actual amountOut + destination tx from swapDetails, refund reason
+- [x] **K5.5** [#54](https://github.com/MFrancis-dev/stack/issues/54) `expireQuotes`; low keeper-gas alert · 2026-11-04: DB-only quote expiry; keeper balance alert below 1 NEAR
 
 ## Phase 6 — UI (Nov 9–11)
 
@@ -216,6 +216,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-04 · agent · Phase 5 worker: pollFunding, scheduleBuys (full safety chain, backoff, insert-before-execute), pollBuys, expireQuotes, keeper gas alert, no-overlap runner; `buys.note` migration; 100 TS tests · K5.1–K5.5
 - 2026-11-04 · agent · Phase 4 API: NEP-413 sessions, onboard, vault, tokens, funding (dry/real/status/submit), plan preview, buys, CSV; services seam for tests/demo; 84 TS tests · K4.1–K4.7, K8.7
 - 2026-11-04 · agent · Phase 3 integrations: 1Click layer (fail-closed signatures), NEAR bindings + NEP-413 sign-in, first DB migration + queries; 66 TS tests; new K3.5 (signature verification) blocked on K0.8 · K3.1–K3.5
 - 2026-11-04 · agent · Phase 2 core logic: money, cost, planMatch, address (checksums), assets, schemas; 33 TS tests · K2.1–K2.6

@@ -2,7 +2,7 @@
  * Queries for funding attempts (any token → USDC into the vault). Roadmap: K3.4
  */
 
-import { and, desc, eq, notInArray } from "drizzle-orm";
+import { and, desc, eq, lt, notInArray } from "drizzle-orm";
 import { FUNDING_TERMINAL, type FundingStatus } from "../../core/status";
 import type { Db } from "../client";
 import { fundingAttempts, type FundingAttempt } from "../schema";
@@ -36,4 +36,14 @@ export async function updateFundingStatus(
     .update(fundingAttempts)
     .set({ ...patch, updatedAt: new Date() })
     .where(eq(fundingAttempts.id, id));
+}
+
+/** DB-only expiry for quotes nobody paid, so the worker stops polling them even if 1Click is unreachable. */
+export async function expireStaleFunding(db: Db, now: Date): Promise<number> {
+  const rows = await db
+    .update(fundingAttempts)
+    .set({ status: "expired", updatedAt: now })
+    .where(and(eq(fundingAttempts.status, "awaiting_deposit"), lt(fundingAttempts.quoteDeadline, now)))
+    .returning({ id: fundingAttempts.id });
+  return rows.length;
 }

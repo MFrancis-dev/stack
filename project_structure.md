@@ -100,7 +100,8 @@ lib/
 
 ## 6. `worker/`
 ```
-worker/index.ts · pollFunding.ts (5 s) · scheduleBuys.ts (60 s) · pollBuys.ts (10 s) · expireQuotes.ts (60 s) · alerts.ts
+worker/index.ts (entry, intervals, shutdown) · runner.ts (no-overlap loops) · deps.ts (WorkerDeps, JSON logger)
+       pollFunding.ts (5 s) · scheduleBuys.ts (60 s) · pollBuys.ts (10 s) · expireQuotes.ts (60 s) · alerts.ts (keeper gas, 10 min) · worker.test.ts
 ```
 
 ## 7. `e2e/`, `scripts/`

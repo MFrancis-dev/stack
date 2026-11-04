@@ -186,11 +186,13 @@ Rules: `verifyQuoteSignature()` before using `depositAddress`; ids/decimals from
 ### 4.4 Worker loops
 | Loop | Every | Does |
 |---|---|---|
-| `pollFunding` | 5 s | Non-terminal funding attempts → status |
-| `scheduleBuys` | 60 s | Due vaults (`get_state`, balance) → quote → verify → plan match → cost check → `execute_buy` → submit tx |
-| `pollBuys` | 10 s | In-flight buys → final status, destination tx |
-| `expireQuotes` | 60 s | |
-Alert when the keeper's NEAR balance is low.
+| `pollFunding` | 5 s | Non-final funding attempts → 1Click status; PENDING past deadline → `expired`; alert on `underpaid`. One failing attempt never stops the others |
+| `scheduleBuys` | 60 s | Per vault: skip if paused / not due / a buy is in flight / within the 15-min backoff after a skip or failure / vault empty. Amount = min(`amount_per_run`, balance). Real quote (fails closed on signature, K3.5) → cost check (`skipped_cost` + note) → plan match (`failed` "refused: …" + alert) → **insert row first** → `execute_buy` → `submitDepositTx` (best effort) |
+| `pollBuys` | 10 s | In-flight buys → final status; on success the actual `amountOut` and destination tx from `swapDetails`; refunds noted with 1Click's reason |
+| `expireQuotes` | 60 s | DB-only expiry of unpaid funding quotes (works while 1Click is down) |
+| `keeperBalance` | 10 min | Alert below 1 NEAR — buys stop without gas |
+
+Runner: a loop never overlaps itself, errors are logged and the loop continues, SIGINT/SIGTERM wait for running ticks. Logs are JSON lines with no secrets or personal data. Rows are timestamped with the worker clock (`deps.now`), never the DB's.
 
 ---
 
@@ -211,6 +213,7 @@ buys (id uuid pk, user_id uuid fk, quote_ref text unique not null, amount_in num
        amount_in_usd numeric, amount_out numeric(78,0), deposit_address text unique,
        quote_signature text, quote_raw jsonb, near_tx_hash text, oneclick_status text,
        status text not null,          -- skipped_cost|no_quote|sent|processing|success|refunded|failed|expired
+       note text,                     -- why it was skipped, refused, failed or refunded (migration 0001)
        destination_tx_hash text, created_at timestamptz default now(), completed_at timestamptz)
 ```
 On-chain vault = truth for plan and balance. DB = history and metadata.
