@@ -14,7 +14,7 @@
 | Phase | Target dates | Progress | Status |
 |---|---|---|---|
 | D. Design & docs | Nov 4 | 100% | ✅ done |
-| 0. Setup & verification | Nov 4–5 | 60% | in progress (K0.9 blocked on K0.8) |
+| 0. Setup & verification | Nov 4–5 | 67% | in progress (K0.9 blocked on K0.8) |
 | 1. Contracts | Nov 5–7 | 0% | in progress (state drafted) |
 | 2. Core logic (`lib/core`) | Nov 6–7 | 0% | in progress (drafted) |
 | 3. Integrations (1Click, NEAR, DB) | Nov 7–8 | 0% | in progress (schema drafted) |
@@ -73,7 +73,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 - [x] **K0.4** [#8](https://github.com/MFrancis-dev/stack/issues/8) (2026-11-04: installed with pnpm 11.17, exact versions pinned (Next 15.5.28, zod 3.25.76, Drizzle 0.36.4, PGlite 0.2.17, 1Click SDK 0.1.26); typecheck, lint, test (11 todo) and `next build` (18 pages, 11 API routes) all pass) Scaffold Next.js 15 + TS strict + Tailwind + shadcn/ui + ESLint/Prettier + vitest + Playwright; scripts per AGENTS.md §5
 - [x] **K0.5** [#9](https://github.com/MFrancis-dev/stack/issues/9) (2026-11-04: rustc 1.98.1, cargo-near 0.22.0; near-sdk pinned =5.30.0, near-workspaces =0.24.0; `cargo check` clean; `pnpm contracts:build` → vault 110.5 KB, factory 107.6 KB wasm; `cargo test` 15 ignored stubs) `contracts/` Cargo workspace (factory, vault, tests) with `cargo-near` + near-workspaces; `rust-toolchain.toml`
 - [x] **K0.6** [#10](https://github.com/MFrancis-dev/stack/issues/10) (2026-11-04: drizzle switch, env.ts, .env.example done; db client + check-env stubs) Drizzle with PGlite / Postgres switch; `lib/server/env.ts`, `.env.example`, `scripts/check-env.ts` · 2026-11-04: `lib/db/client.ts` (PGlite ↔ Postgres, in-memory test passes), `missingForRealMode()` + `pnpm check-env` (names only); worker/scripts run with `--conditions=react-server` so `server-only` doesn't throw in plain Node
-- [~] **K0.7** [#11](https://github.com/MFrancis-dev/stack/issues/11) CI: typecheck, lint, test, `cargo test`, gitleaks · 2026-11-04: `.github/workflows/ci.yml` written (web: typecheck/lint/test/build · contracts: cargo check + test · gitleaks); YAML valid; first run happens on push
+- [x] **K0.7** [#11](https://github.com/MFrancis-dev/stack/issues/11) CI: typecheck, lint, test, `cargo test`, gitleaks · 2026-11-04: `.github/workflows/ci.yml` (web: typecheck/lint/test/build · contracts: cargo check + test · gitleaks); first run on `main` green (run 41886755850)
 - [ ] **K0.8** [#12](https://github.com/MFrancis-dev/stack/issues/12) 👤 Register a 1Click partner JWT
 - [!] **K0.9** [#13](https://github.com/MFrancis-dev/stack/issues/13) 🔍 Does 1Click storage-register NEAR deposit addresses? (K-B1) · 2026-11-04: non-dry quotes return "Failed to get quote" without a partner JWT → needs K0.8. Vault registers the deposit address anyway (safe default)
 - [~] **K0.10** [#14](https://github.com/MFrancis-dev/stack/issues/14) 🔍 + ⛔ Asset ids/decimals for USDC (NEAR), BTC, ETH, NEAR from `/v0/tokens` → KD-6 · 2026-11-04: ids/decimals verified (ARCHITECTURE §12): USDC `nep141:17208628…133a1` (6), BTC `nep141:btc.omft.near` (8), ETH `nep141:eth.omft.near` (18), NEAR `nep141:wrap.near` (24). Waiting on KD-6
@@ -214,6 +214,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-04 · Claude · CI green on main (web, contracts, gitleaks) · K0.7
 - 2026-11-04 · Claude · Phase 0 verification: live `/v0/tokens` + dry quotes (cost data), SDK status enum, NEAR docs (global contracts, near-connect); added near-connect + near-api-js; db client + check-env + test; react-server condition for worker/scripts; CI workflow; ARCHITECTURE §12 + ESSENTIALS updated; new decision KD-8 · K0.6, K0.7, K0.9, K0.10, K0.11, K0.12, K0.13, K1.7, K4.5, K6.3, K8.2
 - 2026-11-04 · Claude · Created public repo MFrancis-dev/stack and pushed; GitHub labels, phase milestones and one issue per ROADMAP task, decision, stretch item + a hackathon-rules compliance issue · K0.3, K10.6
 - 2026-11-04 · Claude · First commit (approved): README cross-links Settle, PR template with ROADMAP + hackathon-rule checklist, issue template · K0.2, K10.4
