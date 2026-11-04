@@ -14,7 +14,7 @@
 | Phase | Target dates | Progress | Status |
 |---|---|---|---|
 | D. Design & docs | Nov 4 | 100% | ✅ done |
-| 0. Setup & verification | Nov 4–5 | 33% | in progress |
+| 0. Setup & verification | Nov 4–5 | 60% | in progress (K0.9 blocked on K0.8) |
 | 1. Contracts | Nov 5–7 | 0% | in progress (state drafted) |
 | 2. Core logic (`lib/core`) | Nov 6–7 | 0% | in progress (drafted) |
 | 3. Integrations (1Click, NEAR, DB) | Nov 7–8 | 0% | in progress (schema drafted) |
@@ -27,9 +27,9 @@
 | 10. README & public repo | Nov 12–13 | 14% | in progress |
 | 11. Launch: video, post, submission | Nov 13–14 | 0% | not started |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~13%** | |
+| **Overall (MVP)** | | **~12%** | |
 
-Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of phases, with D counted.
+Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
 ## Definition of 100% readiness
 
@@ -46,7 +46,9 @@ Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of ph
 
 ## Blockers
 
-_None yet._ Format: `- [task id] what blocks it · who can unblock · since date`
+- [K0.9] Real (non-dry) 1Click quotes need a partner JWT · 👤 human via K0.8 (partners.near-intents.org) · since 2026-11-04
+
+Format: `- [task id] what blocks it · who can unblock · since date`
 
 ## Decisions
 
@@ -59,6 +61,7 @@ _None yet._ Format: `- [task id] what blocks it · who can unblock · since date
 | KD-5 [#2](https://github.com/MFrancis-dev/stack/issues/2) | Owner-approved vault upgrades in MVP? | ⛔ open → decide by Nov 6 (affects K1.x) |
 | KD-6 [#3](https://github.com/MFrancis-dev/stack/issues/3) | MVP target assets (BTC, ETH, NEAR) and chains | ⛔ open → K0.10 |
 | KD-7 [#4](https://github.com/MFrancis-dev/stack/issues/4) | Working name "Stack" final? | ⛔ open → K0.1 |
+| KD-8 [#106](https://github.com/MFrancis-dev/stack/issues/106) | Vault deploy: regular deploy (~1.1 NEAR locked per vault, recoverable) vs global contract **by hash** (~11 NEAR burned once). Never by account. Recommended: regular deploy for the hackathon | ⛔ open → decide before K1.7 is finished |
 
 ---
 
@@ -69,14 +72,14 @@ _None yet._ Format: `- [task id] what blocks it · who can unblock · since date
 - [x] **K0.3** [#7](https://github.com/MFrancis-dev/stack/issues/7) 👤 Create the GitHub repo + remote · 2026-11-04: created **public** at https://github.com/MFrancis-dev/stack on the human's instruction; `origin` set; `main` pushed
 - [x] **K0.4** [#8](https://github.com/MFrancis-dev/stack/issues/8) (2026-11-04: installed with pnpm 11.17, exact versions pinned (Next 15.5.28, zod 3.25.76, Drizzle 0.36.4, PGlite 0.2.17, 1Click SDK 0.1.26); typecheck, lint, test (11 todo) and `next build` (18 pages, 11 API routes) all pass) Scaffold Next.js 15 + TS strict + Tailwind + shadcn/ui + ESLint/Prettier + vitest + Playwright; scripts per AGENTS.md §5
 - [x] **K0.5** [#9](https://github.com/MFrancis-dev/stack/issues/9) (2026-11-04: rustc 1.98.1, cargo-near 0.22.0; near-sdk pinned =5.30.0, near-workspaces =0.24.0; `cargo check` clean; `pnpm contracts:build` → vault 110.5 KB, factory 107.6 KB wasm; `cargo test` 15 ignored stubs) `contracts/` Cargo workspace (factory, vault, tests) with `cargo-near` + near-workspaces; `rust-toolchain.toml`
-- [~] **K0.6** [#10](https://github.com/MFrancis-dev/stack/issues/10) (2026-11-04: drizzle switch, env.ts, .env.example done; db client + check-env stubs) Drizzle with PGlite / Postgres switch; `lib/server/env.ts`, `.env.example`, `scripts/check-env.ts`
-- [ ] **K0.7** [#11](https://github.com/MFrancis-dev/stack/issues/11) CI: typecheck, lint, test, `cargo test`, gitleaks
+- [x] **K0.6** [#10](https://github.com/MFrancis-dev/stack/issues/10) (2026-11-04: drizzle switch, env.ts, .env.example done; db client + check-env stubs) Drizzle with PGlite / Postgres switch; `lib/server/env.ts`, `.env.example`, `scripts/check-env.ts` · 2026-11-04: `lib/db/client.ts` (PGlite ↔ Postgres, in-memory test passes), `missingForRealMode()` + `pnpm check-env` (names only); worker/scripts run with `--conditions=react-server` so `server-only` doesn't throw in plain Node
+- [~] **K0.7** [#11](https://github.com/MFrancis-dev/stack/issues/11) CI: typecheck, lint, test, `cargo test`, gitleaks · 2026-11-04: `.github/workflows/ci.yml` written (web: typecheck/lint/test/build · contracts: cargo check + test · gitleaks); YAML valid; first run happens on push
 - [ ] **K0.8** [#12](https://github.com/MFrancis-dev/stack/issues/12) 👤 Register a 1Click partner JWT
-- [ ] **K0.9** [#13](https://github.com/MFrancis-dev/stack/issues/13) 🔍 Does 1Click storage-register NEAR deposit addresses? (K-B1)
-- [ ] **K0.10** [#14](https://github.com/MFrancis-dev/stack/issues/14) 🔍 + ⛔ Asset ids/decimals for USDC (NEAR), BTC, ETH, NEAR from `/v0/tokens` → KD-6
-- [ ] **K0.11** [#15](https://github.com/MFrancis-dev/stack/issues/15) 🔍 Quote USD field names for the cost check; `/v0/status` enum; deposits after deadline
-- [ ] **K0.12** [#16](https://github.com/MFrancis-dev/stack/issues/16) 🔍 Global contracts availability + cost per vault (K-B5)
-- [ ] **K0.13** [#17](https://github.com/MFrancis-dev/stack/issues/17) 🔍 Wallet selector package + NEP-413 + batched owner transactions
+- [!] **K0.9** [#13](https://github.com/MFrancis-dev/stack/issues/13) 🔍 Does 1Click storage-register NEAR deposit addresses? (K-B1) · 2026-11-04: non-dry quotes return "Failed to get quote" without a partner JWT → needs K0.8. Vault registers the deposit address anyway (safe default)
+- [~] **K0.10** [#14](https://github.com/MFrancis-dev/stack/issues/14) 🔍 + ⛔ Asset ids/decimals for USDC (NEAR), BTC, ETH, NEAR from `/v0/tokens` → KD-6 · 2026-11-04: ids/decimals verified (ARCHITECTURE §12): USDC `nep141:17208628…133a1` (6), BTC `nep141:btc.omft.near` (8), ETH `nep141:eth.omft.near` (18), NEAR `nep141:wrap.near` (24). Waiting on KD-6
+- [x] **K0.11** [#15](https://github.com/MFrancis-dev/stack/issues/15) 🔍 Quote USD field names for the cost check; `/v0/status` enum; deposits after deadline · 2026-11-04: quote has `amountInUsd`/`amountOutUsd` (+ minAmountOut, withdrawFee, refundFee, timeEstimate, signature, timestamp); status enum = 7 values already in `status.ts`; `refundTo` must exist; BTC deposits may need ~1 h (deadline). Late-deposit behaviour still unverified
+- [x] **K0.12** [#16](https://github.com/MFrancis-dev/stack/issues/16) 🔍 Global contracts availability + cost per vault (K-B5) · 2026-11-04: NEP-591 available: global publish burns 10 NEAR/100 KB (~11 NEAR for the vault), use < 0.001 NEAR; regular deploy locks ~1.1 NEAR per vault → decision KD-8
+- [x] **K0.13** [#17](https://github.com/MFrancis-dev/stack/issues/17) 🔍 Wallet selector package + NEP-413 + batched owner transactions · 2026-11-04: NEAR docs now recommend `@hot-labs/near-connect` (0.12.0) + `near-api-js` (7.4.0, `nep413.verifyMessage`); both added and pinned
 - [ ] **K0.14** [#18](https://github.com/MFrancis-dev/stack/issues/18) 👤 Create factory and keeper NEAR accounts; fund the factory for vault storage and the keeper for gas
 - [x] **K0.15** [#19](https://github.com/MFrancis-dev/stack/issues/19) Scaffold full folder structure: every file from `project_structure.md` as a stub with its roadmap id, data models + contract state drafted · 2026-11-04
 
@@ -88,7 +91,7 @@ _None yet._ Format: `- [task id] what blocks it · who can unblock · since date
 - [ ] **K1.4** [#23](https://github.com/MFrancis-dev/stack/issues/23) `execute_buy`: keeper, bounds, deposit-address storage registration, `ft_transfer`, failure callback restoring `last_run_at_s`
 - [ ] **K1.5** [#24](https://github.com/MFrancis-dev/stack/issues/24) `withdraw`, `recover_token` (owner, 1 yocto)
 - [ ] **K1.6** [#25](https://github.com/MFrancis-dev/stack/issues/25) NEP-297 events for every state change
-- [~] **K1.7** [#26](https://github.com/MFrancis-dev/stack/issues/26) (2026-11-04: `Factory` state, `new`, `get_vault` written; `create_vault_for` stubbed) Factory: `create_vault_for` (keeper, one per owner, daily cap), deploy (global or embedded), USDC storage for the vault, `get_vault`
+- [~] **K1.7** [#26](https://github.com/MFrancis-dev/stack/issues/26) (2026-11-04: `Factory` state, `new`, `get_vault` written; `create_vault_for` stubbed) Factory: `create_vault_for` (keeper, one per owner, daily cap), deploy (global or embedded), USDC storage for the vault, `get_vault` · 2026-11-04: USDC storage registration for the vault is **mandatory**: Intents gives no refund to an unregistered receiver (§12). Deploy method per KD-8
 - [ ] **K1.8** [#27](https://github.com/MFrancis-dev/stack/issues/27) near-workspaces setup with mock USDC
 - [ ] **K1.9** [#28](https://github.com/MFrancis-dev/stack/issues/28) Tests: I1–I7 one each
 - [ ] **K1.10** [#29](https://github.com/MFrancis-dev/stack/issues/29) Tests: failed transfer callback, insufficient balance, stray token recovery, daily cap, unauthorized callers
@@ -118,7 +121,7 @@ _None yet._ Format: `- [task id] what blocks it · who can unblock · since date
 - [ ] **K4.2** [#44](https://github.com/MFrancis-dev/stack/issues/44) `POST /api/onboard` (keeper `create_vault_for`, once)
 - [ ] **K4.3** [#45](https://github.com/MFrancis-dev/stack/issues/45) `GET /api/vault`, `GET /api/tokens`
 - [ ] **K4.4** [#46](https://github.com/MFrancis-dev/stack/issues/46) Funding: quote (dry/real, rate limit), submit-tx, status
-- [ ] **K4.5** [#47](https://github.com/MFrancis-dev/stack/issues/47) `POST /api/plan/preview` (cost % for a buy size)
+- [ ] **K4.5** [#47](https://github.com/MFrancis-dev/stack/issues/47) `POST /api/plan/preview` (cost % for a buy size) · 2026-11-04: dry quotes need an existing `refundTo` → use the owner's account before the vault exists
 - [ ] **K4.6** [#48](https://github.com/MFrancis-dev/stack/issues/48) `GET /api/buys`, `GET /api/export.csv`
 - [ ] **K4.7** [#49](https://github.com/MFrancis-dev/stack/issues/49) Route tests (happy + validation + auth)
 
@@ -134,7 +137,7 @@ _None yet._ Format: `- [task id] what blocks it · who can unblock · since date
 
 - [ ] **K6.1** [#55](https://github.com/MFrancis-dev/stack/issues/55) Landing, sign-in, onboarding (vault created)
 - [ ] **K6.2** [#56](https://github.com/MFrancis-dev/stack/issues/56) Fund page: token picker, amount, refund address, dry preview, deposit panel, live status
-- [ ] **K6.3** [#57](https://github.com/MFrancis-dev/stack/issues/57) Plan page: target asset, address typed twice + chain name, amount, interval, max cost, **cost preview**, one batched wallet tx (`set_plan` + `resume`)
+- [ ] **K6.3** [#57](https://github.com/MFrancis-dev/stack/issues/57) Plan page: target asset, address typed twice + chain name, amount, interval, max cost, **cost preview**, one batched wallet tx (`set_plan` + `resume`) · 2026-11-04: live data: BTC $10 buy ≈ 15.4% cost, $100 ≈ 1.6% → suggest ≥ $100 per BTC buy in the cost preview
 - [ ] **K6.4** [#58](https://github.com/MFrancis-dev/stack/issues/58) Pause / resume always visible
 - [ ] **K6.5** [#59](https://github.com/MFrancis-dev/stack/issues/59) Dashboard: balance, next buy, totals, average price, where-is-my-money
 - [ ] **K6.6** [#60](https://github.com/MFrancis-dev/stack/issues/60) History: deposits, buys, skips (with reason), withdrawals; tx links
@@ -153,7 +156,7 @@ _None yet._ Format: `- [task id] what blocks it · who can unblock · since date
 ## Phase 8 — Hardening & edge cases (Nov 11–12)
 
 - [ ] **K8.1** [#69](https://github.com/MFrancis-dev/stack/issues/69) Destination address safety (typed twice, chain named, validation)
-- [ ] **K8.2** [#70](https://github.com/MFrancis-dev/stack/issues/70) NEAR target: owner registered on `wrap.near`
+- [ ] **K8.2** [#70](https://github.com/MFrancis-dev/stack/issues/70) NEAR target: owner registered on `wrap.near` · 2026-11-04: mandatory, not nice-to-have: no refund if the owner isn't registered on `wrap.near`
 - [ ] **K8.3** [#71](https://github.com/MFrancis-dev/stack/issues/71) Withdraw during an in-flight buy (clean failure, retried next interval)
 - [ ] **K8.4** [#72](https://github.com/MFrancis-dev/stack/issues/72) Balance below buy amount (remainder only if it passes the cost check)
 - [ ] **K8.5** [#73](https://github.com/MFrancis-dev/stack/issues/73) Funding underpaid from an exchange: warning + status
@@ -211,6 +214,7 @@ _None yet._ Format: `- [task id] what blocks it · who can unblock · since date
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-04 · Claude · Phase 0 verification: live `/v0/tokens` + dry quotes (cost data), SDK status enum, NEAR docs (global contracts, near-connect); added near-connect + near-api-js; db client + check-env + test; react-server condition for worker/scripts; CI workflow; ARCHITECTURE §12 + ESSENTIALS updated; new decision KD-8 · K0.6, K0.7, K0.9, K0.10, K0.11, K0.12, K0.13, K1.7, K4.5, K6.3, K8.2
 - 2026-11-04 · Claude · Created public repo MFrancis-dev/stack and pushed; GitHub labels, phase milestones and one issue per ROADMAP task, decision, stretch item + a hackathon-rules compliance issue · K0.3, K10.6
 - 2026-11-04 · Claude · First commit (approved): README cross-links Settle, PR template with ROADMAP + hackathon-rule checklist, issue template · K0.2, K10.4
 - 2026-11-04 · Claude · Installed deps (pnpm 11, esbuild approved), pinned exact JS + Rust versions, ESM package, lint config allows `_` stub params, build-contracts.sh now builds both wasm; typecheck/lint/test/build/cargo check/wasm build all green · K0.4, K0.5

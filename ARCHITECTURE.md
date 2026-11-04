@@ -45,8 +45,8 @@ Everything in a vault belongs to its owner. There is no split and no shared bala
 |---|---|
 | Contracts | **Rust**, `near-sdk` 5.x, `cargo-near`; tests with `near-workspaces` (local sandbox) |
 | App | **Next.js 15** (App Router) + TypeScript strict, Tailwind, shadcn/ui, TanStack Query, zod |
-| Wallet | wallet selector **[verify package]**: NEP-413 sign-in + owner transactions |
-| NEAR JS | near-api-js / @near-js/* **[verify]**: RPC views, keeper transactions |
+| Wallet | **`@hot-labs/near-connect` 0.12.0** (NEAR docs' current recommendation, replaces wallet selector): `signMessage` (NEP-413 sign-in), `signAndSendTransaction` with several FunctionCall actions in one tx |
+| NEAR JS | **`near-api-js` 7.4.0**: `JsonRpcProvider` for views, `near-api-js/nep413` `verifyMessage` for sign-in, keeper transactions |
 | 1Click | `@defuse-protocol/one-click-sdk-typescript` ≥ 0.1.24 |
 | DB | Drizzle: **PGlite** local/demo, **Postgres** when `DATABASE_URL` is set |
 | Worker | `worker/index.ts` via `tsx`, interval loops, long-running host |
@@ -63,7 +63,7 @@ Everything in a vault belongs to its owner. There is no split and no shared bala
 | `factory.stack.near` (placeholder) | Creates vaults (keeper only), pays storage |
 | `v<sha256(owner)[0..16]>.factory.stack.near` | One vault per owner |
 | `keeper.stack.near` | Backend signer: `create_vault_for`, `execute_buy`. Gas-only balance, no user funds |
-| USDC | Native USDC NEP-141; id from 1Click `/v0/tokens` **[verify]** |
+| USDC | Native USDC NEP-141 `17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1`, 6 decimals (verified via `/v0/tokens`, §12) |
 
 ### 3.2 Factory
 ```rust
@@ -71,7 +71,7 @@ pub struct Factory {
     admin: AccountId,        // can publish new vault code hashes only (see B12)
     keeper: AccountId,
     usdc: AccountId,
-    vault_code: VaultCode,   // global contract hash [verify availability] or embedded wasm
+    vault_code: VaultCode,   // embedded wasm (regular deploy) unless KD-8 picks a global contract by hash (§12)
     vaults: LookupMap<AccountId, AccountId>,
     created_today: (u64 /*day*/, u32 /*count*/),
     daily_cap: u32,
@@ -88,7 +88,7 @@ pub struct Vault {
     owner: AccountId,
     keeper: AccountId,
     usdc: AccountId,
-    target_asset: Option<String>,        // 1Click assetId, e.g. BTC [verify id]
+    target_asset: Option<String>,        // 1Click assetId, e.g. "nep141:btc.omft.near" (§12)
     destination_address: Option<String>, // owner's address on the target chain
     amount_per_run: u128,                // USDC base units
     interval_s: u64,
@@ -154,9 +154,11 @@ Buy (`EXACT_INPUT`): origin = USDC on NEAR, amount = run amount, destination = `
 
 Rules: `verifyQuoteSignature()` before using `depositAddress`; ids/decimals from `/v0/tokens`; `/v0/deposit/submit` after sending; poll `/v0/status`.
 
-**Cost check:** `cost_bps = (1 − amountOutUsd / amountInUsd) × 10_000` from the quote **[verify field names]**. Over `max_cost_bps` → `skipped_cost`, no transaction.
+**Cost check:** `cost_bps = (1 − amountOutUsd / amountInUsd) × 10_000` from the quote (fields verified, §12). Over `max_cost_bps` → `skipped_cost`, no transaction.
 
-### 4.3 Status mapping **[verify enum]**
+**`refundTo` must be an existing NEAR account**, or 1Click answers "Internal server error". Buy quotes use the vault (exists); plan previews before a vault exists use the owner's own account.
+
+### 4.3 Status mapping (enum verified against SDK 0.1.26, §12)
 | 1Click | FundingAttempt | Buy |
 |---|---|---|
 | PENDING_DEPOSIT | awaiting_deposit | sent |
@@ -262,8 +264,8 @@ PUBLIC_APP_URL=
 | K-B2 | Callback out of gas | Explicit gas; state restored; no locks to get stuck |
 | K-B3 | Small BTC buys mostly fees | Cost shown at plan time; cost guard skips |
 | K-B4 | AI screener can't run it | `pnpm demo`: zero secrets, PGlite |
-| K-B5 | Vault creation too expensive / spammed | Global contracts 🔍; daily cap |
-| K-B6 | Funding quote expires on slow chains | Deadline per origin chain |
+| K-B5 | Vault creation too expensive / spammed | Regular deploy locks ~1.1 NEAR per 110 KB vault (recoverable); global contract burns ~11 NEAR once. Decision KD-8. Daily cap; shrink wasm |
+| K-B6 | Funding quote expires on slow chains | Deadline per origin chain; 1Click docs: Bitcoin deposits may need ~1 hour |
 | K-B7 | Contract bug can't be fixed | Owner-approved upgrade (⛔ pending) |
 
 ### Edge cases
@@ -271,3 +273,45 @@ Destination typo → validate, typed twice, chain named · NEAR target → owner
 
 ### Overengineering avoided
 No savings/spending split · no locks · no refund bookkeeping · no relayer · single app · no reconcile job.
+
+---
+
+## 12. Verified facts (2026-11-04, Phase 0)
+
+Sources: live `GET /v0/tokens`, dry `POST /v0/quote` calls (no deposit address, no funds), the installed `@defuse-protocol/one-click-sdk-typescript` 0.1.26 types, and docs.near.org.
+
+### Asset ids (`/v0/tokens`, 215 tokens)
+| Asset | 1Click assetId | Decimals | Notes |
+|---|---|---|---|
+| USDC on NEAR | `nep141:17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1` | 6 | vault currency |
+| BTC (native) | `nep141:btc.omft.near` | 8 | blockchain `btc`; delivered to a bc1… address |
+| ETH (Ethereum) | `nep141:eth.omft.near` | 18 | also ETH on Arbitrum `nep141:arb.omft.near`, Base `nep141:base.omft.near` |
+| NEAR | `nep141:wrap.near` (wNEAR) | 24 | delivered as wNEAR to a NEAR account |
+Watch out: some tokens share a symbol and "near" blockchain label (e.g. `miden-…` wrapped assets), and some ids use a new `1cs_v1:` prefix. Always match on **assetId**, never symbol.
+
+### Buy cost from dry quotes (USDC on NEAR → target, slippage 1%)
+| Buy size | BTC | ETH | NEAR |
+|---|---|---|---|
+| $10 | **1542 bps (15.4%)** | 101 bps (1.0%) | – |
+| $100 | 163 bps (1.6%) | 27 bps (0.27%) | ~53 bps |
+BTC's fixed network fee dominates small buys → plan UI must show this and suggest **≥ $100 per BTC buy** (K6.3). `timeEstimate`: BTC 465 s, ETH 27 s.
+
+### Quote response shape
+Top level: `correlationId`, `quote`, `quoteRequest`, `signature`, `timestamp`. `quote`: `amountIn`, `amountInFormatted`, `amountInUsd`, `amountOut`, `amountOutFormatted`, `amountOutUsd`, `minAmountIn`, `minAmountOut`, `refundFee`, `timeEstimate`, `withdrawFee` (+ `depositAddress`, `deadline` on non-dry).
+
+### Status enum (SDK `GetExecutionStatusResponse.status`)
+`KNOWN_DEPOSIT_TX`, `PENDING_DEPOSIT`, `INCOMPLETE_DEPOSIT`, `PROCESSING`, `SUCCESS`, `REFUNDED`, `FAILED` — exactly what `lib/core/status.ts` maps. Status responses also carry `quoteResponse`, `updatedAt`, `swapDetails`.
+
+### Behaviour found
+- `refundTo` that doesn't exist → "Internal server error" (looks like an outage; it isn't).
+- wNEAR can be delivered to named or implicit accounts, not to a contract like `wrap.near`.
+- Intents withdrawals to a NEAR account **give no refund if the receiver isn't storage-registered** on the token → the factory must register the vault on USDC (K1.7) and owners must be registered on `wrap.near` before a NEAR plan (K8.2). Non-negotiable.
+- `customRecipientMsg` (marked "highly experimental") delivers with `ft_transfer_call`; not needed by the vault design.
+- Optional `insured: true` adds 0.02%; a LIMIT-order API exists in the SDK (relevant to the "buy the dip" stretch).
+- Non-dry quotes without a partner JWT returned "Failed to get quote" → **K0.9 (deposit-address storage) is blocked on K0.8 (JWT)**.
+
+### Global contracts (docs.near.org, NEP-591)
+Available. Publishing burns **10 NEAR per 100 KB** (≈ 11 NEAR for the 110 KB vault, non-refundable); each user account then needs < 0.001 NEAR. A regular deploy locks ~1 NEAR per 100 KB per vault (recoverable). Docs suggest global contracts only beyond ~10 accounts. Reference **by hash** is immutable (fits invariant I5); reference by account would let the publisher change every vault's code — **never use by-account** for vaults.
+
+### Wallet (docs.near.org "Wallet Login")
+`@hot-labs/near-connect` + `near-api-js`. `wallet.signMessage({message, recipient, nonce})` for NEP-413; `wallet.signAndSendTransaction({receiverId, actions})` accepts several FunctionCall actions (so `set_plan` + `resume` is one approval). Server verification: `verifyMessage` from `near-api-js/nep413`.

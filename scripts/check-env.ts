@@ -1,8 +1,16 @@
 /**
- * Prints which env vars are missing for real (non-demo) mode. Never prints values.
- * Roadmap: S0.6 / K0.6
- * Status: scaffold — not implemented yet.
+ * Prints which env vars real (non-demo) mode still needs. Never prints values.
+ * Roadmap: K0.6 · Run: pnpm check-env
  */
 
-// TODO: import the schema from lib/server/env.ts and list missing names.
-console.log("check-env: not implemented yet");
+import { missingForRealMode, REQUIRED_FOR_REAL_MODE } from "../lib/server/env";
+
+const missing = missingForRealMode();
+
+if (missing.length === 0) {
+  console.log(`check-env: all ${REQUIRED_FOR_REAL_MODE.length} variables for real mode are set.`);
+} else {
+  console.log("check-env: demo mode works without these, but real mode needs:");
+  for (const name of missing) console.log(`  - ${name}`);
+  process.exitCode = 1;
+}
