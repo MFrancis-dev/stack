@@ -18,10 +18,10 @@ export default function HistoryPage() {
     <div className="grid gap-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="grid gap-2">
-          <h1 className="text-4xl font-bold">History</h1>
+          <h1 className="text-2xl font-bold">History</h1>
           <p className="max-w-2xl text-lg text-sage">Every buy, including the ones that were skipped and why. Skipped buys never spend anything.</p>
         </div>
-        <a href="/api/export.csv" className="inline-flex min-h-11 items-center rounded-md px-4 font-bold ring-1 ring-inset ring-mist hover:bg-paper-deep" download>
+        <a href="/api/export.csv" className="inline-flex min-h-11 items-center rounded-md px-4 font-bold bg-surface ring-1 ring-inset ring-mist hover:bg-paper-deep" download>
           Download CSV
         </a>
       </div>

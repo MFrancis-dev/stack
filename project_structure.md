@@ -23,7 +23,7 @@ stack/
 ├─ contracts/                    # Rust smart contracts
 ├─ app/ · components/ · lib/ · worker/
 ├─ drizzle/                      # generated migrations — never hand-edit
-├─ e2e/ · scripts/ · public/
+├─ e2e/ · scripts/ · public/      # public/images: found pictures + footage for the public pages, credits.json
 ```
 
 Import direction (never the other way):
@@ -62,7 +62,8 @@ Unit tests next to code (`#[cfg(test)]`); cross-contract tests in `contracts/tes
 ## 3. `app/`
 ```
 app/
-├─ layout.tsx · page.tsx · globals.css      # landing: what Stack is, demo + sign in
+├─ layout.tsx · page.tsx · globals.css      # landing: what Stack is, live fee check, demo + sign in
+├─ landing.css                              # public pages' look (bottle green + gold, coin motif); app screens use globals.css tokens
 ├─ (dashboard)/
 │  ├─ dashboard/page.tsx                    # balance, next buy, totals, where-is-my-money
 │  ├─ fund/page.tsx                         # fund from any chain
@@ -86,13 +87,14 @@ components/
 ├─ plan/        # PlanForm (address typed twice, chain name), CostPreview, PauseButton
 ├─ history/     # BuyTable, SkipReason, TxLinks
 ├─ vault/       # StackColumn, BalanceCard, NextBuy, WhereIsMyMoney, WithdrawForm (+ RecoverTokenForm), CreateVault, DemoBanner
-└─ wallet/      # WalletProvider, SignInButton, OwnerTx (builds set_plan/resume/withdraw txs)
+├─ wallet/      # WalletProvider, SignInButton, OwnerTx (builds set_plan/resume/withdraw txs)
+└─ landing/     # public pages only: FeeCheck (live fee check), Questions, StartPlan, NavSignIn, Reveal (entrances), Credits
 ```
 
 ## 5. `lib/`
 ```
 lib/
-├─ core/        # pure: csv.ts, assets.ts (KD-6 ids), money.ts, status.ts, cost.ts (cost_bps), planMatch.ts, address.ts (checksums), adapters.ts, schemas.ts
+├─ core/        # pure: csv.ts, assets.ts (KD-6 ids), feeModel.ts (fee model calibrated on real quotes), money.ts, status.ts, cost.ts (cost_bps), planMatch.ts, address.ts (checksums), adapters.ts, schemas.ts
 ├─ oneclick/    # index.ts (QuoteProvider/StatusProvider), client.ts, tokens.ts, quote.ts (funding + buy, fail-closed verify), status.ts, demo.ts, __fixtures__/ (real dry quotes)
 ├─ near/        # index.ts (VaultClient), rpc.ts, nep413.ts, vault.ts (bindings), factory.ts, keeper.ts (server only), events.ts, demo.ts
 ├─ db/          # schema.ts, client.ts (PGlite/Postgres + migrate()), queries/ (users, fundingAttempts, buys), seed-demo.ts

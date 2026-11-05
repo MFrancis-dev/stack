@@ -38,13 +38,13 @@ export default function Dashboard() {
   const totalIn = sameAsset.reduce((s, b) => s + BigInt(b.amountIn), 0n);
 
   return (
-    <div className="grid gap-14 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
-      <section aria-labelledby="stack" className="grid content-start gap-5">
+    <div className="grid gap-6 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+      <section aria-labelledby="stack" className="grid content-start gap-5 self-start rounded-lg bg-surface p-6 ring-1 ring-inset ring-mist">
         <div>
           <h1 id="stack" className="text-base font-bold text-sage">
             Your stack
           </h1>
-          <p className="font-display text-[clamp(2.4rem,6vw,3.6rem)] font-extrabold leading-none">
+          <p className="mt-1 font-display text-[clamp(2rem,4vw,2.5rem)] font-extrabold leading-none">
             {target ? `${formatAmount(totalOut.toString(), target.decimals, target.key === "btc" ? 8 : 6)} ${target.symbol}` : "Nothing yet"}
           </p>
           {target && sameAsset.length > 0 ? (
@@ -57,7 +57,7 @@ export default function Dashboard() {
         {bars.length > 0 ? <p className="text-sm text-sage">Solid bars arrived. Striped bars are on their way. Dashed bars were skipped and cost nothing.</p> : null}
       </section>
 
-      <div className="grid content-start gap-12">
+      <div className="grid content-start gap-10">
         <BalanceCard usdcBalance={v.usdcBalance} amountPerRun={v.state.amountPerRun} />
         <NextBuy state={v.state} />
         <WhereIsMyMoney buys={list} />

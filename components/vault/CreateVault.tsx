@@ -18,7 +18,7 @@ export function CreateVault() {
   });
   return (
     <section className="grid max-w-xl gap-5">
-      <h1 className="text-4xl font-bold">Create your vault</h1>
+      <h1 className="text-2xl font-bold">Create your vault</h1>
       <p className="text-lg text-sage">
         Your vault is a small account on NEAR that only you control. It holds your dollars and buys on your schedule.
         Creating it is free.

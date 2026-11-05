@@ -9,11 +9,11 @@ export function BalanceCard({ usdcBalance, amountPerRun }: { usdcBalance: string
   const perRun = BigInt(amountPerRun);
   const runs = perRun > 0n ? BigInt(usdcBalance) / perRun : null;
   return (
-    <section aria-labelledby="balance" className="grid gap-1">
+    <section aria-labelledby="balance" className="grid gap-1 rounded-lg bg-surface p-5 ring-1 ring-inset ring-mist">
       <h2 id="balance" className="text-base font-bold text-sage">
         Ready to buy with
       </h2>
-      <p className="font-display text-5xl font-extrabold">${formatUsdc(usdcBalance)}</p>
+      <p className="font-display text-[2rem] font-extrabold leading-tight">${formatUsdc(usdcBalance)}</p>
       <p className="text-sage">
         {runs === null ? "Set a plan to start buying." : runs === 0n ? "Less than one buy left. " : `Enough for ${runs} more ${runs === 1n ? "buy" : "buys"}. `}
         <Link href="/fund" className="font-bold text-moss underline-offset-4 hover:underline">

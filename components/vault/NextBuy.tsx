@@ -12,7 +12,7 @@ export function NextBuy({ state }: { state: VaultState }) {
   if (!target || !state.destinationAddress) {
     return (
       <section className="grid gap-2">
-        <h2 className="text-2xl font-bold">No plan yet</h2>
+        <h2 className="text-lg font-bold">No plan yet</h2>
         <p className="text-sage">Choose what to buy and how often. Your vault stays paused until you do.</p>
         <Link href="/plan" className="font-bold text-moss underline-offset-4 hover:underline">
           Set your plan
@@ -22,7 +22,7 @@ export function NextBuy({ state }: { state: VaultState }) {
   }
   return (
     <section className="grid gap-2">
-      <h2 className="text-2xl font-bold">
+      <h2 className="text-lg font-bold">
         ${formatUsdc(state.amountPerRun)} of {target.symbol}, {intervalLabel(state.intervalS)}
       </h2>
       <p className="text-sage">

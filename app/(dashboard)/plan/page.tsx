@@ -15,7 +15,7 @@ export default function PlanPage() {
   return (
     <div className="grid max-w-3xl gap-8">
       <div className="grid gap-2">
-        <h1 className="text-4xl font-bold">{v.state.targetAsset ? "Your plan" : "Set your plan"}</h1>
+        <h1 className="text-2xl font-bold">{v.state.targetAsset ? "Your plan" : "Set your plan"}</h1>
         <p className="text-lg text-sage">
           Your vault follows these rules on its own. You can change them or pause at any time; only your wallet can.
         </p>

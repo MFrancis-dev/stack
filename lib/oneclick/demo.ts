@@ -6,7 +6,9 @@
  */
 
 import type { QuoteProvider, StatusProvider } from "../core/adapters";
-import { targetByAssetId, USDC_DECIMALS, USDC_ON_NEAR } from "../core/assets";
+import { USDC_DECIMALS, USDC_ON_NEAR } from "../core/assets";
+import { modelCostBps } from "../core/feeModel";
+export { modelCostBps, NETWORK_FEE_USD, SPREAD_BPS } from "../core/feeModel";
 import { asBaseUnits } from "../core/money";
 import type { OneClickStatus } from "../core/status";
 import type { AssetId, BaseUnits, QuoteSummary } from "../core/types";
@@ -30,10 +32,6 @@ export const FALLBACK_TOKENS: TokenInfo[] = [
   { assetId: "nep141:wrap.near", symbol: "wNEAR", blockchain: "near", decimals: 24, priceUsd: 4.1 },
 ];
 
-/** Payout network fee in USD per target chain + solver spread. Calibrated: $10 BTC ≈ 15%, $100 BTC ≈ 1.6%. */
-export const NETWORK_FEE_USD: Record<string, number> = { btc: 1.5, eth: 0.2, near: 0.02 };
-export const SPREAD_BPS = 25;
-
 async function tokens(): Promise<TokenInfo[]> {
   try {
     return await getTokens();
@@ -56,12 +54,6 @@ export function toBase(amount: number, decimals: number): BaseUnits {
 
 export function fromBase(amount: string, decimals: number): number {
   return Number(BigInt(amount)) / 10 ** decimals;
-}
-
-/** Modelled cost in bps for buying `usd` of `targetAssetId`, plus an optional fee spike. */
-export function modelCostBps(targetAssetId: AssetId, usd: number, spikeBps = 0): number {
-  const chain = targetByAssetId(targetAssetId)?.chain ?? "near";
-  return Math.ceil(SPREAD_BPS + ((NETWORK_FEE_USD[chain] ?? 0.1) / usd) * 10_000 + spikeBps);
 }
 
 export const demoDepositAddress = (now = Date.now()) => `demo-${now}-${Math.random().toString(36).slice(2, 8)}`;

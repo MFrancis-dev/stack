@@ -77,7 +77,7 @@ export function PlanForm({ vaultId, accountId, state }: { vaultId: string; accou
         <legend className="mb-2 font-bold">What to buy</legend>
         <div className="grid gap-2 sm:grid-cols-3">
           {targetOptions.map((o) => (
-            <label key={o.key} className={`flex min-h-14 cursor-pointer items-center gap-3 rounded-md px-4 ring-1 ring-inset ${target === o.key ? "bg-paper-deep ring-2 ring-moss" : "ring-mist hover:bg-paper-deep"}`}>
+            <label key={o.key} className={`flex min-h-14 cursor-pointer items-center gap-3 rounded-md px-4 ring-1 ring-inset ${target === o.key ? "bg-surface ring-2 ring-ink" : "bg-surface ring-mist hover:bg-paper-deep"}`}>
               <input
                 type="radio"
                 name="target"
@@ -134,7 +134,7 @@ export function PlanForm({ vaultId, accountId, state }: { vaultId: string; accou
         <TextField label="Most you'll pay in fees (%)" inputMode="decimal" value={maxCost} onChange={(e) => setMaxCost(e.target.value.replace(",", "."))} hint="Buys above this are skipped." error={show("maxCostBps")} />
       </div>
 
-      <section aria-label="Estimate" className="rounded-lg bg-paper-deep p-5">
+      <section aria-label="Estimate" className="rounded-lg bg-surface p-5 ring-1 ring-inset ring-mist">
         <CostPreview target={target} amountPerRun={amountBase.base} maxCostBps={Number.isFinite(maxCostBps) ? maxCostBps : null} />
       </section>
 

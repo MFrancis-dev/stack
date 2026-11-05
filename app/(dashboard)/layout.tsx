@@ -38,7 +38,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   else if (v && !v.signedIn)
     body = (
       <div className="grid max-w-md gap-4">
-        <h1 className="text-3xl font-bold">Sign in to see your vault</h1>
+        <h1 className="text-2xl font-bold">Sign in to see your vault</h1>
         <SignInButton next={path} />
       </div>
     );
@@ -47,7 +47,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className="mx-auto max-w-5xl px-5 sm:px-8">
       <header className="flex flex-wrap items-center justify-between gap-4 py-5">
-        <Link href="/dashboard" className="font-display text-2xl font-extrabold tracking-tight">
+        <Link href="/dashboard" className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight">
+          <span aria-hidden className="block h-2.5 w-6 rounded-full bg-brass" />
           Stack
         </Link>
         <div className="flex items-center gap-4">
@@ -69,7 +70,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 <Link
                   href={n.href}
                   aria-current={active ? "page" : undefined}
-                  className={`block whitespace-nowrap px-3 py-3 font-bold ${active ? "border-b-[3px] border-moss text-ink" : "text-sage hover:text-ink"}`}
+                  className={`block whitespace-nowrap px-3 py-3 text-[15px] font-bold ${active ? "border-b-2 border-ink text-ink" : "text-sage hover:text-ink"}`}
                 >
                   {n.label}
                 </Link>

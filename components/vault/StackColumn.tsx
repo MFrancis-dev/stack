@@ -23,7 +23,7 @@ export function StackColumn({ bars, empty }: { bars: StackBar[]; empty?: string 
         <li key={b.key} title={b.label}>
           <span
             aria-hidden
-            className={`block h-4 rounded-[2px] ${b.state === "done" ? "bg-brass" : b.state === "pending" ? "stack-pending" : "border border-dashed border-sage/60"}`}
+            className={`block h-4 rounded-full ${b.state === "done" ? "bg-brass" : b.state === "pending" ? "stack-pending" : "border border-dashed border-sage"}`}
             style={{ width: b.state === "skipped" ? "22%" : `${Math.max(10, (b.weight / max) * 100)}%` }}
           />
           <span className="sr-only">{b.label}</span>

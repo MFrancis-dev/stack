@@ -49,7 +49,7 @@ function FundFlow() {
   if (attempt) {
     return (
       <div className="grid max-w-3xl gap-6">
-        <h1 className="text-4xl font-bold">Add funds</h1>
+        <h1 className="text-2xl font-bold">Add funds</h1>
         <FundStatus attemptId={attempt.id} />
         <DepositPanel attemptId={attempt.id} depositAddress={attempt.depositAddress} amountLabel={attempt.amountLabel} deadline={attempt.deadline} />
       </div>
@@ -59,7 +59,7 @@ function FundFlow() {
   return (
     <div className="grid max-w-3xl gap-8">
       <div className="grid gap-2">
-        <h1 className="text-4xl font-bold">Add funds</h1>
+        <h1 className="text-2xl font-bold">Add funds</h1>
         <p className="text-lg text-sage">Send almost any token from any chain. It arrives in your vault as US dollars (USDC), ready for your next buys.</p>
       </div>
 

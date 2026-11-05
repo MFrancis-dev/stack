@@ -32,7 +32,7 @@ export function WithdrawForm({
   const tooMuch = p.base !== null && BigInt(p.base) > BigInt(usdcBalance);
   return (
     <section aria-labelledby="withdraw" className="grid max-w-md gap-4">
-      <h2 id="withdraw" className="text-2xl font-bold">
+      <h2 id="withdraw" className="text-lg font-bold">
         Withdraw dollars
       </h2>
       <p className="text-sage">
@@ -67,7 +67,7 @@ export function RecoverTokenForm({ vaultId }: { vaultId: string }) {
   const valid = /^[a-z0-9._-]{2,64}$/.test(token) && /^\d+$/.test(amount) && BigInt(amount || "0") > 0n;
   return (
     <section aria-labelledby="recover" className="grid max-w-md gap-4">
-      <h2 id="recover" className="text-xl font-bold">
+      <h2 id="recover" className="text-lg font-bold">
         Recover another token
       </h2>
       <p className="text-sage">If someone sent your vault a token other than USDC, send it to your account here.</p>

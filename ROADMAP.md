@@ -145,6 +145,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 - [x] **K6.5** [#59](https://github.com/MFrancis-dev/stack/issues/59) Dashboard: balance, next buy, totals, average price, where-is-my-money · 2026-11-05: built and reviewed in the browser (landing, redirect and signed-out states); signed-in views re-checked with demo data in Phase 7
 - [x] **K6.6** [#60](https://github.com/MFrancis-dev/stack/issues/60) History: deposits, buys, skips (with reason), withdrawals; tx links · 2026-11-05: built and reviewed in the browser (landing, redirect and signed-out states); signed-in views re-checked with demo data in Phase 7
 - [x] **K6.7** [#61](https://github.com/MFrancis-dev/stack/issues/61) Settings: withdraw, recover tokens · 2026-11-05: built and reviewed in the browser (landing, redirect and signed-out states); signed-in views re-checked with demo data in Phase 7
+- [x] **K6.9** [#120](https://github.com/MFrancis-dev/stack/issues/120) Redesign the public pages and restyle the app screens · 2026-11-05: landing + demo entry redesigned from land-book.com finance/savings references (bottle green + gold, edge-on coin motif, live fee check, real coin pictures + footage credited in the footer); app screens restyled as a ledger (sage ground, white panels, gold only on the stack); design gate 0 FAIL at 1440/768/390; Playwright journey green
 - [x] **K6.8** [#62](https://github.com/MFrancis-dev/stack/issues/62) Mobile + accessibility pass · 2026-11-05: browser-reviewed at 1280 px and 390 px (no horizontal overflow, focus styles, labels); signed-in pages to be reviewed again with demo data in Phase 7
 
 ## Phase 7 — Demo mode & dry-run (Nov 11)
@@ -218,6 +219,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-05 · agent · Redesign: new landing + demo entry (land-book references, coin motif, live fee check, credited pictures), app screens restyled to match; fee model moved to `lib/core/feeModel.ts`; e2e updated for the new landing copy · K6.9
 - 2026-11-05 · agent · Hosted the demo on Vercel + Neon (build-time migrations, hosted DB guard, daily cleanup cron, .vercelignore, Node 22); loading states on overview/history; `E2E_BASE_URL` runs the journey against the live site (4/4 pass); README hosted URL; docs synced; `.gitleaksignore` for one fake test value (false positive) · K9.1, K9.2, K10.1
 - 2026-11-05 · agent · Phase 10 README for judges and AI screeners; .env.example completed; README steps verified from a fresh clone of the public repo · K10.1–K10.5, K10.7
 - 2026-11-05 · agent · Phase 8 hardening: wNEAR registration gate for NEAR plans, in-flight withdraw warning, log redaction + security headers, demo cleanup loop (new K8.9); K8.1/4/5/6 verified against existing tests; K8.8 blocked on deploy · K8.1–K8.9

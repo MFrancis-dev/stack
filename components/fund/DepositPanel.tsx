@@ -44,8 +44,8 @@ export function DepositPanel({
   });
 
   return (
-    <section aria-labelledby="send" className="grid gap-6 rounded-lg bg-paper-deep p-5 sm:p-7">
-      <h2 id="send" className="text-2xl font-bold">
+    <section aria-labelledby="send" className="grid gap-6 rounded-lg bg-surface p-5 ring-1 ring-inset ring-mist sm:p-7">
+      <h2 id="send" className="text-lg font-bold">
         Send exactly {amountLabel}
       </h2>
       <div className="grid gap-6 sm:grid-cols-[auto_1fr] sm:items-start">
