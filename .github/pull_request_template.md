@@ -14,7 +14,7 @@
 ## NEAR HACKATHON rules
 - [ ] No secrets, keys or JWTs committed (keys live in `.env` only)
 - [ ] New libraries/templates are listed in the README (rule Q-005)
-- [ ] No code imported from the sister project (rule Q-015)
+- [ ] No code copied from other projects without listing it in the README (rule Q-005)
 - [ ] No funds sent, contracts deployed, posts made or submission sent without the human's explicit OK
 
 ## Not done / not verified

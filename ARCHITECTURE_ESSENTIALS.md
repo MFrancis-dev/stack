@@ -6,8 +6,8 @@
 ## One line
 Fund a personal NEAR vault from any token on any chain → it buys BTC/ETH/NEAR on schedule within a cost limit → coins land in the owner's own address. Track `defi`.
 
-## Independence (hackathon Q-015)
-Separate repo from **Settle** (track 08). Never import Settle code; README names Settle.
+## One project
+Stack is the team's only submission (the planned second project was dropped 2026-11-05). No sister project to name or link.
 
 ## ✅ Decided
 - Factory + one vault per owner; keeper creates vaults after NEP-413 sign-in; new vault paused, no plan

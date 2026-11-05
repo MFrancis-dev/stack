@@ -15,7 +15,6 @@ import { StartPlan } from "@/components/landing/StartPlan";
 import "./landing.css";
 
 const REPO = "https://github.com/MFrancis-dev/stack";
-const SETTLE = "https://github.com/MFrancis-dev/settle";
 
 // The hero stack: ten weekly buys seen edge-on, each nudged a little off the one below it.
 const COIN_OFFSETS = [44, 10, 58, 22, 0, 40, 14, 52, 26, 6];
@@ -437,7 +436,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ n
               <a href={`${REPO}#safety-model`}>The vault&apos;s rules</a>
             </li>
             <li>
-              <a href={SETTLE}>Settle, our other project</a>
+              <a href={`${REPO}#readme`}>Read the README</a>
             </li>
           </ul>
           <div className="lp-foot-about">

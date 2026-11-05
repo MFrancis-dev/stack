@@ -2,7 +2,7 @@
 
 > Working name. **"Save into BTC, ETH or NEAR on autopilot — from any chain, into an address you own."**
 > NEAR HACKATHON · Track **01 Unstoppable DeFi** (`defi`) · Deadline 2026-11-14 23:59 UTC
-> Sister project (separate repo, separate submission): **Settle** — track 08 (`realworld`). See §13.
+> The team's only submission. See §13.
 > Every contribution updates `ROADMAP.md` (see `AGENTS.md`).
 
 ---
@@ -53,7 +53,7 @@ Not for: traders wanting leverage, perps, lending or yield (v1).
 - G6. A judge can try it in under 3 minutes with no funds (dry-run + demo mode).
 
 ### Non-goals
-- Invoicing or receiving client payments (that is **Settle**, a separate project).
+- Invoicing or receiving client payments.
 - Leverage, perps, lending, yield.
 - Fiat on/off-ramp.
 - Price prediction or trading strategies beyond fixed schedules (v1).
@@ -167,8 +167,8 @@ Details: `ARCHITECTURE.md` §11.
 
 ---
 
-## 13. Relationship to Settle (hackathon rule Q-015)
-Stack and Settle are **independent projects** by the same team: separate repositories, separate codebases (no shared packages), separate demos and submissions. Each README names the other. Stack has no invoicing; Settle has no savings.
+## 13. One project (decided 2026-11-05)
+Stack is the team's only submission. A second project (Settle, any-token invoicing) was dropped after a review of the 150 projects already submitted showed at least four with the same idea. Stack had no direct competitor, so the team is putting all its time into it. Hackathon rule Q-015 (naming a second project) no longer applies.
 
 ## 14. Hackathon deliverables
-Public repo + README ("do X → see Y"), MIT LICENSE, libraries listed, README names Settle · demo post on X (@NEARProtocol, #NEARHackathon) · submission with track `defi`.
+Public repo + README ("do X → see Y"), MIT LICENSE, libraries listed · demo post on X (@NEARProtocol, #NEARHackathon) · submission with track `defi`.

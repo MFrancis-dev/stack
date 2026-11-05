@@ -6,7 +6,6 @@ NEAR HACKATHON · track 01 **Unstoppable DeFi** (`defi`) · MIT license
 
 Stack is a personal savings vault on NEAR. You fund it once from whatever you hold (SOL on Solana, USDC on Base, ETH, …); it arrives as USDC. On your schedule the vault buys BTC, ETH or NEAR through NEAR Intents and the coins go straight to your own wallet on their native chain. Buys that would cost more than your fee limit are skipped. Only you can withdraw or change where coins go.
 
-> Our team's other, independent project: **[Settle](https://github.com/MFrancis-dev/settle)** (track 08, Real-World Money) — separate repository, codebase and submission (hackathon rule Q-015).
 
 ---
 
