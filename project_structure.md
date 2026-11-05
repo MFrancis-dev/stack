@@ -83,7 +83,7 @@ components/
 ├─ fund/        # TokenPicker, AmountInput, DepositPanel, FundStatus
 ├─ plan/        # PlanForm (address typed twice, chain name), CostPreview, PauseButton
 ├─ history/     # BuyTable, SkipReason, TxLinks
-├─ vault/       # BalanceCard, NextBuy, WhereIsMyMoney, WithdrawForm
+├─ vault/       # StackColumn, BalanceCard, NextBuy, WhereIsMyMoney, WithdrawForm (+ RecoverTokenForm), CreateVault, DemoBanner
 └─ wallet/      # WalletProvider, SignInButton, OwnerTx (builds set_plan/resume/withdraw txs)
 ```
 
@@ -107,7 +107,7 @@ worker/index.ts (entry, intervals, shutdown) · runner.ts (no-overlap loops) · 
 
 ## 7. `e2e/`, `scripts/`
 ```
-e2e/demo-journey.spec.ts                       # PRD §8
+e2e/playwright.config.ts · e2e/demo-journey.spec.ts   # PRD §8 on demo mode, desktop + phone (`pnpm e2e`, CI job)
 scripts/build-contracts.sh · scripts/seed-demo.ts · scripts/check-env.ts
 ```
 

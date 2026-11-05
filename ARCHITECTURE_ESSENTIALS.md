@@ -85,7 +85,12 @@ On-chain vault = truth for plan + balance.
 - Every skip/refusal/failure writes `buys.note`; refusals and failures `log.alert`
 
 ## Demo & dry-run
-`pnpm demo` = zero secrets, PGlite, seeded vault + history, fast-forward 30 days with one `skipped_cost`. Never moves funds.
+`pnpm demo` = zero secrets, PGlite (verified from a fresh clone). `/demo` → per-visitor demo saver + demo session; Never moves funds.
+- Demo sessions use `servicesFor(session)` → demo quotes (live dry first, calibrated model fallback), demo status (time-based), demo vault (`demo_vaults` + balance from rows)
+- Owner actions in demo → `POST /api/demo/owner-tx`, same rules as the contract; `fast-forward` 30 days, `reset`
+- Real worker queries **exclude demo users**; `demo-` hashes never link to explorers
+- `pnpm e2e` = Playwright PRD §8 journey on demo mode, desktop + phone, in CI
+- Keep `@electric-sql/pglite` in `serverExternalPackages`; keep the dev session secret on `globalThis`
 
 ## Never
 Add an admin withdraw path · use an unverified quote · show unconfirmed statuses · commit secrets · deploy, sign with real keys, send funds, post, push or submit without the human's explicit OK · finish a contribution without updating `ROADMAP.md`
