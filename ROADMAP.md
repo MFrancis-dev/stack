@@ -23,11 +23,11 @@
 | 6. UI | Nov 9–11 | 100% | ✅ done |
 | 7. Demo mode & dry-run | Nov 11 | 100% | ✅ done |
 | 8. Hardening & edge cases | Nov 11–12 | 89% | in progress (K8.8 blocked on deploy) |
-| 9. Deploy & real run | Nov 12 | 17% | in progress (hosted demo live; worker + real run need K1.13/K0.8) |
+| 9. Deploy & real run | Nov 12 | 33% | in progress (app + worker hosted; real run needs contracts deployed, K1.13) |
 | 10. README & public repo | Nov 12–13 | 100% | ✅ done (hosted URL added) |
 | 11. Launch: video, post, submission | Nov 13–14 | 57% | in progress (video, post and submission need the human) |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~80%** | |
+| **Overall (MVP)** | | **~81%** | |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
@@ -172,7 +172,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Phase 9 — Deploy & real run (Nov 12)
 
 - [x] **K9.1** [#77](https://github.com/MFrancis-dev/stack/issues/77) 👤 Pick hosting (web, worker, Postgres); set production env vars · 2026-11-05: human picked Vercel (account mallison031, project `stack-savings`) + Neon via the Vercel integration (new free `stack-savings-db`); `SESSION_SECRET`, `CRON_SECRET`, `PUBLIC_APP_URL` set (secrets never printed). Worker host to pick with real mode
-- [~] **K9.2** [#78](https://github.com/MFrancis-dev/stack/issues/78) Deploy app + worker; hosted demo reachable · 2026-11-05: app deployed, hosted demo live at https://stack-savings.vercel.app/demo (migrations at build, daily demo-cleanup cron, cron route 401 without its secret, security headers on); Playwright journey passes against it (desktop + phone, `E2E_BASE_URL`). Fixed: overview/history showed "no buys" while the list was still loading. Left: worker on a long-running host, needed only once contracts are deployed (K1.13)
+- [x] **K9.2** [#78](https://github.com/MFrancis-dev/stack/issues/78) Deploy app + worker; hosted demo reachable · 2026-11-05: worker hosted as `GET /api/cron/tick` (one pass of every loop) called every 5 min by the `Worker tick` workflow; off until real mode is configured (repo variable `WORKER_ENABLED=true`, secret `CRON_SECRET`) · 2026-11-05: app deployed, hosted demo live at https://stack-savings.vercel.app/demo (migrations at build, daily demo-cleanup cron, cron route 401 without its secret, security headers on); Playwright journey passes against it (desktop + phone, `E2E_BASE_URL`). Fixed: overview/history showed "no buys" while the list was still loading. Left: worker on a long-running host, needed only once contracts are deployed (K1.13)
 - [ ] **K9.3** [#79](https://github.com/MFrancis-dev/stack/issues/79) 👤 Approve one small real deposit (any chain → vault)
 - [ ] **K9.4** [#80](https://github.com/MFrancis-dev/stack/issues/80) 👤 Approve one small real scheduled buy (short interval) → asset lands in the owner's address
 - [ ] **K9.5** [#81](https://github.com/MFrancis-dev/stack/issues/81) 👤 Approve a withdraw test
@@ -219,6 +219,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-05 · agent · Hosted worker: `worker/tick.ts` + `GET /api/cron/tick` (cron-secret protected, loops isolated, in-flight work first) + scheduled `Worker tick` workflow, off until enabled; shared `cronAuthorized`; 4 tests; README/ARCHITECTURE updated · K9.2
 - 2026-11-05 · agent · Launch kit: video script, X post draft, submission guide with the `idea` text; live rules re-read (JWT optional, keep demo up to 11-18); README: landing fee check in the do/see table, Node 22, launch links · K11.1, K11.3, K11.5, K11.6, K0.8
 - 2026-11-05 · agent · Stack is now the only submission: removed the sister-project link from the README, landing footer, PRD, AGENTS, ESSENTIALS and PR template after a review of 150 submitted projects found Stack's idea unique and Settle's crowded · K10.4
 - 2026-11-05 · agent · Redesign: new landing + demo entry (land-book references, coin motif, live fee check, credited pictures), app screens restyled to match; fee model moved to `lib/core/feeModel.ts`; e2e updated for the new landing copy · K6.9
