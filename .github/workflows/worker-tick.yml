@@ -1,0 +1,29 @@
+# Runs one worker pass on the hosted app every 5 minutes (K9.2). The hosted app is serverless, so
+# this replaces the long-running `pnpm worker` there. Off until real mode is configured: set the
+# repository variable WORKER_ENABLED=true and the secret CRON_SECRET (same value as on Vercel).
+name: Worker tick
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: worker-tick
+  cancel-in-progress: false
+
+jobs:
+  tick:
+    if: vars.WORKER_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Run one worker pass
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          APP_URL: ${{ vars.APP_URL || 'https://stack-savings.vercel.app' }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then echo "CRON_SECRET is not set"; exit 1; fi
+          curl -fsS --max-time 90 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/tick"

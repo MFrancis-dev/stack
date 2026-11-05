@@ -77,7 +77,8 @@ app/
    ├─ fund/quote/route.ts · fund/[id]/submit-tx/route.ts · fund/[id]/status/route.ts
    ├─ plan/preview/route.ts · buys/route.ts · export.csv/route.ts
    ├─ demo/[action]/route.ts                # start, fast-forward, reset, owner-tx
-   └─ cron/cleanup-demo/route.ts            # Vercel Cron, Bearer CRON_SECRET
+   ├─ cron/cleanup-demo/route.ts            # Vercel Cron, Bearer CRON_SECRET
+   └─ cron/tick/route.ts                    # one worker pass, called by .github/workflows/worker-tick.yml
 ```
 
 ## 4. `components/`
@@ -108,6 +109,7 @@ lib/
 ```
 worker/index.ts (entry, intervals, shutdown) · runner.ts (no-overlap loops) · deps.ts (WorkerDeps, JSON logger)
        pollFunding.ts (5 s) · scheduleBuys.ts (60 s) · pollBuys.ts (10 s) · expireQuotes.ts (60 s) · alerts.ts (keeper gas, 10 min) · cleanupDemo.ts (60 min) · worker.test.ts
+       tick.ts (one pass of every loop, for serverless hosts) · tick.test.ts
 ```
 
 ## 7. `e2e/`, `scripts/`

@@ -154,6 +154,7 @@ The keeper chooses `deposit_address`. A stolen keeper key could redirect at most
 | `GET /api/export.csv` | session | CSV |
 | `POST /api/demo/:action` | demo session | `fast-forward`, `reset` |
 | `GET /api/cron/cleanup-demo` | `Bearer $CRON_SECRET` | Vercel Cron (daily 03:00 UTC): same `cleanupDemo` as the worker loop, for hosts without the worker |
+| `GET /api/cron/tick` | `Bearer $CRON_SECRET` | One pass of every worker loop (`worker/tick.ts`), in order: pollFunding → pollBuys → expireQuotes → scheduleBuys → keeper gas. Called every 5 min by `.github/workflows/worker-tick.yml` when `WORKER_ENABLED=true`. Each loop isolated |
 
 Owner contract calls (`set_plan`, `resume`, `pause`, `withdraw`, `recover_token`) are wallet transactions built in the browser; no server involvement.
 
@@ -186,6 +187,8 @@ Rules: `verifyQuoteSignature()` before using `depositAddress`; ids/decimals from
 | no route / API down | – | no_quote (retry next loop) |
 
 ### 4.4 Worker loops
+On a long-running host `pnpm worker` runs the loops below on their intervals. On the serverless host the same loops run once per `GET /api/cron/tick` (every 5 minutes), which is enough for plans that run at most every few minutes and for funding status, which also refreshes whenever the user opens it.
+
 | Loop | Every | Does |
 |---|---|---|
 | `pollFunding` | 5 s | Non-final funding attempts → 1Click status; PENDING past deadline → `expired`; alert on `underpaid`. One failing attempt never stops the others |

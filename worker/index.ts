@@ -1,6 +1,6 @@
 /**
  * Worker entry: `pnpm worker`. Polls funding and buys, schedules buys, expires quotes, watches keeper gas.
- * Must run on a long-lived host (not serverless). Stops cleanly on SIGINT/SIGTERM.
+ * For a long-lived host; serverless hosts call worker/tick.ts via /api/cron/tick instead. Stops cleanly on SIGINT/SIGTERM.
  * Roadmap: K5.1 · Spec: ARCHITECTURE.md §4.4
  */
 
@@ -12,6 +12,7 @@ import { expireQuotes } from "./expireQuotes";
 import { pollBuys } from "./pollBuys";
 import { pollFunding } from "./pollFunding";
 import { startLoops } from "./runner";
+import { depsFromServices } from "./tick";
 import { scheduleBuys } from "./scheduleBuys";
 
 export const INTERVALS = {
@@ -24,17 +25,7 @@ export const INTERVALS = {
 } as const;
 
 async function main() {
-  const s = await getServices();
-  const deps: WorkerDeps = {
-    db: s.db,
-    quotes: s.quotes,
-    status: s.status,
-    vault: s.vault,
-    near: s.near,
-    keeperAccountId: process.env.KEEPER_ACCOUNT_ID || null,
-    now: Date.now,
-    log: consoleLogger,
-  };
+  const deps: WorkerDeps = depsFromServices(await getServices(), consoleLogger);
   if (!deps.vault) consoleLogger.warn("keeper not configured: scheduleBuys will do nothing (run `pnpm check-env`)");
 
   const runner = startLoops(

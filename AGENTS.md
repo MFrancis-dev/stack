@@ -68,7 +68,8 @@ Installed and verified 2026-11-04 with **pnpm 11** (`packageManager` is pinned; 
 | Typecheck / lint / format | `pnpm typecheck` / `pnpm lint` / `pnpm format` |
 | Tests / E2E | `pnpm test` / `pnpm e2e` |
 | E2E against the hosted demo | `E2E_BASE_URL=https://stack-savings.vercel.app pnpm e2e` |
-| Deploy (human OK first) | `vercel deploy --prod` |
+| Deploy (human OK first) | `vercel deploy --prod` (from this folder) |
+| Hosted worker | `.github/workflows/worker-tick.yml` → `GET /api/cron/tick`; on when repo variable `WORKER_ENABLED=true` + secret `CRON_SECRET` |
 | DB | `pnpm db:generate && pnpm db:migrate` |
 | Contract build | `cd contracts && cargo near build` |
 | Contract tests | `cd contracts && cargo test` |

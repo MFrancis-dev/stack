@@ -80,6 +80,7 @@ On-chain vault = truth for plan + balance.
 
 ## Worker
 `pollFunding` 5 s · `scheduleBuys` 60 s · `pollBuys` 10 s · `expireQuotes` 60 s · keeper gas alert 10 min · `cleanupDemo` 60 min (demo users > 24 h)
+- Hosted (serverless): one pass of each loop per `GET /api/cron/tick` every 5 min (`worker/tick.ts`, GitHub workflow, off until `WORKER_ENABLED=true`)
 - NEAR plans: the destination must be registered on `wrap.near` first (`/api/storage-check`, `wnearRegisterTx`)
 - Log errors through `redact()`; security headers live in next.config.ts
 - Every loop is `(deps) => Promise` (worker/deps.ts) — test one tick with fakes

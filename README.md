@@ -98,7 +98,7 @@ Being honest about what is and isn't live:
 - **Demo mode** uses live dry quotes when NEAR Intents is reachable and a fee model calibrated on real quotes otherwise; demo deposits complete on a timer. It never moves funds.
 - **No Content-Security-Policy yet** — the wallet connector loads wallets in sandboxed iframes.
 - Rate limits are in-memory (per app instance).
-- **Hosting:** the web app runs on Vercel with a Neon Postgres database; demo cleanup runs as a daily Vercel Cron job. The background worker (buys, funding status) needs a long-running host and goes live with real mode.
+- **Hosting:** the web app runs on Vercel with a Neon Postgres database; demo cleanup runs as a daily Vercel Cron job. On the hosted app the worker runs as one pass every 5 minutes (`GET /api/cron/tick`, called by the `Worker tick` GitHub workflow). It stays off until real mode is configured: set the repository variable `WORKER_ENABLED=true` and the secret `CRON_SECRET`.
 
 ## Running for real
 
@@ -106,7 +106,7 @@ Being honest about what is and isn't live:
 cp .env.example .env    # fill in the values; never commit .env
 pnpm check-env          # lists what real mode still needs (names only, never values)
 pnpm dev                # app
-pnpm worker             # background loops (long-running host, not serverless)
+pnpm worker             # background loops on a long-running host (serverless hosts: /api/cron/tick, see Hosting above)
 ```
 
 Contracts: `pnpm contracts:build` (cargo-near 0.22 → `contracts/target/near/`) and `pnpm contracts:test`. Deploy order: factory `new(admin, keeper, usdc, daily_cap)` → admin `set_vault_code` with the vault wasm as raw input → keeper `create_vault_for(owner)` per user (done by `POST /api/onboard`).
