@@ -96,13 +96,13 @@ lib/
 ├─ db/          # schema.ts, client.ts (PGlite/Postgres + migrate()), queries/ (users, fundingAttempts, buys), seed-demo.ts
 ├─ client/      # browser-only: api.ts (typed fetch + DTOs), hooks.ts (TanStack Query), ownerTx.ts (vault txs for the wallet), format.ts
 └─ server/      # SERVER ONLY: env.ts, session.ts (NEP-413 challenge + HMAC cookies), adapters.ts (getServices seam), context.ts (current user/vault),
-                #   http.ts (JSON, body parsing, error mapping), rateLimit.ts, routes.test.ts (API tests), testing/ (server-only stub for vitest)
+                #   http.ts (JSON, body parsing, error mapping), rateLimit.ts, redact.ts (scrub secrets from logs), routes.test.ts + demo.test.ts (API tests), testing/ (server-only stub for vitest)
 ```
 
 ## 6. `worker/`
 ```
 worker/index.ts (entry, intervals, shutdown) · runner.ts (no-overlap loops) · deps.ts (WorkerDeps, JSON logger)
-       pollFunding.ts (5 s) · scheduleBuys.ts (60 s) · pollBuys.ts (10 s) · expireQuotes.ts (60 s) · alerts.ts (keeper gas, 10 min) · worker.test.ts
+       pollFunding.ts (5 s) · scheduleBuys.ts (60 s) · pollBuys.ts (10 s) · expireQuotes.ts (60 s) · alerts.ts (keeper gas, 10 min) · cleanupDemo.ts (60 min) · worker.test.ts
 ```
 
 ## 7. `e2e/`, `scripts/`

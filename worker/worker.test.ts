@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { USDC_ON_NEAR } from "../lib/core/assets";
 import { asBaseUnits } from "../lib/core/money";
@@ -8,6 +9,10 @@ import { insertBuy, listBuysByUser } from "../lib/db/queries/buys";
 import { getFundingAttempt, insertFundingAttempt } from "../lib/db/queries/fundingAttempts";
 import { setVault, upsertUser } from "../lib/db/queries/users";
 import { checkKeeperBalance } from "./alerts";
+import { cleanupDemo, DEMO_TTL_MS } from "./cleanupDemo";
+import { seedDemoUser } from "../lib/db/seed-demo";
+import { listBuysByUser as buysOf } from "../lib/db/queries/buys";
+import { getUserByAccount } from "../lib/db/queries/users";
 import type { Logger, WorkerDeps } from "./deps";
 import { expireQuotes } from "./expireQuotes";
 import { pollBuys } from "./pollBuys";
@@ -290,5 +295,20 @@ describe("runner (K5.1)", () => {
     expect(calls).toBeGreaterThan(1);
     expect(active).toBe(0);
     expect(logs.some((l) => l.msg === "slow tick failed")).toBe(true);
+  });
+});
+
+describe("cleanupDemo (K8.9)", () => {
+  it("removes demo users older than a day with all their rows, and never real users", async () => {
+    const old = await seedDemoUser(db, NOW - DEMO_TTL_MS - 60_000);
+    const fresh = await seedDemoUser(db, NOW);
+    // seedDemoUser sets created_at from the DB clock; age the old one explicitly.
+    await db.execute(sql`update users set created_at = ${new Date(NOW - DEMO_TTL_MS - 60_000)} where id = ${old.id}`);
+    await db.execute(sql`update users set created_at = ${new Date(NOW)} where id = ${fresh.id}`);
+    expect(await cleanupDemo(deps())).toBe(1);
+    expect(await getUserByAccount(db, old.nearAccountId)).toBeUndefined();
+    expect(await buysOf(db, old.id)).toHaveLength(0);
+    expect(await getUserByAccount(db, fresh.nearAccountId)).toBeDefined();
+    expect(await getUserByAccount(db, "alice.near")).toBeDefined();
   });
 });

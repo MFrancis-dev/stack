@@ -6,6 +6,7 @@
 
 import { getServices } from "../lib/server/adapters";
 import { checkKeeperBalance } from "./alerts";
+import { cleanupDemo } from "./cleanupDemo";
 import { consoleLogger, type WorkerDeps } from "./deps";
 import { expireQuotes } from "./expireQuotes";
 import { pollBuys } from "./pollBuys";
@@ -19,6 +20,7 @@ export const INTERVALS = {
   scheduleBuys: 60_000,
   expireQuotes: 60_000,
   keeperBalance: 10 * 60_000,
+  cleanupDemo: 60 * 60_000,
 } as const;
 
 async function main() {
@@ -42,6 +44,7 @@ async function main() {
       { name: "scheduleBuys", everyMs: INTERVALS.scheduleBuys, tick: () => scheduleBuys(deps) },
       { name: "expireQuotes", everyMs: INTERVALS.expireQuotes, tick: () => expireQuotes(deps) },
       { name: "keeperBalance", everyMs: INTERVALS.keeperBalance, tick: () => checkKeeperBalance(deps) },
+      { name: "cleanupDemo", everyMs: INTERVALS.cleanupDemo, tick: () => cleanupDemo(deps) },
     ],
     consoleLogger,
   );

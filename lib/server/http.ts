@@ -5,6 +5,7 @@
 
 import type { z } from "zod";
 import { OneClickError } from "../oneclick/client";
+import { redact } from "./redact";
 
 export class HttpError extends Error {
   constructor(
@@ -52,7 +53,7 @@ export function handle<A extends unknown[]>(fn: (...args: A) => Promise<Response
     } catch (e) {
       if (e instanceof HttpError) return json({ error: e.message, details: e.details }, { status: e.status });
       if (e instanceof OneClickError) return json({ error: e.message, correlationId: e.correlationId }, { status: 502 });
-      console.error("unhandled route error", e instanceof Error ? e.message : e);
+      console.error("unhandled route error", redact(e instanceof Error ? e.message : String(e)));
       return json({ error: "Something went wrong" }, { status: 500 });
     }
   };

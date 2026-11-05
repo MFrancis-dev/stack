@@ -59,6 +59,18 @@ export const withdrawTx = (vaultId: string, amount: BaseUnits): OwnerTx => ({
   actions: [call("withdraw", { amount }, 60)],
 });
 
+/** wrap.near storage_balance_bounds: min = max = 0.00125 NEAR (read on-chain 2026-11-05). */
+export const WNEAR_STORAGE_DEPOSIT = "1250000000000000000000";
+
+/**
+ * Lets `account` receive wNEAR. Needed before a NEAR plan: Intents gives no refund to an unregistered
+ * receiver (ARCHITECTURE §12). Sent from the owner's wallet; costs 0.00125 NEAR. Roadmap: K8.2
+ */
+export const wnearRegisterTx = (account: string): OwnerTx => ({
+  receiverId: "wrap.near",
+  actions: [call("storage_deposit", { account_id: account, registration_only: true }, 30, WNEAR_STORAGE_DEPOSIT)],
+});
+
 export const recoverTokenTx = (vaultId: string, token: string, amount: BaseUnits): OwnerTx => ({
   receiverId: vaultId,
   actions: [call("recover_token", { token, amount }, 60)],

@@ -149,6 +149,7 @@ The keeper chooses `deposit_address`. A stolen keeper key could redirect at most
 | `POST /api/fund/quote` | session, rate-limited | `{originAsset, amount, refundTo, dry}` → preview or FundingAttempt |
 | `POST /api/fund/:id/submit-tx` · `GET /api/fund/:id/status` | session | |
 | `POST /api/plan/preview` | session | Dry buy quote → expected cost % for a buy size |
+| `GET /api/storage-check?account=` | session, rate-limited | Is the account registered on `wrap.near`? A NEAR plan can't be saved until it is (no refund otherwise); the UI offers a one-tap `storage_deposit` (0.00125 NEAR). Demo: always yes |
 | `GET /api/buys` | session | History |
 | `GET /api/export.csv` | session | CSV |
 | `POST /api/demo/:action` | demo session | `fast-forward`, `reset` |
@@ -191,6 +192,7 @@ Rules: `verifyQuoteSignature()` before using `depositAddress`; ids/decimals from
 | `pollBuys` | 10 s | In-flight buys → final status; on success the actual `amountOut` and destination tx from `swapDetails`; refunds noted with 1Click's reason |
 | `expireQuotes` | 60 s | DB-only expiry of unpaid funding quotes (works while 1Click is down) |
 | `keeperBalance` | 10 min | Alert below 1 NEAR — buys stop without gas |
+| `cleanupDemo` | 60 min | Delete demo users older than 24 h with their rows (never real users) |
 
 Runner: a loop never overlaps itself, errors are logged and the loop continues, SIGINT/SIGTERM wait for running ticks. Logs are JSON lines with no secrets or personal data. Rows are timestamped with the worker clock (`deps.now`), never the DB's.
 
@@ -237,7 +239,10 @@ On-chain vault = truth for plan and balance. DB = history and metadata.
 | Factory spam | Session, one vault per account, daily cap |
 | Tampered quote | `verifyQuoteSignature()` |
 | Admin rug | No admin path to funds (I5) |
-| Secrets | `.env` only |
+| Secrets | `.env` only; logged errors pass through `redact()` (env secret values, URL credentials, private-key strings) |
+| Clickjacking, sniffing, leaky referrers | Security headers on every response: `X-Frame-Options: DENY`, `nosniff`, `strict-origin-when-cross-origin`, restrictive `Permissions-Policy`, `COOP: same-origin-allow-popups`, HSTS in production. No CSP yet (wallet connector iframes) |
+| CSRF on state-changing routes | Session cookie is `SameSite=Lax` + HTTP-only, so cross-site POSTs carry no session |
+| Request floods | In-memory rate limits on quote, plan preview, onboard, storage check and demo start (single instance) |
 
 ---
 

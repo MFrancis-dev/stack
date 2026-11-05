@@ -10,6 +10,7 @@ import * as submitTxRoute from "@/app/api/fund/[id]/submit-tx/route";
 import * as onboardRoute from "@/app/api/onboard/route";
 import * as planPreviewRoute from "@/app/api/plan/preview/route";
 import * as sessionRoute from "@/app/api/session/route";
+import * as storageCheckRoute from "@/app/api/storage-check/route";
 import * as tokensRoute from "@/app/api/tokens/route";
 import * as vaultRoute from "@/app/api/vault/route";
 import { USDC_ON_NEAR } from "../core/assets";
@@ -275,6 +276,18 @@ describe("plan preview (K4.5)", () => {
   it("rejects unknown targets", async () => {
     const cookie = await signIn();
     expect((await planPreviewRoute.POST(req("/api/plan/preview", { method: "POST", cookie, body: { target: "doge", amountPerRun: "1" } }))).status).toBe(400);
+  });
+});
+
+describe("wNEAR registration check (K8.2)", () => {
+  it("reports whether a NEAR account can receive wNEAR", async () => {
+    const callFunction = vi.fn().mockResolvedValueOnce(null).mockResolvedValueOnce({ total: "1250000000000000000000", available: "0" });
+    setServicesForTest(services({ near: { viewAccessKey: vi.fn(async () => ({ permission: "FullAccess" })), callFunction } as never }));
+    const cookie = await signIn();
+    expect(await (await storageCheckRoute.GET(req("/api/storage-check?account=bob.near", { cookie }))).json()).toMatchObject({ registered: false });
+    expect(await (await storageCheckRoute.GET(req("/api/storage-check?account=bob.near", { cookie }))).json()).toMatchObject({ registered: true });
+    expect(callFunction).toHaveBeenLastCalledWith({ contractId: "wrap.near", method: "storage_balance_of", args: { account_id: "bob.near" } });
+    expect((await storageCheckRoute.GET(req("/api/storage-check?account=Bad..Name", { cookie }))).status).toBe(400);
   });
 });
 
