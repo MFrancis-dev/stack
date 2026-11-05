@@ -32,7 +32,8 @@ export interface DbOptions {
 
 export function createDb({ databaseUrl, pgliteDataDir = DEFAULT_PGLITE_DIR }: DbOptions = {}): Db {
   if (databaseUrl) {
-    const db = drizzlePostgres(postgres(databaseUrl), { schema });
+    // Serverless + pooled URLs (e.g. Neon's pooler): one connection per instance, no prepared statements.
+    const db = drizzlePostgres(postgres(databaseUrl, { max: 1, prepare: false }), { schema });
     return Object.assign(db, { migrate: () => migratePostgres(db, { migrationsFolder: MIGRATIONS_FOLDER }) }) as unknown as Db;
   }
   const db = drizzlePglite(new PGlite(pgliteDataDir), { schema });
@@ -43,6 +44,11 @@ let shared: Db | undefined;
 
 /** Process-wide client for the app and worker. Tests should call `createDb` directly. */
 export function getDb(): Db {
-  shared ??= createDb({ databaseUrl: process.env.DATABASE_URL || undefined });
+  if (!shared) {
+    const databaseUrl = process.env.DATABASE_URL || undefined;
+    // Hosted platforms have a read-only or throwaway disk: the embedded database would lose data or crash.
+    if (!databaseUrl && process.env.VERCEL) throw new Error("DATABASE_URL is required when hosted (embedded PGlite is for local and CI only)");
+    shared = createDb({ databaseUrl });
+  }
   return shared;
 }

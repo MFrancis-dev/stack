@@ -22,3 +22,6 @@ test-results/
 
 # os
 .DS_Store
+
+# vercel CLI project link
+.vercel/
