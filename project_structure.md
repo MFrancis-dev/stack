@@ -11,7 +11,7 @@ stack/
 ├─ CLAUDE.md                     # Claude Code entry; imports AGENTS, ROADMAP, ESSENTIALS
 ├─ ROADMAP.md                    # remaining work to 100% readiness — updated on EVERY contribution
 ├─ PRD.md · ARCHITECTURE.md · ARCHITECTURE_ESSENTIALS.md · project_structure.md
-├─ README.md                     # judges + AI screeners; keeper trust assumption; names sister project Settle
+├─ README.md                     # judges + AI screeners; keeper trust assumption
 ├─ LICENSE                       # MIT
 ├─ .github/                       # pull_request_template.md (ROADMAP + hackathon-rule checklist), ISSUE_TEMPLATE/roadmap-task.md
 ├─ .env.example · .gitignore · .vercelignore · .gitleaksignore (reviewed false positives only)

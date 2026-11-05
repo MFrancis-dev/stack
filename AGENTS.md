@@ -27,7 +27,7 @@ A contribution without a `ROADMAP.md` update is not done.
 
 **Hard deadline: 2026-11-14 23:59 UTC.** Prefer a working, demoable MVP over completeness.
 
-**Sister project: Settle** (track 08) is a separate repo and a separate submission. Never import its code; hackathon rule Q-015 requires the projects to be independent and each README to name the other.
+**Single project.** Stack is the team's only submission. A second project (Settle, invoicing) was dropped on 2026-11-05 because its idea had already been submitted several times; don't reference it in code, docs or the site.
 
 ## 2. Read order
 
@@ -139,7 +139,7 @@ Tests never call paid APIs or move funds.
 Keep `ARCHITECTURE_ESSENTIALS.md` under ~120 lines.
 
 ## 10. Hackathon requirements affecting code
-Code counts from 2026-10-19 · libraries listed in README · public repo + MIT LICENSE by the deadline · README written for AI screeners ("do X → see Y"), states the keeper trust assumption, and names **Settle** · demo post on X by the human · track `defi`.
+Code counts from 2026-10-19 · libraries listed in README · public repo + MIT LICENSE by the deadline · README written for AI screeners ("do X → see Y"), states the keeper trust assumption, and states that all code was written in the hackathon window · demo post on X by the human · track `defi`.
 
 ## 11. Definition of done
 - [ ] Matches PRD/ARCHITECTURE (or docs updated with the human's agreement)

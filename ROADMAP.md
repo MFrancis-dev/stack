@@ -3,7 +3,7 @@
 > All remaining work to get this repo to **100% readiness** (submitted, public, demoable, judged-ready).
 > **Every contribution updates this file in the same change** (AGENTS.md §0): task status, phase %, Readiness table, Blockers if any, and one Update-log line.
 > **GitHub issues:** every task, open decision and stretch item has an issue on https://github.com/MFrancis-dev/stack/issues (linked next to its id). Hackathon rules checklist: [#1](https://github.com/MFrancis-dev/stack/issues/1). Keep issues and this file in sync (AGENTS.md §0.6).
-> Deadline: **2026-11-14 23:59 UTC**. Target submission: **2026-11-14 12:00 UTC** (sister project Settle submits on the 13th).
+> Deadline: **2026-11-14 23:59 UTC**. Target submission: **2026-11-14 12:00 UTC**. Stack is the team's only submission (second project dropped 2026-11-05).
 
 **Legend:** `[ ]` todo · `[~]` in progress · `[x]` done (add date) · `[!]` blocked (reason in Blockers) · `[-]` dropped (reason) · 👤 = human-only task · 🔍 = verify in docs · ⛔ = needs a human decision
 
@@ -39,7 +39,7 @@ Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of al
 - [ ] `pnpm typecheck && pnpm lint && pnpm test && pnpm e2e` pass in CI
 - [ ] Contracts deployed; hosted demo URL up and in the README
 - [ ] One real deposit + one real scheduled buy completed and linked
-- [ ] README: what, problem, how NEAR is used, "do X → see Y", keeper trust assumption, libraries, names **Settle**
+- [ ] README: what, problem, how NEAR is used, "do X → see Y", keeper trust assumption, libraries, code written in the hackathon window
 - [ ] Repo public with MIT LICENSE
 - [ ] Demo post live on X (@NEARProtocol, #NEARHackathon)
 - [ ] Submission accepted (HTTP 201) with track `defi`
@@ -183,7 +183,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 - [x] **K10.1** [#83](https://github.com/MFrancis-dev/stack/issues/83) README: what, problem, how NEAR Intents + vault contracts are used, "do X → see Y", demo URL · 2026-11-05: what it is, the problem, how NEAR Intents + vault contracts are used, two-minute demo with a do/see table · 2026-11-05: hosted demo URL added
 - [x] **K10.2** [#84](https://github.com/MFrancis-dev/stack/issues/84) README: architecture summary, invariants, **keeper trust assumption**, limitations · 2026-11-05: architecture summary, invariants I1–I7, keeper trust assumption, honest status/limitations (not deployed yet, K3.5 fail-closed, no CSP)
 - [x] **K10.3** [#85](https://github.com/MFrancis-dev/stack/issues/85) README: libraries/templates used; code written in the hackathon window · 2026-11-05: libraries and tools with versions (Q-005); all code written in the hackathon window, first commit 2026-11-04
-- [x] **K10.4** [#86](https://github.com/MFrancis-dev/stack/issues/86) (2026-11-04: README links the Settle repo; keep it in the final README) README names **Settle** as the team's other, independent project (Q-015) · 2026-11-05: README names Settle with a link (Q-015)
+- [-] **K10.4** [#86](https://github.com/MFrancis-dev/stack/issues/86) README names the team's other project (Q-015) · 2026-11-05: dropped: the second project (Settle) was dropped, so Stack is the only submission and the README, site and docs no longer mention it
 - [x] **K10.5** [#87](https://github.com/MFrancis-dev/stack/issues/87) LICENSE; `.env.example` complete; gitleaks clean · 2026-11-05: MIT LICENSE; `.env.example` complete (added `NEXT_PUBLIC_NEAR_NETWORK`); CI secret scan green
 - [x] **K10.6** [#88](https://github.com/MFrancis-dev/stack/issues/88) 👤 Make the repo public · 2026-11-04: public from creation; must stay public through judging (Q-014)
 - [x] **K10.7** [#89](https://github.com/MFrancis-dev/stack/issues/89) Fresh-clone check from the public URL · 2026-11-05: cloned https://github.com/MFrancis-dev/stack, no .env, `pnpm install && pnpm demo`, followed every README step: all 10 checks matched
@@ -219,6 +219,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-05 · agent · Stack is now the only submission: removed the sister-project link from the README, landing footer, PRD, AGENTS, ESSENTIALS and PR template after a review of 150 submitted projects found Stack's idea unique and Settle's crowded · K10.4
 - 2026-11-05 · agent · Redesign: new landing + demo entry (land-book references, coin motif, live fee check, credited pictures), app screens restyled to match; fee model moved to `lib/core/feeModel.ts`; e2e updated for the new landing copy · K6.9
 - 2026-11-05 · agent · Hosted the demo on Vercel + Neon (build-time migrations, hosted DB guard, daily cleanup cron, .vercelignore, Node 22); loading states on overview/history; `E2E_BASE_URL` runs the journey against the live site (4/4 pass); README hosted URL; docs synced; `.gitleaksignore` for one fake test value (false positive) · K9.1, K9.2, K10.1
 - 2026-11-05 · agent · Phase 10 README for judges and AI screeners; .env.example completed; README steps verified from a fresh clone of the public repo · K10.1–K10.5, K10.7
