@@ -79,7 +79,9 @@ On-chain vault = truth for plan + balance.
 - Funding status refreshes from 1Click on read; plan preview refunds to the user's own account before a vault exists
 
 ## Worker
-`pollFunding` 5 s · `scheduleBuys` 60 s · `pollBuys` 10 s · `expireQuotes` 60 s · keeper gas alert 10 min
+`pollFunding` 5 s · `scheduleBuys` 60 s · `pollBuys` 10 s · `expireQuotes` 60 s · keeper gas alert 10 min · `cleanupDemo` 60 min (demo users > 24 h)
+- NEAR plans: the destination must be registered on `wrap.near` first (`/api/storage-check`, `wnearRegisterTx`)
+- Log errors through `redact()`; security headers live in next.config.ts
 - Every loop is `(deps) => Promise` (worker/deps.ts) — test one tick with fakes
 - scheduleBuys order: due? → not in flight / not in 15-min backoff → amount = min(per-run, balance) → quote → cost → plan match → **insert row** → execute_buy → submit
 - Every skip/refusal/failure writes `buys.note`; refusals and failures `log.alert`

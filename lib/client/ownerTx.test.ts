@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { asBaseUnits } from "../core/money";
-import { pauseTx, planTx, recoverTokenTx, withdrawTx } from "./ownerTx";
+import { pauseTx, planTx, recoverTokenTx, withdrawTx, wnearRegisterTx } from "./ownerTx";
 
 // Roadmap: K6.3, K6.4, K6.7 — must match contracts/vault (method names, args, 1-yocto rule)
 const V = "vabc.factory.stack.near";
@@ -23,6 +23,12 @@ describe("owner transactions", () => {
 
   it("pauses with no deposit (always the easiest call)", () => {
     expect(pauseTx(V).actions[0]!.params).toMatchObject({ methodName: "pause", deposit: "0" });
+  });
+
+  it("registers a NEAR account on wrap.near with exactly the required storage deposit", () => {
+    const tx = wnearRegisterTx("alice.near");
+    expect(tx.receiverId).toBe("wrap.near");
+    expect(tx.actions[0]!.params).toMatchObject({ methodName: "storage_deposit", args: { account_id: "alice.near", registration_only: true }, deposit: "1250000000000000000000" });
   });
 
   it("withdraws and recovers with 1 yocto", () => {

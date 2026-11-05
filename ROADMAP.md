@@ -22,12 +22,12 @@
 | 5. Worker (scheduler) | Nov 9–10 | 100% | ✅ done |
 | 6. UI | Nov 9–11 | 100% | ✅ done |
 | 7. Demo mode & dry-run | Nov 11 | 100% | ✅ done |
-| 8. Hardening & edge cases | Nov 11–12 | 0% | not started |
+| 8. Hardening & edge cases | Nov 11–12 | 89% | in progress (K8.8 blocked on deploy) |
 | 9. Deploy & real run | Nov 12 | 0% | not started |
 | 10. README & public repo | Nov 12–13 | 14% | in progress |
 | 11. Launch: video, post, submission | Nov 13–14 | 0% | not started |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~62%** | |
+| **Overall (MVP)** | | **~68%** | |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
@@ -47,6 +47,7 @@ Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of al
 ## Blockers
 
 - [K0.9] Real (non-dry) 1Click quotes need a partner JWT · 👤 human via K0.8 (partners.near-intents.org) · since 2026-11-04
+- [K8.8] Re-running invariant tests against the deployed code needs the contracts deployed (K1.13) · 👤 human · since 2026-11-05
 - [K3.5] Confirming quote-signature verification needs a real quote → needs the partner JWT (K0.8) · 👤 human · since 2026-11-04
 
 Format: `- [task id] what blocks it · who can unblock · since date`
@@ -157,14 +158,15 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 
 ## Phase 8 — Hardening & edge cases (Nov 11–12)
 
-- [ ] **K8.1** [#69](https://github.com/MFrancis-dev/stack/issues/69) Destination address safety (typed twice, chain named, validation)
-- [ ] **K8.2** [#70](https://github.com/MFrancis-dev/stack/issues/70) NEAR target: owner registered on `wrap.near` · 2026-11-04: mandatory, not nice-to-have: no refund if the owner isn't registered on `wrap.near`
-- [ ] **K8.3** [#71](https://github.com/MFrancis-dev/stack/issues/71) Withdraw during an in-flight buy (clean failure, retried next interval)
-- [ ] **K8.4** [#72](https://github.com/MFrancis-dev/stack/issues/72) Balance below buy amount (remainder only if it passes the cost check)
-- [ ] **K8.5** [#73](https://github.com/MFrancis-dev/stack/issues/73) Funding underpaid from an exchange: warning + status
-- [ ] **K8.6** [#74](https://github.com/MFrancis-dev/stack/issues/74) 1Click down / no route → `no_quote`
-- [~] **K8.7** [#75](https://github.com/MFrancis-dev/stack/issues/75) Rate limits; logs without secrets · 2026-11-04: in-memory rate limits on quote, preview and onboard routes; log hygiene still to review
-- [ ] **K8.8** [#76](https://github.com/MFrancis-dev/stack/issues/76) Re-run all contract invariant tests against the deployed code hash
+- [x] **K8.1** [#69](https://github.com/MFrancis-dev/stack/issues/69) Destination address safety (typed twice, chain named, validation) · 2026-11-05: address typed twice, checksummed per chain (BTC bech32/base58check, EIP-55, NEAR), chain named; schemas/address tests
+- [x] **K8.2** [#70](https://github.com/MFrancis-dev/stack/issues/70) NEAR target: owner registered on `wrap.near` · 2026-11-04: mandatory, not nice-to-have: no refund if the owner isn't registered on `wrap.near` · 2026-11-05: `GET /api/storage-check` + plan form blocks a NEAR plan until the destination is registered on wrap.near; one-tap `storage_deposit` (0.00125 NEAR, read on-chain) from the wallet; route + tx tests
+- [x] **K8.3** [#71](https://github.com/MFrancis-dev/stack/issues/71) Withdraw during an in-flight buy (clean failure, retried next interval) · 2026-11-05: contract fails the buy cleanly and retries next interval (sandbox test); Settings warns when a buy is in flight
+- [x] **K8.4** [#72](https://github.com/MFrancis-dev/stack/issues/72) Balance below buy amount (remainder only if it passes the cost check) · 2026-11-05: scheduler buys min(per-run, balance) and still applies the cost check; worker test
+- [x] **K8.5** [#73](https://github.com/MFrancis-dev/stack/issues/73) Funding underpaid from an exchange: warning + status · 2026-11-05: exchange-fee warning on the deposit panel, underpaid status copy, worker alert; pollFunding test
+- [x] **K8.6** [#74](https://github.com/MFrancis-dev/stack/issues/74) 1Click down / no route → `no_quote` · 2026-11-05: `no_quote` recorded with a note and retried after backoff; token list falls back offline; readable 1Click errors
+- [x] **K8.7** [#75](https://github.com/MFrancis-dev/stack/issues/75) Rate limits; logs without secrets · 2026-11-04: in-memory rate limits on quote, preview and onboard routes; log hygiene still to review · 2026-11-05: rate limits on quote/preview/onboard/demo-start/storage-check; log review (ids only) + `redact()` for library errors (env secrets, URL credentials, private keys); security headers (nosniff, DENY framing, referrer, permissions, COOP, HSTS in prod). No CSP yet: wallet iframes
+- [!] **K8.8** [#76](https://github.com/MFrancis-dev/stack/issues/76) Re-run all contract invariant tests against the deployed code hash · 2026-11-05: blocked on K1.13 (contracts not deployed yet)
+- [x] **K8.9** [#116](https://github.com/MFrancis-dev/stack/issues/116) Remove demo users older than a day · 2026-11-05: hourly `cleanupDemo` loop; test keeps fresh demo and real users
 
 ## Phase 9 — Deploy & real run (Nov 12)
 
@@ -216,6 +218,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-05 · agent · Phase 8 hardening: wNEAR registration gate for NEAR plans, in-flight withdraw warning, log redaction + security headers, demo cleanup loop (new K8.9); K8.1/4/5/6 verified against existing tests; K8.8 blocked on deploy · K8.1–K8.9
 - 2026-11-05 · agent · Phase 7 demo mode: per-visitor demo, demo adapters, owner actions without a wallet, fast-forward/reset, worker isolation, offline token fallback, Playwright journey in CI; fixed PGlite bundling + per-route dev session secret found in the browser; 119 unit/route tests + 4 e2e · K7.1–K7.6
 - 2026-11-05 · agent · Phase 6 UI reviewed in the browser (desktop + phone, redirect and signed-out states, no server errors); sign-in button width fix · K6.1–K6.8
 - 2026-11-04 · agent · Phase 6 UI built on branch feat/ui (landing, sign-in, vault creation, fund, plan + cost preview, pause/resume, overview stack, history, settings); visual review pending · K6.1–K6.8

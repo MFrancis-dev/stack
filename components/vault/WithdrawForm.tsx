@@ -8,13 +8,25 @@
 import { useState } from "react";
 import { parseAmount } from "@/components/fund/AmountInput";
 import { TextField } from "@/components/ui/Field";
+import { Notice } from "@/components/ui/Notice";
 import { OwnerTx } from "@/components/wallet/OwnerTx";
 import { formatUsdc } from "@/lib/client/format";
 import { recoverTokenTx, withdrawTx } from "@/lib/client/ownerTx";
 import { USDC_DECIMALS } from "@/lib/core/assets";
 import { asBaseUnits } from "@/lib/core/money";
 
-export function WithdrawForm({ vaultId, accountId, usdcBalance }: { vaultId: string; accountId: string; usdcBalance: string }) {
+export function WithdrawForm({
+  vaultId,
+  accountId,
+  usdcBalance,
+  buyInFlight = false,
+}: {
+  vaultId: string;
+  accountId: string;
+  usdcBalance: string;
+  /** A buy has left the vault and is still settling (K8.3). */
+  buyInFlight?: boolean;
+}) {
   const [amount, setAmount] = useState("");
   const p = parseAmount(amount, USDC_DECIMALS);
   const tooMuch = p.base !== null && BigInt(p.base) > BigInt(usdcBalance);
@@ -36,6 +48,12 @@ export function WithdrawForm({ vaultId, accountId, usdcBalance }: { vaultId: str
       <button type="button" className="justify-self-start text-sm font-bold text-moss underline-offset-4 hover:underline" onClick={() => setAmount(formatUsdc(usdcBalance, USDC_DECIMALS))}>
         Use everything
       </button>
+      {buyInFlight ? (
+        <Notice tone="warn">
+          A buy is on its way right now. Its dollars have already left your vault, so they aren&apos;t included above. If you withdraw
+          everything, the next scheduled buy is skipped until you add funds.
+        </Notice>
+      ) : null}
       <OwnerTx tx={p.base && !tooMuch ? withdrawTx(vaultId, asBaseUnits(p.base)) : null} done="Withdrawn to your account.">
         Withdraw
       </OwnerTx>

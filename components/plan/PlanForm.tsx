@@ -6,12 +6,15 @@
  * Roadmap: K6.3
  */
 
+import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { parseAmount } from "@/components/fund/AmountInput";
 import { SelectField, TextField } from "@/components/ui/Field";
+import { Notice } from "@/components/ui/Notice";
 import { OwnerTx } from "@/components/wallet/OwnerTx";
+import { api } from "@/lib/client/api";
 import { INTERVALS, targetOptions } from "@/lib/client/format";
-import { planTx } from "@/lib/client/ownerTx";
+import { planTx, wnearRegisterTx } from "@/lib/client/ownerTx";
 import { TARGET_ASSETS, targetByAssetId, USDC_DECIMALS, type TargetKey } from "@/lib/core/assets";
 import { asBaseUnits, formatAmount } from "@/lib/core/money";
 import { planInput } from "@/lib/core/schemas";
@@ -46,6 +49,17 @@ export function PlanForm({ vaultId, accountId, state }: { vaultId: string; accou
   );
   const errors = parsed.success ? {} : parsed.error.flatten().fieldErrors;
   const show = (k: keyof typeof errors) => (touched ? errors[k]?.[0] : undefined);
+
+  // K8.2: a NEAR plan only starts once the destination can receive wNEAR (no refund otherwise).
+  const destination = parsed.success ? parsed.data.destinationAddress : "";
+  const needsWnear = target === "near" && parsed.success;
+  const wnear = useQuery({
+    queryKey: ["storage-check", destination],
+    queryFn: () => api<{ registered: boolean }>(`/api/storage-check?account=${encodeURIComponent(destination)}`),
+    enabled: needsWnear,
+    staleTime: 30_000,
+  });
+  const wnearBlocked = needsWnear && wnear.data?.registered !== true;
 
   const tx = parsed.success
     ? planTx(vaultId, {
@@ -124,8 +138,23 @@ export function PlanForm({ vaultId, accountId, state }: { vaultId: string; accou
         <CostPreview target={target} amountPerRun={amountBase.base} maxCostBps={Number.isFinite(maxCostBps) ? maxCostBps : null} />
       </section>
 
+      {needsWnear && wnear.data?.registered === false ? (
+        <div className="grid max-w-xl gap-3">
+          <Notice tone="warn">
+            {destination} can&apos;t receive NEAR from Stack yet. Register it once (0.00125 NEAR from your wallet). Without it,
+            coins sent there would be lost.
+          </Notice>
+          <div className="max-w-sm">
+            <OwnerTx tx={wnearRegisterTx(destination)} done="Registered. You can save your plan now." variant="quiet" onSent={() => void wnear.refetch()}>
+              Let this account receive NEAR
+            </OwnerTx>
+          </div>
+        </div>
+      ) : null}
+      {needsWnear && wnear.isError ? <Notice tone="error">Couldn&apos;t check this account: {wnear.error.message}</Notice> : null}
+
       <div className="max-w-sm">
-        <OwnerTx tx={tx} done="Plan saved. Buying is on." disabled={!parsed.success}>
+        <OwnerTx tx={tx} done="Plan saved. Buying is on." disabled={!parsed.success || wnearBlocked}>
           Save plan and start buying
         </OwnerTx>
         <p className="text-sm text-sage">Your wallet will ask you to approve one transaction.</p>

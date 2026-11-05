@@ -6,6 +6,7 @@
 import type { QuoteProvider, StatusProvider, VaultClient } from "../lib/core/adapters";
 import type { Db } from "../lib/db/client";
 import type { NearProvider } from "../lib/near/rpc";
+import { redact } from "../lib/server/redact";
 
 export interface Logger {
   info(msg: string, data?: Record<string, unknown>): void;
@@ -34,5 +35,5 @@ export const consoleLogger: Logger = {
 };
 
 export function errorMessage(e: unknown): string {
-  return e instanceof Error ? e.message : String(e);
+  return redact(e instanceof Error ? e.message : String(e));
 }
