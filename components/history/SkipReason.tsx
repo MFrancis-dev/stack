@@ -21,7 +21,9 @@ export function SkipReason({ status, note }: { status: BuyStatus; note: string |
   return (
     <span className="grid">
       <span className={`font-bold ${bad ? "text-rust" : ""}`}>{WORDS[status]}</span>
-      {note && status !== "success" ? <span className="text-sm text-sage">{note}</span> : null}
+      {note && status !== "success" ? (
+        <span className="text-sm text-sage">{status === "skipped_cost" || status === "no_quote" ? `${note}. Nothing was spent.` : note}</span>
+      ) : null}
     </span>
   );
 }

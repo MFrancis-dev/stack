@@ -10,13 +10,14 @@ import { requireUser } from "@/lib/server/context";
 import { handle, json } from "@/lib/server/http";
 
 export const GET = handle(async (req: Request) => {
-  const { services, user } = await requireUser(req);
-  if (!user.vaultAccountId) return json({ accountId: user.nearAccountId, vaultAccountId: null });
+  const { services, user, session } = await requireUser(req);
+  if (!user.vaultAccountId) return json({ accountId: user.nearAccountId, vaultAccountId: null, demo: session.demo });
   const vaults = requireVaultClient(services);
   const [state, balance] = await Promise.all([vaults.getState(user.vaultAccountId), vaults.usdcBalance(user.vaultAccountId)]);
   return json({
     accountId: user.nearAccountId,
     vaultAccountId: user.vaultAccountId,
+    demo: session.demo,
     state,
     usdcBalance: balance,
     usdcBalanceFormatted: formatAmount(balance, USDC_DECIMALS),

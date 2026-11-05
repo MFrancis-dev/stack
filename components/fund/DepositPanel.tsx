@@ -68,6 +68,9 @@ export function DepositPanel({
           </p>
         </div>
       </div>
+      {depositAddress.startsWith("demo-") ? (
+        <Notice tone="error">This is a demo address. Don&apos;t send anything to it. The deposit will complete on its own in about a minute.</Notice>
+      ) : null}
       <Notice tone="warn">
         Sending from an exchange? Exchanges take a withdrawal fee, so add it on top. If less than {amountLabel} arrives,
         the deposit is marked short and may be refunded to your refund address.

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { PauseButton } from "@/components/plan/PauseButton";
 import { CreateVault } from "@/components/vault/CreateVault";
+import { DemoBanner } from "@/components/vault/DemoBanner";
 import { SignInButton } from "@/components/wallet/SignInButton";
 import { useWallet } from "@/components/wallet/WalletProvider";
 import { useVault } from "@/lib/client/hooks";
@@ -58,6 +59,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           ) : null}
         </div>
       </header>
+      {v?.signedIn && v.demo ? <DemoBanner /> : null}
       <nav aria-label="Sections" className="-mx-5 overflow-x-auto px-5 sm:mx-0 sm:px-0">
         <ul className="flex gap-1 border-b border-mist">
           {NAV.map((n) => {

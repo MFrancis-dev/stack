@@ -78,8 +78,14 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         }),
       send: (tx) =>
         run(async () => {
-          const wallet = await (await getConnector()).wallet();
-          await wallet.signAndSendTransaction({ receiverId: tx.receiverId, actions: tx.actions });
+          const vault = queryClient.getQueryData<{ demo?: boolean }>(["vault"]);
+          if (vault?.demo) {
+            // Demo mode: same transaction, applied to the demo vault with the contract's rules.
+            await api("/api/demo/owner-tx", { body: { tx } });
+          } else {
+            const wallet = await (await getConnector()).wallet();
+            await wallet.signAndSendTransaction({ receiverId: tx.receiverId, actions: tx.actions });
+          }
           await queryClient.invalidateQueries({ queryKey: ["vault"] });
         }),
     }),

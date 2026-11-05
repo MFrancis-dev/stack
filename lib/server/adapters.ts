@@ -9,9 +9,11 @@ import "server-only";
 import type { QuoteProvider, StatusProvider, VaultClient } from "../core/adapters";
 import { getDb, type Db } from "../db/client";
 import { nearVaultClient } from "../near";
+import { demoVaultClient } from "../near/demo";
 import { createKeeper } from "../near/keeper";
 import { createProvider, type NearProvider } from "../near/rpc";
 import { configureOneClick, getTokens, oneClickQuotes, oneClickStatus } from "../oneclick";
+import { demoQuotes, demoStatus, tokensWithFallback } from "../oneclick/demo";
 import type { TokenInfo } from "../oneclick/tokens";
 import { NotConfiguredError } from "./http";
 
@@ -55,6 +57,23 @@ export async function getServices(): Promise<Services> {
   if (override) return override;
   real ??= buildReal();
   return real;
+}
+
+/** Demo sessions get the same routes with demo adapters on the same database (K7.1). */
+export function demoServices(base: Services): Services {
+  return {
+    db: base.db,
+    quotes: demoQuotes,
+    status: demoStatus,
+    listTokens: async () => (await tokensWithFallback()).tokens,
+    near: null,
+    vault: demoVaultClient(base.db),
+  };
+}
+
+export async function servicesFor(session: { demo: boolean }): Promise<Services> {
+  const base = await getServices();
+  return session.demo ? demoServices(base) : base;
 }
 
 export function requireVaultClient(s: Services): VaultClient {

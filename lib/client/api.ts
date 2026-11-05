@@ -30,6 +30,8 @@ export async function api<T>(path: string, init?: { method?: string; body?: unkn
 export interface VaultResponse {
   accountId: string;
   vaultAccountId: string | null;
+  /** Demo session: example data, owner actions applied without a wallet. */
+  demo?: boolean;
   state?: VaultState;
   usdcBalance?: string;
   usdcBalanceFormatted?: string;

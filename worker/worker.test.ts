@@ -137,7 +137,7 @@ describe("scheduleBuys (K5.3)", () => {
     expect((await scheduleBuys(deps())).get(userId)).toBe("skipped_cost");
     expect(fakes.executeBuy).not.toHaveBeenCalled();
     const [b] = await listBuysByUser(db, userId);
-    expect(b).toMatchObject({ status: "skipped_cost", costBps: 1540, note: "cost 1540 bps above limit 300" });
+    expect(b).toMatchObject({ status: "skipped_cost", costBps: 1540, note: "Fees were 15.40%, above your 3.00% limit" });
   });
 
   it("refuses and alerts when the quote doesn't match the on-chain plan", async () => {

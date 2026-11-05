@@ -6,7 +6,7 @@ import "server-only";
 
 import { getUserById } from "../db/queries/users";
 import type { User } from "../db/schema";
-import { getServices, type Services } from "./adapters";
+import { servicesFor, type Services } from "./adapters";
 import { HttpError } from "./http";
 import { requireSession, type Session } from "./session";
 
@@ -18,9 +18,9 @@ export interface UserContext {
 
 export async function requireUser(req: Request): Promise<UserContext> {
   const session = requireSession(req);
-  const services = await getServices();
+  const services = await servicesFor(session);
   const user = await getUserById(services.db, session.userId);
-  if (!user) throw new HttpError(401, "Sign in again");
+  if (!user || user.isDemo !== session.demo) throw new HttpError(401, "Sign in again");
   return { session, services, user };
 }
 

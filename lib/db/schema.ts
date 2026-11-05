@@ -72,6 +72,17 @@ export const buys = pgTable(
   (t) => [index("buys_user_idx").on(t.userId)],
 );
 
+/** Demo mode only: the fake vault's on-chain state. Balances are derived from demo rows (lib/near/demo.ts). */
+export const demoVaults = pgTable("demo_vaults", {
+  vaultAccountId: text("vault_account_id").primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  state: jsonb("state").notNull(),
+  withdrawn: baseUnits("withdrawn").notNull().default("0"),
+});
+
 export type User = typeof users.$inferSelect;
 export type FundingAttempt = typeof fundingAttempts.$inferSelect;
 export type Buy = typeof buys.$inferSelect;
+export type DemoVault = typeof demoVaults.$inferSelect;

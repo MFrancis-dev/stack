@@ -26,6 +26,14 @@ export function costBps(quote: Pick<QuoteSummary, "amountInUsd" | "amountOutUsd"
   return Number((lost + inUsd - 1n) / inUsd);
 }
 
+/** Plain-language skip reason, e.g. "Fees were 4.35%, above your 3.00% limit". */
+export function costSkipNote(costBps: number | null, maxCostBps: number): string {
+  const pct = (bps: number) => `${(bps / 100).toFixed(2)}%`;
+  return costBps === null
+    ? "The price quote didn't include a cost, so it wasn't safe to buy"
+    : `Fees were ${pct(costBps)}, above your ${pct(maxCostBps)} limit`;
+}
+
 export type CostVerdict = { ok: true; costBps: number } | { ok: false; costBps: number | null; reason: "unknown_cost" | "over_limit" };
 
 export function checkCost(quote: Pick<QuoteSummary, "amountInUsd" | "amountOutUsd">, maxCostBps: number): CostVerdict {
