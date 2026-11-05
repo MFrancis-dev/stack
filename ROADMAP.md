@@ -24,10 +24,10 @@
 | 7. Demo mode & dry-run | Nov 11 | 100% | ✅ done |
 | 8. Hardening & edge cases | Nov 11–12 | 89% | in progress (K8.8 blocked on deploy) |
 | 9. Deploy & real run | Nov 12 | 0% | not started |
-| 10. README & public repo | Nov 12–13 | 14% | in progress |
+| 10. README & public repo | Nov 12–13 | 100% | ✅ done (add hosted URL after K9.2) |
 | 11. Launch: video, post, submission | Nov 13–14 | 0% | not started |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~68%** | |
+| **Overall (MVP)** | | **~74%** | |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
@@ -179,13 +179,13 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 
 ## Phase 10 — README & public repo (Nov 12–13)
 
-- [ ] **K10.1** [#83](https://github.com/MFrancis-dev/stack/issues/83) README: what, problem, how NEAR Intents + vault contracts are used, "do X → see Y", demo URL
-- [ ] **K10.2** [#84](https://github.com/MFrancis-dev/stack/issues/84) README: architecture summary, invariants, **keeper trust assumption**, limitations
-- [ ] **K10.3** [#85](https://github.com/MFrancis-dev/stack/issues/85) README: libraries/templates used; code written in the hackathon window
-- [~] **K10.4** [#86](https://github.com/MFrancis-dev/stack/issues/86) (2026-11-04: README links the Settle repo; keep it in the final README) README names **Settle** as the team's other, independent project (Q-015)
-- [ ] **K10.5** [#87](https://github.com/MFrancis-dev/stack/issues/87) LICENSE; `.env.example` complete; gitleaks clean
+- [x] **K10.1** [#83](https://github.com/MFrancis-dev/stack/issues/83) README: what, problem, how NEAR Intents + vault contracts are used, "do X → see Y", demo URL · 2026-11-05: what it is, the problem, how NEAR Intents + vault contracts are used, two-minute demo with a do/see table; hosted URL to be added after K9.2
+- [x] **K10.2** [#84](https://github.com/MFrancis-dev/stack/issues/84) README: architecture summary, invariants, **keeper trust assumption**, limitations · 2026-11-05: architecture summary, invariants I1–I7, keeper trust assumption, honest status/limitations (not deployed yet, K3.5 fail-closed, no CSP)
+- [x] **K10.3** [#85](https://github.com/MFrancis-dev/stack/issues/85) README: libraries/templates used; code written in the hackathon window · 2026-11-05: libraries and tools with versions (Q-005); all code written in the hackathon window, first commit 2026-11-04
+- [x] **K10.4** [#86](https://github.com/MFrancis-dev/stack/issues/86) (2026-11-04: README links the Settle repo; keep it in the final README) README names **Settle** as the team's other, independent project (Q-015) · 2026-11-05: README names Settle with a link (Q-015)
+- [x] **K10.5** [#87](https://github.com/MFrancis-dev/stack/issues/87) LICENSE; `.env.example` complete; gitleaks clean · 2026-11-05: MIT LICENSE; `.env.example` complete (added `NEXT_PUBLIC_NEAR_NETWORK`); CI secret scan green
 - [x] **K10.6** [#88](https://github.com/MFrancis-dev/stack/issues/88) 👤 Make the repo public · 2026-11-04: public from creation; must stay public through judging (Q-014)
-- [ ] **K10.7** [#89](https://github.com/MFrancis-dev/stack/issues/89) Fresh-clone check from the public URL
+- [x] **K10.7** [#89](https://github.com/MFrancis-dev/stack/issues/89) Fresh-clone check from the public URL · 2026-11-05: cloned https://github.com/MFrancis-dev/stack, no .env, `pnpm install && pnpm demo`, followed every README step: all 10 checks matched
 
 ## Phase 11 — Launch (Nov 13–14)
 
@@ -218,6 +218,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-05 · agent · Phase 10 README for judges and AI screeners; .env.example completed; README steps verified from a fresh clone of the public repo · K10.1–K10.5, K10.7
 - 2026-11-05 · agent · Phase 8 hardening: wNEAR registration gate for NEAR plans, in-flight withdraw warning, log redaction + security headers, demo cleanup loop (new K8.9); K8.1/4/5/6 verified against existing tests; K8.8 blocked on deploy · K8.1–K8.9
 - 2026-11-05 · agent · Phase 7 demo mode: per-visitor demo, demo adapters, owner actions without a wallet, fast-forward/reset, worker isolation, offline token fallback, Playwright journey in CI; fixed PGlite bundling + per-route dev session secret found in the browser; 119 unit/route tests + 4 e2e · K7.1–K7.6
 - 2026-11-05 · agent · Phase 6 UI reviewed in the browser (desktop + phone, redirect and signed-out states, no server errors); sign-in button width fix · K6.1–K6.8
