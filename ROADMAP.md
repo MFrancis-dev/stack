@@ -192,7 +192,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 
 - [x] **K11.1** [#90](https://github.com/MFrancis-dev/stack/issues/90) Video script: saver's problem → fund from another chain → buy lands in own wallet → NEAR's role → next step · 2026-11-05: `docs/launch/VIDEO_SCRIPT.md` (90 s, hosted demo, shot list)
 - [ ] **K11.2** [#91](https://github.com/MFrancis-dev/stack/issues/91) 👤 Record the video
-- [x] **K11.3** [#92](https://github.com/MFrancis-dev/stack/issues/92) Draft the X post (@NEARProtocol #NEARHackathon, optional @NearLegion @NearBuilders, repo + demo links) · 2026-11-05: `docs/launch/X_POST.md` (one-post and two-post versions)
+- [x] **K11.3** [#92](https://github.com/MFrancis-dev/stack/issues/92) Draft the X post (@NEARProtocol #NEARHackathon, optional @NearLegion @NearBuilders, repo + demo links) · 2026-11-05: `docs/launch/X_POST.md` (one-post and two-post versions) · 2026-11-05: link preview card + site icon so the post's links show the product (`app/opengraph-image.tsx`, `app/icon.svg`)
 - [ ] **K11.4** [#93](https://github.com/MFrancis-dev/stack/issues/93) 👤 Publish; paste URL here
 - [x] **K11.5** [#94](https://github.com/MFrancis-dev/stack/issues/94) Re-read live HACKATHON.md · 2026-11-05: re-read; new since the design: Q-006 says a 1Click JWT is not required (0.2% fee without it), Q-012 keep the hosted demo up to 11-18 (ideally 11-25), Q-017 AI screening. Re-read again on submission day
 - [x] **K11.6** [#95](https://github.com/MFrancis-dev/stack/issues/95) Draft submission payload (track `defi`); print it for the human · 2026-11-05: `docs/launch/SUBMISSION.md`: field rules, `idea` text drafted (1,031 chars), steps. The filled payload is printed in chat at submission time, never committed
@@ -219,6 +219,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-05 · agent · Link preview card (Open Graph + X large card, display font with fallback), site icon, page title/description; README updated · K11.3
 - 2026-11-05 · agent · Hosted worker: `worker/tick.ts` + `GET /api/cron/tick` (cron-secret protected, loops isolated, in-flight work first) + scheduled `Worker tick` workflow, off until enabled; shared `cronAuthorized`; 4 tests; README/ARCHITECTURE updated · K9.2
 - 2026-11-05 · agent · Launch kit: video script, X post draft, submission guide with the `idea` text; live rules re-read (JWT optional, keep demo up to 11-18); README: landing fee check in the do/see table, Node 22, launch links · K11.1, K11.3, K11.5, K11.6, K0.8
 - 2026-11-05 · agent · Stack is now the only submission: removed the sister-project link from the README, landing footer, PRD, AGENTS, ESSENTIALS and PR template after a review of 150 submitted projects found Stack's idea unique and Settle's crowded · K10.4
