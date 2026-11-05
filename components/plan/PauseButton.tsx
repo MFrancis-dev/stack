@@ -29,7 +29,7 @@ export function PauseButton() {
       </span>
       {hasPlan ? (
         <button
-          className="min-h-9 rounded-md px-3 text-sm font-bold ring-1 ring-inset ring-mist hover:bg-paper-deep disabled:text-sage"
+          className="min-h-9 rounded-md px-3 text-sm font-bold bg-surface ring-1 ring-inset ring-mist hover:bg-paper-deep disabled:text-sage"
           disabled={busy}
           onClick={() => {
             setError(null);

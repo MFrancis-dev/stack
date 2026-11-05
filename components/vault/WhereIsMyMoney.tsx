@@ -36,7 +36,7 @@ export function WhereIsMyMoney({ buys }: { buys: BuyDto[] }) {
 
   return (
     <section aria-labelledby="motion" className="grid gap-3">
-      <h2 id="motion" className="text-xl font-bold">
+      <h2 id="motion" className="text-lg font-bold">
         Where your money is right now
       </h2>
       {incoming.length === 0 && outgoing.length === 0 ? (
@@ -44,7 +44,7 @@ export function WhereIsMyMoney({ buys }: { buys: BuyDto[] }) {
       ) : (
         <ul className="grid gap-2">
           {incoming.map((a) => (
-            <li key={a.id} className="flex flex-wrap justify-between gap-2 rounded-md bg-paper-deep px-4 py-3">
+            <li key={a.id} className="flex flex-wrap justify-between gap-2 rounded-lg bg-surface px-4 py-3 ring-1 ring-inset ring-mist">
               <span>
                 About ${formatUsdc(a.expectedOut)} coming into your vault: {FUNDING_WORDS[a.status] ?? a.status}
               </span>
@@ -54,7 +54,7 @@ export function WhereIsMyMoney({ buys }: { buys: BuyDto[] }) {
             </li>
           ))}
           {outgoing.map((b) => (
-            <li key={b.id} className="rounded-md bg-paper-deep px-4 py-3">
+            <li key={b.id} className="rounded-lg bg-surface px-4 py-3 ring-1 ring-inset ring-mist">
               ${formatUsdc(b.amountIn)} buying about {formatTarget(b.amountOut, b.targetAsset)}, on its way to your wallet
             </li>
           ))}

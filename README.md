@@ -130,6 +130,7 @@ Listed per hackathon rule Q-005. All code in this repository was written during 
 - **Data:** Drizzle ORM 0.36 + drizzle-kit, PGlite 0.2 (embedded Postgres), `postgres` 3.4
 - **Contracts:** `near-sdk` 5.30, `near-contract-standards` 5.30 (test token only), `near-workspaces` 0.24, `cargo-near` 0.22, tokio, anyhow, serde_json
 - **Tooling:** TypeScript 5.9, tsx, Vitest 2, Playwright 1.64, ESLint 9, Prettier 3, pnpm 11, nanoid, server-only
+- **Design:** references from land-book.com (finance and savings sites); public-domain and Creative Commons pictures and footage from Wikimedia Commons and The Metropolitan Museum of Art, credited in the page footer and listed in `public/images/credits.json`
 
 ## License
 

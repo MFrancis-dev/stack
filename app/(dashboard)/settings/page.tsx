@@ -16,7 +16,7 @@ export default function SettingsPage() {
   return (
     <div className="grid gap-14">
       <div className="grid gap-2">
-        <h1 className="text-4xl font-bold">Settings</h1>
+        <h1 className="text-2xl font-bold">Settings</h1>
         <p className="text-lg text-sage">
           Your vault is <span className="break-all font-bold text-ink">{v.vaultAccountId}</span>. Only {v.accountId} can withdraw from it.
         </p>

@@ -1,19 +1,22 @@
 @import "tailwindcss";
 
 /*
- * Stack design tokens (K6.x). Sage paper, green-black ink, moss for actions, brass for what you've
- * stacked. Brass is decoration only — never used for text (contrast).
+ * App screen tokens (K6.x), the "ledger" style: a sage ground from the product's world, white
+ * panels with a faint edge, bottle-green ink for text and the one primary action, and deep gold only
+ * on the stack itself (the main data). The public pages use their own tokens (app/landing.css).
  */
 @theme {
-  --color-paper: #f3f5f2;
-  --color-paper-deep: #e7ece7;
-  --color-ink: #18231f;
-  --color-sage: #56655d;
-  --color-mist: #d9e0da;
-  --color-moss: #2f6b4f;
-  --color-moss-deep: #24543e;
-  --color-brass: #b8892b;
-  --color-brass-soft: #e8d5a6;
+  --color-paper: #f2f5f2;
+  --color-paper-deep: #e8ede8;
+  --color-surface: #ffffff;
+  --color-ink: #133621;
+  --color-sage: #4f5e56;
+  --color-mist: #dde4de;
+  --color-moss: #133621;
+  --color-moss-deep: #1f4a2e;
+  --color-brass: #a37b12;
+  --color-brass-soft: #ecd9a0;
+  --color-gold: #f4d96c;
   --color-rust: #b4412f;
 
   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
@@ -58,5 +61,9 @@ h3 {
 
 /* A buy that is on its way: brass stripes instead of animation. */
 .stack-pending {
-  background-image: repeating-linear-gradient(135deg, var(--color-brass) 0 6px, var(--color-brass-soft) 6px 12px);
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--color-brass) 0 6px,
+    var(--color-brass-soft) 6px 12px
+  );
 }

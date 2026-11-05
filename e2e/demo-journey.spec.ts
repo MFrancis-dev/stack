@@ -4,8 +4,8 @@ import { expect, test } from "@playwright/test";
 test("a judge can try Stack end to end with no wallet and no funds", async ({ page }) => {
   // 1. Landing → demo → own example vault
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Put your savings on a schedule." })).toBeVisible();
-  await page.getByRole("link", { name: "See it with example data" }).click();
+  await expect(page.getByRole("heading", { name: "Savings on a schedule", level: 1 })).toBeVisible();
+  await page.getByRole("link", { name: "Try it with example data" }).click();
   await page.getByRole("button", { name: "Open the demo" }).click();
   await expect(page.getByText("Your stack")).toBeVisible();
   await expect(page.getByLabel("Demo mode")).toBeVisible();

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 /** Inline message. `tone="warn"` for things the user should act on, never for decoration. */
 export function Notice({ tone = "info", children }: { tone?: "info" | "warn" | "error"; children: ReactNode }) {
   const look = {
-    info: "bg-paper-deep text-ink",
+    info: "bg-surface text-ink ring-1 ring-inset ring-mist",
     warn: "bg-brass-soft/60 text-ink",
     error: "bg-rust/10 text-rust",
   }[tone];
