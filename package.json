@@ -6,11 +6,12 @@
   "license": "MIT",
   "packageManager": "pnpm@11.17.0",
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "vercel-build": "drizzle-kit migrate && next build",
     "start": "next start",
     "worker": "tsx --conditions=react-server worker/index.ts",
     "demo": "tsx --conditions=react-server scripts/seed-demo.ts && next dev",

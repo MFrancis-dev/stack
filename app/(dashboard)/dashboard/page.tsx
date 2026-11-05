@@ -20,6 +20,8 @@ export default function Dashboard() {
   const buys = useBuys(!!v?.vaultAccountId);
   if (!v?.state || !v.usdcBalance) return null;
 
+  // Until the buy list arrives, say so: an empty list would read as "no buys yet" (slow on a cold hosted DB).
+  if (buys.isPending) return <p className="text-sage" role="status">Loading your stack…</p>;
   const list = buys.data ?? [];
   const recent = list.slice(0, 30);
   const bars: StackBar[] = recent.map((b) => ({

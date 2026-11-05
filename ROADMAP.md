@@ -23,11 +23,11 @@
 | 6. UI | Nov 9–11 | 100% | ✅ done |
 | 7. Demo mode & dry-run | Nov 11 | 100% | ✅ done |
 | 8. Hardening & edge cases | Nov 11–12 | 89% | in progress (K8.8 blocked on deploy) |
-| 9. Deploy & real run | Nov 12 | 0% | not started |
-| 10. README & public repo | Nov 12–13 | 100% | ✅ done (add hosted URL after K9.2) |
+| 9. Deploy & real run | Nov 12 | 17% | in progress (hosted demo live; worker + real run need K1.13/K0.8) |
+| 10. README & public repo | Nov 12–13 | 100% | ✅ done (hosted URL added) |
 | 11. Launch: video, post, submission | Nov 13–14 | 0% | not started |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~74%** | |
+| **Overall (MVP)** | | **~76%** | |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
@@ -170,8 +170,8 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 
 ## Phase 9 — Deploy & real run (Nov 12)
 
-- [ ] **K9.1** [#77](https://github.com/MFrancis-dev/stack/issues/77) 👤 Pick hosting (web, worker, Postgres); set production env vars
-- [ ] **K9.2** [#78](https://github.com/MFrancis-dev/stack/issues/78) Deploy app + worker; hosted demo reachable
+- [x] **K9.1** [#77](https://github.com/MFrancis-dev/stack/issues/77) 👤 Pick hosting (web, worker, Postgres); set production env vars · 2026-11-05: human picked Vercel (account mallison031, project `stack-savings`) + Neon via the Vercel integration (new free `stack-savings-db`); `SESSION_SECRET`, `CRON_SECRET`, `PUBLIC_APP_URL` set (secrets never printed). Worker host to pick with real mode
+- [~] **K9.2** [#78](https://github.com/MFrancis-dev/stack/issues/78) Deploy app + worker; hosted demo reachable · 2026-11-05: app deployed, hosted demo live at https://stack-savings.vercel.app/demo (migrations at build, daily demo-cleanup cron, cron route 401 without its secret, security headers on); Playwright journey passes against it (desktop + phone, `E2E_BASE_URL`). Fixed: overview/history showed "no buys" while the list was still loading. Left: worker on a long-running host, needed only once contracts are deployed (K1.13)
 - [ ] **K9.3** [#79](https://github.com/MFrancis-dev/stack/issues/79) 👤 Approve one small real deposit (any chain → vault)
 - [ ] **K9.4** [#80](https://github.com/MFrancis-dev/stack/issues/80) 👤 Approve one small real scheduled buy (short interval) → asset lands in the owner's address
 - [ ] **K9.5** [#81](https://github.com/MFrancis-dev/stack/issues/81) 👤 Approve a withdraw test
@@ -179,7 +179,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 
 ## Phase 10 — README & public repo (Nov 12–13)
 
-- [x] **K10.1** [#83](https://github.com/MFrancis-dev/stack/issues/83) README: what, problem, how NEAR Intents + vault contracts are used, "do X → see Y", demo URL · 2026-11-05: what it is, the problem, how NEAR Intents + vault contracts are used, two-minute demo with a do/see table; hosted URL to be added after K9.2
+- [x] **K10.1** [#83](https://github.com/MFrancis-dev/stack/issues/83) README: what, problem, how NEAR Intents + vault contracts are used, "do X → see Y", demo URL · 2026-11-05: what it is, the problem, how NEAR Intents + vault contracts are used, two-minute demo with a do/see table · 2026-11-05: hosted demo URL added
 - [x] **K10.2** [#84](https://github.com/MFrancis-dev/stack/issues/84) README: architecture summary, invariants, **keeper trust assumption**, limitations · 2026-11-05: architecture summary, invariants I1–I7, keeper trust assumption, honest status/limitations (not deployed yet, K3.5 fail-closed, no CSP)
 - [x] **K10.3** [#85](https://github.com/MFrancis-dev/stack/issues/85) README: libraries/templates used; code written in the hackathon window · 2026-11-05: libraries and tools with versions (Q-005); all code written in the hackathon window, first commit 2026-11-04
 - [x] **K10.4** [#86](https://github.com/MFrancis-dev/stack/issues/86) (2026-11-04: README links the Settle repo; keep it in the final README) README names **Settle** as the team's other, independent project (Q-015) · 2026-11-05: README names Settle with a link (Q-015)
@@ -218,6 +218,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-05 · agent · Hosted the demo on Vercel + Neon (build-time migrations, hosted DB guard, daily cleanup cron, .vercelignore, Node 22); loading states on overview/history; `E2E_BASE_URL` runs the journey against the live site (4/4 pass); README hosted URL; docs synced; `.gitleaksignore` for one fake test value (false positive) · K9.1, K9.2, K10.1
 - 2026-11-05 · agent · Phase 10 README for judges and AI screeners; .env.example completed; README steps verified from a fresh clone of the public repo · K10.1–K10.5, K10.7
 - 2026-11-05 · agent · Phase 8 hardening: wNEAR registration gate for NEAR plans, in-flight withdraw warning, log redaction + security headers, demo cleanup loop (new K8.9); K8.1/4/5/6 verified against existing tests; K8.8 blocked on deploy · K8.1–K8.9
 - 2026-11-05 · agent · Phase 7 demo mode: per-visitor demo, demo adapters, owner actions without a wallet, fast-forward/reset, worker isolation, offline token fallback, Playwright journey in CI; fixed PGlite bundling + per-route dev session secret found in the browser; 119 unit/route tests + 4 e2e · K7.1–K7.6

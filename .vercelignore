@@ -1,0 +1,10 @@
+# Only the web app is deployed; the Rust contracts, local data and build output stay local.
+contracts/
+.pglite/
+.next/
+node_modules/
+test-results/
+playwright-report/
+.env
+.env.*
+!.env.example

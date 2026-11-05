@@ -25,7 +25,13 @@ export default function HistoryPage() {
           Download CSV
         </a>
       </div>
-      {buys.isError ? <Notice tone="error">{buys.error.message}</Notice> : <BuyTable buys={buys.data ?? []} />}
+      {buys.isError ? (
+        <Notice tone="error">{buys.error.message}</Notice>
+      ) : buys.isPending ? (
+        <p className="text-sage" role="status">Loading your buys…</p>
+      ) : (
+        <BuyTable buys={buys.data ?? []} />
+      )}
     </div>
   );
 }
