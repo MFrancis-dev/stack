@@ -28,3 +28,6 @@ test-results/
 
 # design-review working files (screenshots, reports)
 .taste-skill/
+
+# one-off local checks
+.scratch/

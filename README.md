@@ -11,7 +11,7 @@ Stack is a personal savings vault on NEAR. You fund it once from whatever you ho
 
 ## Try it in two minutes (no wallet, no keys, no funds)
 
-Requirements: Node 20+ and pnpm 11.
+Requirements: Node 22 and pnpm 11.
 
 ```bash
 git clone https://github.com/MFrancis-dev/stack.git
@@ -28,6 +28,7 @@ No `.env` is needed. Open **http://localhost:3000/demo** and press **Open the de
 
 | Do | See |
 |---|---|
+| On the landing page, scroll to **Fees, checked every week**, pick Bitcoin and drag the amount to $30 | "Above your 3% limit: this week is skipped and nothing is spent." At $100 it says the buy goes ahead (about 1.75% in fees). Ether and NEAR stay under 3% at much smaller amounts |
 | Open the demo | **Overview**: "Your stack" in BTC from 3 buys, $996.70 ready to buy with, the plan ("$100 of BTC, every week"), the next buy time, and a stack of bars — solid = arrived, dashed = skipped (cost nothing) |
 | **Add funds** → pick "SOL on sol", amount `2`, any Solana refund address → **Preview** | "2 SOL becomes about $… in your vault". Prices are live from NEAR Intents when reachable |
 | → **Get deposit address** | A demo deposit address with QR code, countdown and warnings. Status moves from waiting to "Done" in about a minute and the balance goes up by the quoted amount |
@@ -36,7 +37,9 @@ No `.env` is needed. Open **http://localhost:3000/demo** and press **Open the de
 | **History** | Every buy incl. "Skipped: fees too high — Fees were 4.xx%, above your 3.00% limit. Nothing was spent." **Download CSV** gives a file with the USD value of each buy |
 | Press **Pause** (header) | Status turns to "Paused"; Resume brings it back |
 
-The same journey runs automatically: `pnpm e2e` (Playwright, desktop + phone; also in CI).
+The same journey runs automatically: `pnpm e2e` (Playwright, desktop + phone; also in CI), or against the hosted copy with `E2E_BASE_URL=https://stack-savings.vercel.app pnpm e2e`.
+
+Launch material (demo video script, X post draft, submission guide) is in [`docs/launch/`](docs/launch/).
 
 ---
 

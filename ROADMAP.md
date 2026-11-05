@@ -25,9 +25,9 @@
 | 8. Hardening & edge cases | Nov 11–12 | 89% | in progress (K8.8 blocked on deploy) |
 | 9. Deploy & real run | Nov 12 | 17% | in progress (hosted demo live; worker + real run need K1.13/K0.8) |
 | 10. README & public repo | Nov 12–13 | 100% | ✅ done (hosted URL added) |
-| 11. Launch: video, post, submission | Nov 13–14 | 0% | not started |
+| 11. Launch: video, post, submission | Nov 13–14 | 57% | in progress (video, post and submission need the human) |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~76%** | |
+| **Overall (MVP)** | | **~80%** | |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
@@ -76,7 +76,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 - [x] **K0.5** [#9](https://github.com/MFrancis-dev/stack/issues/9) (2026-11-04: rustc 1.98.1, cargo-near 0.22.0; near-sdk pinned =5.30.0, near-workspaces =0.24.0; `cargo check` clean; `pnpm contracts:build` → vault 110.5 KB, factory 107.6 KB wasm; `cargo test` 15 ignored stubs) `contracts/` Cargo workspace (factory, vault, tests) with `cargo-near` + near-workspaces; `rust-toolchain.toml`
 - [x] **K0.6** [#10](https://github.com/MFrancis-dev/stack/issues/10) (2026-11-04: drizzle switch, env.ts, .env.example done; db client + check-env stubs) Drizzle with PGlite / Postgres switch; `lib/server/env.ts`, `.env.example`, `scripts/check-env.ts` · 2026-11-04: `lib/db/client.ts` (PGlite ↔ Postgres, in-memory test passes), `missingForRealMode()` + `pnpm check-env` (names only); worker/scripts run with `--conditions=react-server` so `server-only` doesn't throw in plain Node
 - [x] **K0.7** [#11](https://github.com/MFrancis-dev/stack/issues/11) CI: typecheck, lint, test, `cargo test`, gitleaks · 2026-11-04: `.github/workflows/ci.yml` (web: typecheck/lint/test/build · contracts: cargo check + test · gitleaks); first run on `main` green (run 41886755850)
-- [ ] **K0.8** [#12](https://github.com/MFrancis-dev/stack/issues/12) 👤 Register a 1Click partner JWT
+- [ ] **K0.8** [#12](https://github.com/MFrancis-dev/stack/issues/12) 👤 Register a 1Click partner JWT · 2026-11-05: optional per live rules (Q-006: without it 1Click charges 0.2%). A real quote without it still returned "Failed to get quote" today, but 1Click was refusing every pair at the time, dry quotes included, so retest
 - [!] **K0.9** [#13](https://github.com/MFrancis-dev/stack/issues/13) 🔍 Does 1Click storage-register NEAR deposit addresses? (K-B1) · 2026-11-04: non-dry quotes return "Failed to get quote" without a partner JWT → needs K0.8. Vault registers the deposit address anyway (safe default)
 - [x] **K0.10** [#14](https://github.com/MFrancis-dev/stack/issues/14) 🔍 + ⛔ Asset ids/decimals for USDC (NEAR), BTC, ETH, NEAR from `/v0/tokens` → KD-6 · 2026-11-04: ids/decimals verified (ARCHITECTURE §12): USDC `nep141:17208628…133a1` (6), BTC `nep141:btc.omft.near` (8), ETH `nep141:eth.omft.near` (18), NEAR `nep141:wrap.near` (24). KD-6 decided: BTC, ETH, NEAR
 - [x] **K0.11** [#15](https://github.com/MFrancis-dev/stack/issues/15) 🔍 Quote USD field names for the cost check; `/v0/status` enum; deposits after deadline · 2026-11-04: quote has `amountInUsd`/`amountOutUsd` (+ minAmountOut, withdrawFee, refundFee, timeEstimate, signature, timestamp); status enum = 7 values already in `status.ts`; `refundTo` must exist; BTC deposits may need ~1 h (deadline). Late-deposit behaviour still unverified
@@ -190,12 +190,12 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 
 ## Phase 11 — Launch (Nov 13–14)
 
-- [ ] **K11.1** [#90](https://github.com/MFrancis-dev/stack/issues/90) Video script: saver's problem → fund from another chain → buy lands in own wallet → NEAR's role → next step
+- [x] **K11.1** [#90](https://github.com/MFrancis-dev/stack/issues/90) Video script: saver's problem → fund from another chain → buy lands in own wallet → NEAR's role → next step · 2026-11-05: `docs/launch/VIDEO_SCRIPT.md` (90 s, hosted demo, shot list)
 - [ ] **K11.2** [#91](https://github.com/MFrancis-dev/stack/issues/91) 👤 Record the video
-- [ ] **K11.3** [#92](https://github.com/MFrancis-dev/stack/issues/92) Draft the X post (@NEARProtocol #NEARHackathon, optional @NearLegion @NearBuilders, repo + demo links)
+- [x] **K11.3** [#92](https://github.com/MFrancis-dev/stack/issues/92) Draft the X post (@NEARProtocol #NEARHackathon, optional @NearLegion @NearBuilders, repo + demo links) · 2026-11-05: `docs/launch/X_POST.md` (one-post and two-post versions)
 - [ ] **K11.4** [#93](https://github.com/MFrancis-dev/stack/issues/93) 👤 Publish; paste URL here
-- [ ] **K11.5** [#94](https://github.com/MFrancis-dev/stack/issues/94) Re-read live HACKATHON.md
-- [ ] **K11.6** [#95](https://github.com/MFrancis-dev/stack/issues/95) Draft submission payload (track `defi`); print it for the human
+- [x] **K11.5** [#94](https://github.com/MFrancis-dev/stack/issues/94) Re-read live HACKATHON.md · 2026-11-05: re-read; new since the design: Q-006 says a 1Click JWT is not required (0.2% fee without it), Q-012 keep the hosted demo up to 11-18 (ideally 11-25), Q-017 AI screening. Re-read again on submission day
+- [x] **K11.6** [#95](https://github.com/MFrancis-dev/stack/issues/95) Draft submission payload (track `defi`); print it for the human · 2026-11-05: `docs/launch/SUBMISSION.md`: field rules, `idea` text drafted (1,031 chars), steps. The filled payload is printed in chat at submission time, never committed
 - [ ] **K11.7** [#96](https://github.com/MFrancis-dev/stack/issues/96) 👤 Confirm; submit once (keep `requestId`); record the 201
 
 ## Phase 12 — After submission (Nov 14–25)
@@ -219,6 +219,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-05 · agent · Launch kit: video script, X post draft, submission guide with the `idea` text; live rules re-read (JWT optional, keep demo up to 11-18); README: landing fee check in the do/see table, Node 22, launch links · K11.1, K11.3, K11.5, K11.6, K0.8
 - 2026-11-05 · agent · Stack is now the only submission: removed the sister-project link from the README, landing footer, PRD, AGENTS, ESSENTIALS and PR template after a review of 150 submitted projects found Stack's idea unique and Settle's crowded · K10.4
 - 2026-11-05 · agent · Redesign: new landing + demo entry (land-book references, coin motif, live fee check, credited pictures), app screens restyled to match; fee model moved to `lib/core/feeModel.ts`; e2e updated for the new landing copy · K6.9
 - 2026-11-05 · agent · Hosted the demo on Vercel + Neon (build-time migrations, hosted DB guard, daily cleanup cron, .vercelignore, Node 22); loading states on overview/history; `E2E_BASE_URL` runs the journey against the live site (4/4 pass); README hosted URL; docs synced; `.gitleaksignore` for one fake test value (false positive) · K9.1, K9.2, K10.1

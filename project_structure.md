@@ -23,6 +23,7 @@ stack/
 ├─ contracts/                    # Rust smart contracts
 ├─ app/ · components/ · lib/ · worker/
 ├─ drizzle/                      # generated migrations — never hand-edit
+├─ docs/launch/                  # VIDEO_SCRIPT.md, X_POST.md, SUBMISSION.md (no personal data)
 ├─ e2e/ · scripts/ · public/      # public/images: found pictures + footage for the public pages, credits.json
 ```
 
