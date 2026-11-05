@@ -340,6 +340,10 @@ Top level: `correlationId`, `quote`, `quoteRequest`, `signature`, `timestamp`. `
 `KNOWN_DEPOSIT_TX`, `PENDING_DEPOSIT`, `INCOMPLETE_DEPOSIT`, `PROCESSING`, `SUCCESS`, `REFUNDED`, `FAILED` — exactly what `lib/core/status.ts` maps. Status responses also carry `quoteResponse`, `updatedAt`, `swapDetails`.
 
 ### Behaviour found
+- Real (non-dry) quotes work without a JWT, with about 0.25% extra fee (tested 2026-11-05: $100 USDC → BTC ≈ 2.0%). Re-verified: `depositAddress` returned.
+- Real quotes fail with "Failed to get quote" for `refundTo` = `wrap.near` or `usdt.tether-token.near`, and work for `near`, `intents.near`, `aurora` (contracts included). Likely cause, not confirmed: the refund account must be registered on the origin token. Vaults are registered on USDC by the factory; recheck with a real vault.
+- `verifyQuoteSignature()` (SDK 0.1.26, the newest) is false on dry and real quotes. Hashing every combination of the extra request fields (`depositMode`, `confidentiality`, `insured`, `appFees`, `quoteWaitingTimeMs`) and optional quote fields (1,024 tries) against the SDK's key also failed, so the key or hash has likely changed (K3.5).
+- 1Click refused every pair for a few hours on 2026-11-05 ("Quoting for this pair is not available"), dry quotes included; the demo fell back to the calibrated model.
 - `refundTo` that doesn't exist → "Internal server error" (looks like an outage; it isn't).
 - wNEAR can be delivered to named or implicit accounts, not to a contract like `wrap.near`.
 - Intents withdrawals to a NEAR account **give no refund if the receiver isn't storage-registered** on the token → the factory must register the vault on USDC (K1.7) and owners must be registered on `wrap.near` before a NEAR plan (K8.2). Non-negotiable.

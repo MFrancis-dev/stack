@@ -14,10 +14,10 @@
 | Phase | Target dates | Progress | Status |
 |---|---|---|---|
 | D. Design & docs | Nov 4 | 100% | ✅ done |
-| 0. Setup & verification | Nov 4–5 | 80% | in progress (K0.9 blocked on K0.8; K0.8, K0.14 👤) |
+| 0. Setup & verification | Nov 4–5 | 86% | in progress (K0.9 needs a real deposit; K0.14 👤) |
 | 1. Contracts | Nov 5–7 | 92% | in progress (K1.13 deploy is 👤) |
 | 2. Core logic (`lib/core`) | Nov 6–7 | 100% | ✅ done |
-| 3. Integrations (1Click, NEAR, DB) | Nov 7–8 | 80% | in progress (K3.5 blocked on K0.8) |
+| 3. Integrations (1Click, NEAR, DB) | Nov 7–8 | 80% | in progress (K3.5 blocked: signature check fails on real quotes) |
 | 4. API routes | Nov 8–9 | 100% | ✅ done |
 | 5. Worker (scheduler) | Nov 9–10 | 100% | ✅ done |
 | 6. UI | Nov 9–11 | 100% | ✅ done |
@@ -46,9 +46,9 @@ Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of al
 
 ## Blockers
 
-- [K0.9] Real (non-dry) 1Click quotes need a partner JWT · 👤 human via K0.8 (partners.near-intents.org) · since 2026-11-04
+- [K0.9] Needs one real deposit to observe; the vault registers the deposit address anyway (safe default) · needs K1.13 + K9.3 · since 2026-11-05
 - [K8.8] Re-running invariant tests against the deployed code needs the contracts deployed (K1.13) · 👤 human · since 2026-11-05
-- [K3.5] Confirming quote-signature verification needs a real quote → needs the partner JWT (K0.8) · 👤 human · since 2026-11-04
+- [K3.5] `verifyQuoteSignature()` is false on real quotes with the newest SDK; real funding and buys fail closed until 1Click confirms the signing key or hash · 👤 human: ask in NEAR Discord / partner support, or decide whether to go without it · since 2026-11-05
 
 Format: `- [task id] what blocks it · who can unblock · since date`
 
@@ -76,8 +76,8 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 - [x] **K0.5** [#9](https://github.com/MFrancis-dev/stack/issues/9) (2026-11-04: rustc 1.98.1, cargo-near 0.22.0; near-sdk pinned =5.30.0, near-workspaces =0.24.0; `cargo check` clean; `pnpm contracts:build` → vault 110.5 KB, factory 107.6 KB wasm; `cargo test` 15 ignored stubs) `contracts/` Cargo workspace (factory, vault, tests) with `cargo-near` + near-workspaces; `rust-toolchain.toml`
 - [x] **K0.6** [#10](https://github.com/MFrancis-dev/stack/issues/10) (2026-11-04: drizzle switch, env.ts, .env.example done; db client + check-env stubs) Drizzle with PGlite / Postgres switch; `lib/server/env.ts`, `.env.example`, `scripts/check-env.ts` · 2026-11-04: `lib/db/client.ts` (PGlite ↔ Postgres, in-memory test passes), `missingForRealMode()` + `pnpm check-env` (names only); worker/scripts run with `--conditions=react-server` so `server-only` doesn't throw in plain Node
 - [x] **K0.7** [#11](https://github.com/MFrancis-dev/stack/issues/11) CI: typecheck, lint, test, `cargo test`, gitleaks · 2026-11-04: `.github/workflows/ci.yml` (web: typecheck/lint/test/build · contracts: cargo check + test · gitleaks); first run on `main` green (run 41886755850)
-- [ ] **K0.8** [#12](https://github.com/MFrancis-dev/stack/issues/12) 👤 Register a 1Click partner JWT · 2026-11-05: optional per live rules (Q-006: without it 1Click charges 0.2%). A real quote without it still returned "Failed to get quote" today, but 1Click was refusing every pair at the time, dry quotes included, so retest
-- [!] **K0.9** [#13](https://github.com/MFrancis-dev/stack/issues/13) 🔍 Does 1Click storage-register NEAR deposit addresses? (K-B1) · 2026-11-04: non-dry quotes return "Failed to get quote" without a partner JWT → needs K0.8. Vault registers the deposit address anyway (safe default)
+- [-] **K0.8** [#12](https://github.com/MFrancis-dev/stack/issues/12) 👤 Register a 1Click partner JWT · 2026-11-05: dropped as a requirement: real quotes work without it (Q-006), at about 0.25% extra fee. Optional later to lower fees
+- [!] **K0.9** [#13](https://github.com/MFrancis-dev/stack/issues/13) 🔍 Does 1Click storage-register NEAR deposit addresses? (K-B1) · 2026-11-04: non-dry quotes return "Failed to get quote" without a partner JWT → needs K0.8. Vault registers the deposit address anyway (safe default) · 2026-11-05: real quotes now work without a JWT; this needs one real deposit to observe
 - [x] **K0.10** [#14](https://github.com/MFrancis-dev/stack/issues/14) 🔍 + ⛔ Asset ids/decimals for USDC (NEAR), BTC, ETH, NEAR from `/v0/tokens` → KD-6 · 2026-11-04: ids/decimals verified (ARCHITECTURE §12): USDC `nep141:17208628…133a1` (6), BTC `nep141:btc.omft.near` (8), ETH `nep141:eth.omft.near` (18), NEAR `nep141:wrap.near` (24). KD-6 decided: BTC, ETH, NEAR
 - [x] **K0.11** [#15](https://github.com/MFrancis-dev/stack/issues/15) 🔍 Quote USD field names for the cost check; `/v0/status` enum; deposits after deadline · 2026-11-04: quote has `amountInUsd`/`amountOutUsd` (+ minAmountOut, withdrawFee, refundFee, timeEstimate, signature, timestamp); status enum = 7 values already in `status.ts`; `refundTo` must exist; BTC deposits may need ~1 h (deadline). Late-deposit behaviour still unverified
 - [x] **K0.12** [#16](https://github.com/MFrancis-dev/stack/issues/16) 🔍 Global contracts availability + cost per vault (K-B5) · 2026-11-04: NEP-591 available: global publish burns 10 NEAR/100 KB (~11 NEAR for the vault), use < 0.001 NEAR; regular deploy locks ~1.1 NEAR per vault → decision KD-8
@@ -116,7 +116,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 - [x] **K3.2** [#40](https://github.com/MFrancis-dev/stack/issues/40) Fixtures for every status + valid/tampered signatures · 2026-11-04: real dry-quote fixtures (BTC $100, ETH $10) + status fixtures for all 7 values; tampered/unknown cases tested
 - [x] **K3.3** [#41](https://github.com/MFrancis-dev/stack/issues/41) `lib/near`: rpc (`get_state`, `ft_balance_of`), nep413 verify, factory + vault bindings, keeper signer (server only), event parsing · 2026-11-04: `lib/near`: rpc views, NEP-297 event parsing, vault/factory bindings, keeper signer (server-only), NEP-413 `verifySignIn` (tested with a real signature), `nearVaultClient` adapter
 - [x] **K3.4** [#42](https://github.com/MFrancis-dev/stack/issues/42) (2026-11-04: all 3 tables written; migration not generated) `lib/db`: schema (users, funding_attempts, buys) + migration + queries · 2026-11-04: first migration (`drizzle/0000_…sql`), `db.migrate()` for PGlite + Postgres, queries for users/funding/buys, terminal-status sets; tested on in-memory PGlite
-- [!] **K3.5** [#110](https://github.com/MFrancis-dev/stack/issues/110) 🔍 Verify 1Click quote signatures on real quotes · 2026-11-04: SDK 0.1.26 `verifyQuoteSignature` fails on real unauthenticated dry quotes; real quotes fail closed until verified with the partner JWT (K0.8)
+- [!] **K3.5** [#110](https://github.com/MFrancis-dev/stack/issues/110) 🔍 Verify 1Click quote signatures on real quotes · 2026-11-04: SDK 0.1.26 `verifyQuoteSignature` fails on real unauthenticated dry quotes; real quotes fail closed until verified with the partner JWT (K0.8) · 2026-11-05: tested on real quotes without a JWT: still false, also with 1,024 field combinations against the SDK's key; SDK 0.1.26 is the newest. Likely a changed key or hash; needs 1Click's answer
 
 ## Phase 4 — API routes (Nov 8–9)
 
@@ -219,6 +219,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-05 · agent · Real-quote findings: works without a JWT (K0.8 dropped), signature check false on real quotes (K3.5 reason changed), refund-account behaviour, fee gap documented; README status updated · K0.8, K0.9, K3.5
 - 2026-11-05 · agent · Link preview card (Open Graph + X large card, display font with fallback), site icon, page title/description; README updated · K11.3
 - 2026-11-05 · agent · Hosted worker: `worker/tick.ts` + `GET /api/cron/tick` (cron-secret protected, loops isolated, in-flight work first) + scheduled `Worker tick` workflow, off until enabled; shared `cronAuthorized`; 4 tests; README/ARCHITECTURE updated · K9.2
 - 2026-11-05 · agent · Launch kit: video script, X post draft, submission guide with the `idea` text; live rules re-read (JWT optional, keep demo up to 11-18); README: landing fee check in the do/see table, Node 22, launch links · K11.1, K11.3, K11.5, K11.6, K0.8

@@ -33,9 +33,9 @@ _None._
 - Global contracts exist (NEP-591) → KD-8.
 
 ## 🔍 Still to verify
-1. Does 1Click storage-register NEAR deposit addresses? (K-B1) — **blocked on the partner JWT (K0.8)**
+1. Does 1Click storage-register NEAR deposit addresses? (K-B1) — needs a real deposit; the vault registers the address anyway
 2. Deposits arriving after the quote deadline
-3. **K3.5** Quote signatures verify on real quotes — **blocked on the JWT**; until then real quotes fail closed, dry previews skip the check
+3. **K3.5** Quote signatures — real quotes work without a JWT (about 0.25% extra), but `verifyQuoteSignature()` is false on them with SDK 0.1.26: **blocked on 1Click confirming the key or hash**. Real quotes fail closed; dry previews skip the check
 
 ## Stack
 Rust near-sdk =5.30.0 + cargo-near 0.22 + near-workspaces =0.24.0 · Next.js 15.5 + TS strict · Tailwind + shadcn/ui · TanStack Query · zod · Drizzle (PGlite/Postgres) · 1Click SDK 0.1.26 · `@hot-labs/near-connect` 0.12.0 + `near-api-js` 7.4.0 · vitest + Playwright · pnpm 11 (worker/scripts run with `--conditions=react-server` so `server-only` works)
