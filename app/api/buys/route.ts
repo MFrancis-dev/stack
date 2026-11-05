@@ -23,6 +23,7 @@ export const GET = handle(async (req: Request) => {
       costBps: b.costBps,
       nearTxHash: b.nearTxHash,
       destinationTxHash: b.destinationTxHash,
+      note: b.note,
       createdAt: b.createdAt.toISOString(),
       completedAt: b.completedAt?.toISOString() ?? null,
     })),

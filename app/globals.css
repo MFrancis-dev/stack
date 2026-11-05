@@ -1,3 +1,62 @@
 @import "tailwindcss";
 
-/* Roadmap: S4.1 / K6.1 — design tokens go here. */
+/*
+ * Stack design tokens (K6.x). Sage paper, green-black ink, moss for actions, brass for what you've
+ * stacked. Brass is decoration only — never used for text (contrast).
+ */
+@theme {
+  --color-paper: #f3f5f2;
+  --color-paper-deep: #e7ece7;
+  --color-ink: #18231f;
+  --color-sage: #56655d;
+  --color-mist: #d9e0da;
+  --color-moss: #2f6b4f;
+  --color-moss-deep: #24543e;
+  --color-brass: #b8892b;
+  --color-brass-soft: #e8d5a6;
+  --color-rust: #b4412f;
+
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-atkinson), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-brass);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* A buy that is on its way: brass stripes instead of animation. */
+.stack-pending {
+  background-image: repeating-linear-gradient(135deg, var(--color-brass) 0 6px, var(--color-brass-soft) 6px 12px);
+}
