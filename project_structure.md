@@ -14,7 +14,8 @@ stack/
 ├─ README.md                     # judges + AI screeners; keeper trust assumption; names sister project Settle
 ├─ LICENSE                       # MIT
 ├─ .github/                       # pull_request_template.md (ROADMAP + hackathon-rule checklist), ISSUE_TEMPLATE/roadmap-task.md
-├─ .env.example · .gitignore
+├─ .env.example · .gitignore · .vercelignore
+├─ vercel.json                   # build command (migrate, then build) + daily demo-cleanup cron
 ├─ package.json                  # scripts: dev, worker, demo, test, e2e, lint, typecheck, db:*, contracts:* (exact versions, ESM)
 ├─ pnpm-workspace.yaml · pnpm-lock.yaml   # pnpm 11 settings (allowBuilds) + lockfile — commit both
 ├─ tsconfig.json · next.config.ts · postcss.config.mjs (Tailwind v4) · eslint.config.mjs · .prettierrc · vitest.config.ts · drizzle.config.ts
@@ -73,7 +74,8 @@ app/
    ├─ session/route.ts · onboard/route.ts · vault/route.ts · tokens/route.ts
    ├─ fund/quote/route.ts · fund/[id]/submit-tx/route.ts · fund/[id]/status/route.ts
    ├─ plan/preview/route.ts · buys/route.ts · export.csv/route.ts
-   └─ demo/[action]/route.ts                # fast-forward, reset
+   ├─ demo/[action]/route.ts                # start, fast-forward, reset, owner-tx
+   └─ cron/cleanup-demo/route.ts            # Vercel Cron, Bearer CRON_SECRET
 ```
 
 ## 4. `components/`

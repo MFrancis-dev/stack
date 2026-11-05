@@ -67,6 +67,8 @@ Installed and verified 2026-11-04 with **pnpm 11** (`packageManager` is pinned; 
 | **Demo mode (zero config)** | `pnpm demo` |
 | Typecheck / lint / format | `pnpm typecheck` / `pnpm lint` / `pnpm format` |
 | Tests / E2E | `pnpm test` / `pnpm e2e` |
+| E2E against the hosted demo | `E2E_BASE_URL=https://stack-savings.vercel.app pnpm e2e` |
+| Deploy (human OK first) | `vercel deploy --prod` |
 | DB | `pnpm db:generate && pnpm db:migrate` |
 | Contract build | `cd contracts && cargo near build` |
 | Contract tests | `cd contracts && cargo test` |

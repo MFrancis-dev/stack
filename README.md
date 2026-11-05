@@ -23,7 +23,7 @@ pnpm demo          # migrates an embedded database, then starts the app on http:
 
 No `.env` is needed. Open **http://localhost:3000/demo** and press **Open the demo**. You get your own example saver: a weekly $100 Bitcoin plan, $1,296.70 deposited from two chains and four weeks of history.
 
-Hosted demo: not deployed yet (ROADMAP K9.2).
+**Hosted demo:** https://stack-savings.vercel.app/demo — same demo, nothing to install. It runs only demo mode; real mode needs the deployed contracts (see Status).
 
 ### What to do, and what you should see
 
@@ -95,7 +95,8 @@ Being honest about what is and isn't live:
 - **Quote signatures:** with the newest SDK (0.1.26), `verifyQuoteSignature()` did not verify unauthenticated dry quotes. Real quotes therefore fail closed until this is confirmed with a partner JWT (ROADMAP K3.5).
 - **Demo mode** uses live dry quotes when NEAR Intents is reachable and a fee model calibrated on real quotes otherwise; demo deposits complete on a timer. It never moves funds.
 - **No Content-Security-Policy yet** — the wallet connector loads wallets in sandboxed iframes.
-- Rate limits are in-memory (one app instance).
+- Rate limits are in-memory (per app instance).
+- **Hosting:** the web app runs on Vercel with a Neon Postgres database; demo cleanup runs as a daily Vercel Cron job. The background worker (buys, funding status) needs a long-running host and goes live with real mode.
 
 ## Running for real
 
@@ -111,8 +112,9 @@ Contracts: `pnpm contracts:build` (cargo-near 0.22 → `contracts/target/near/`)
 ## Tests
 
 ```bash
-pnpm typecheck && pnpm lint && pnpm test   # 124 unit + API route tests (in-memory database, fake 1Click/NEAR)
+pnpm typecheck && pnpm lint && pnpm test   # 127 unit + API route tests (in-memory database, fake 1Click/NEAR)
 pnpm e2e                                    # Playwright judge journey on demo mode, desktop + phone
+E2E_BASE_URL=https://stack-savings.vercel.app pnpm e2e   # same journey against the hosted demo
 pnpm contracts:test                         # 49 contract tests: 24 vault + 9 factory unit, 16 sandbox (I1–I7 and more)
 ```
 

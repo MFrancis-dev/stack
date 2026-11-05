@@ -98,4 +98,7 @@ On-chain vault = truth for plan + balance.
 Add an admin withdraw path · use an unverified quote · show unconfirmed statuses · commit secrets · deploy, sign with real keys, send funds, post, push or submit without the human's explicit OK · finish a contribution without updating `ROADMAP.md`
 
 ## Env
-`NEAR_RPC_URL FACTORY_ACCOUNT_ID USDC_CONTRACT_ID KEEPER_ACCOUNT_ID KEEPER_PRIVATE_KEY ONECLICK_BASE_URL ONECLICK_JWT DATABASE_URL SESSION_SECRET PUBLIC_APP_URL`
+`NEAR_RPC_URL FACTORY_ACCOUNT_ID USDC_CONTRACT_ID KEEPER_ACCOUNT_ID KEEPER_PRIVATE_KEY ONECLICK_BASE_URL ONECLICK_JWT DATABASE_URL SESSION_SECRET PUBLIC_APP_URL CRON_SECRET`
+
+## Hosting
+Vercel (web, `pnpm vercel-build` migrates first) + Neon Postgres + daily cron `/api/cron/cleanup-demo`. Hosted demo: https://stack-savings.vercel.app/demo. Worker needs a long-running host (real mode only).

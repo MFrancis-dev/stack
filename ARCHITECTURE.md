@@ -153,6 +153,7 @@ The keeper chooses `deposit_address`. A stolen keeper key could redirect at most
 | `GET /api/buys` | session | History |
 | `GET /api/export.csv` | session | CSV |
 | `POST /api/demo/:action` | demo session | `fast-forward`, `reset` |
+| `GET /api/cron/cleanup-demo` | `Bearer $CRON_SECRET` | Vercel Cron (daily 03:00 UTC): same `cleanupDemo` as the worker loop, for hosts without the worker |
 
 Owner contract calls (`set_plan`, `resume`, `pause`, `withdraw`, `recover_token`) are wallet transactions built in the browser; no server involvement.
 
@@ -273,14 +274,17 @@ ONECLICK_JWT=
 DATABASE_URL=                # empty → PGlite
 SESSION_SECRET=
 PUBLIC_APP_URL=
+CRON_SECRET=                 # ≥ 16 chars; Vercel sends it to the cron route
 ```
+
+**Hosting (K9.1, decided 2026-11-05):** web on Vercel (project `stack-savings`, Node 22), Postgres on Neon (via the Vercel integration, pooled `DATABASE_URL`). `pnpm vercel-build` runs `drizzle-kit migrate` before `next build`; migrations SQL is traced into the API functions; `getDb()` refuses to start hosted without `DATABASE_URL`. `.vercelignore` keeps contracts and local data out of the upload. The worker needs a long-running host; it is only needed for real mode.
 
 ---
 
 ## 10. Testing
 - Contracts: unit + near-workspaces for I1–I7, failed-transfer callback, deposit-address registration, stray-token recovery, daily cap.
 - TS: cost check, status mapping, plan-match check, signature fixtures, NEP-413.
-- E2E: PRD §8 journey in demo mode.
+- E2E: PRD §8 journey in demo mode (locally, in CI, and against the hosted demo with `E2E_BASE_URL`).
 - Manual: one small real deposit + buy for the video (human approval).
 
 ---
