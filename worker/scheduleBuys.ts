@@ -5,7 +5,7 @@
  */
 
 import { randomUUID } from "node:crypto";
-import { checkCost } from "../lib/core/cost";
+import { checkCost, costSkipNote } from "../lib/core/cost";
 import { minUnits } from "../lib/core/money";
 import { quoteMatchesPlan } from "../lib/core/planMatch";
 import type { BaseUnits, QuoteSummary, VaultState } from "../lib/core/types";
@@ -77,7 +77,7 @@ async function runForUser(deps: WorkerDeps, user: User): Promise<BuyOutcome> {
 
   const cost = checkCost(quote, state.maxCostBps);
   if (!cost.ok) {
-    const note = cost.reason === "unknown_cost" ? "quote had no USD values" : `cost ${cost.costBps} bps above limit ${state.maxCostBps}`;
+    const note = costSkipNote(cost.costBps, state.maxCostBps);
     await record("skipped_cost", note, quote, cost.costBps);
     deps.log.info("buy skipped for cost", { userId: user.id, costBps: cost.costBps });
     return "skipped_cost";

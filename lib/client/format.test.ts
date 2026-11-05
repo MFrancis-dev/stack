@@ -6,6 +6,7 @@ describe("format", () => {
   it("formats USDC and target amounts", () => {
     expect(formatUsdc("100000000")).toBe("100");
     expect(formatUsdc("123456789")).toBe("123.45");
+    expect(formatUsdc("996700000")).toBe("996.70");
     expect(formatTarget("121000", "nep141:btc.omft.near")).toBe("0.00121 BTC");
     expect(formatTarget(null, "nep141:btc.omft.near")).toBe("—");
   });

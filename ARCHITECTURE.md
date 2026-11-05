@@ -242,7 +242,17 @@ On-chain vault = truth for plan and balance. DB = history and metadata.
 ---
 
 ## 8. Demo and dry-run
-`pnpm demo`: PGlite + seed (vault with plan, deposits, 3 weeks of buys including `skipped_cost`), `DemoVaultClient` + demo quote/status providers behind `lib/core/adapters.ts`; "fast-forward 30 days"; real dry quotes when online, recorded fixtures offline. No secrets, no funds.
+`pnpm demo` = migrate the local PGlite DB, then `next dev`. Zero secrets, no external DB (verified from a fresh clone, K7.5).
+
+- **Per-visitor demo:** `/demo` → `POST /api/demo/start` creates a fresh `isDemo` user (`saver-<id>.demo`, vault `v<id>.vaults.demo`) with a weekly $100 BTC plan, two credited deposits ($1,296.70) and four weeks of buys including one `skipped_cost`, then signs the visitor in with a demo session. Visitors never share data.
+- **Same routes, demo adapters:** `servicesFor(session)` (lib/server/adapters.ts) swaps in `demoQuotes`, `demoStatus` (lib/oneclick/demo.ts) and `demoVaultClient` (lib/near/demo.ts) on the same DB. A session whose demo flag doesn't match the user is rejected.
+- **Quotes:** dry quotes try live 1Click first (stand-in refund account `near`; dry quotes move nothing) and fall back to a fee model calibrated on real quotes ($10 BTC ≈ 15%, $100 ≈ 1.75%). Non-dry demo quotes get a `demo-<ms>-<rand>` deposit address whose status advances on its own (~20 s per step → `SUCCESS`).
+- **Vault:** plan in `demo_vaults.state` (migration 0002); balance derived from the user's rows (credited deposits − sent/success buys − withdrawn). Owner transactions from the UI go to `POST /api/demo/owner-tx` and follow the contract's rules (1-yocto rules aside): `set_plan` ranges, `resume` needs a plan, `withdraw` ≤ balance, `recover_token` refused.
+- **Controls:** `fast-forward` (next 30 days of the plan, same cost check, one fee spike → skip) and `reset`.
+- **Isolation:** real worker queries exclude demo users (`listUsersWithVault`, `listActiveFunding`, `listInFlightBuys`); demo tx hashes start with `demo-` and the UI shows "Example only" instead of explorer links.
+- **Token list:** `GET /api/tokens` falls back to a small built-in list (`offline: true`) when 1Click is unreachable.
+
+Two production bugs found by this phase's browser run (both fixed): PGlite must be a Next `serverExternalPackages` entry (bundling breaks its WebAssembly path); the dev session secret lives on `globalThis` because each Next route is its own bundle.
 
 ---
 

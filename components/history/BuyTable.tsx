@@ -8,6 +8,9 @@ import { formatTarget, formatUsdc } from "@/lib/client/format";
 import { SkipReason } from "./SkipReason";
 import { TxLinks } from "./TxLinks";
 
+/** Statuses where dollars actually left the vault. Skipped, failed and refunded buys spent nothing. */
+const SPENT = new Set(["success", "sent", "processing"]);
+
 export function BuyTable({ buys }: { buys: BuyDto[] }) {
   if (buys.length === 0) return <p className="text-sage">No buys yet. Once your plan is running, every buy shows up here, including skipped ones.</p>;
   return (
@@ -27,7 +30,9 @@ export function BuyTable({ buys }: { buys: BuyDto[] }) {
         {buys.map((b) => (
           <tr key={b.id} className="grid grid-cols-2 gap-x-4 gap-y-1 border-b border-mist py-4 sm:table-row sm:py-0">
             <td className="sm:py-3 sm:pr-4">{new Date(b.createdAt).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}</td>
-            <td className="text-right sm:py-3 sm:pr-4 sm:text-left">${formatUsdc(b.amountIn)}</td>
+            <td className="text-right sm:py-3 sm:pr-4 sm:text-left">
+              {SPENT.has(b.status) ? `$${formatUsdc(b.amountIn)}` : <span className="text-sage">Nothing spent</span>}
+            </td>
             <td className="sm:py-3 sm:pr-4">{b.status === "success" || b.status === "sent" || b.status === "processing" ? formatTarget(b.amountOut, b.targetAsset) : "—"}</td>
             <td className="text-right sm:py-3 sm:pr-4 sm:text-left">{b.costBps === null ? "—" : `${(b.costBps / 100).toFixed(2)}%`}</td>
             <td className="col-span-2 sm:py-3 sm:pr-4">

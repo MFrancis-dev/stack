@@ -6,6 +6,7 @@
 import { destinationTxUrl, nearTxUrl } from "@/lib/client/format";
 
 export function TxLinks({ nearTxHash, destinationTxHash, targetAsset }: { nearTxHash: string | null; destinationTxHash: string | null; targetAsset: string }) {
+  if (nearTxHash?.startsWith("demo-") || destinationTxHash?.startsWith("demo-")) return <span className="text-sage">Example only</span>;
   const dest = destinationTxHash ? destinationTxUrl(targetAsset, destinationTxHash) : null;
   if (!nearTxHash && !dest) return <span className="text-sage">—</span>;
   return (

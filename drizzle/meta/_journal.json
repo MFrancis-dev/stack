@@ -15,6 +15,13 @@
       "when": 1793820914606,
       "tag": "0001_buy_note",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793865866986,
+      "tag": "0002_demo_vaults",
+      "breakpoints": true
     }
   ]
 }

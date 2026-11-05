@@ -29,15 +29,17 @@ export interface Challenge {
   exp: number;
 }
 
-let devSecret: Buffer | undefined;
+// On globalThis, not module state: Next compiles each route into its own bundle, and a module-level
+// secret would differ between the route that signs a session and the one that checks it.
+const g = globalThis as typeof globalThis & { __stackDevSessionSecret?: Buffer };
 
 function secret(): Buffer {
   const s = process.env.SESSION_SECRET;
   if (s && s.length >= 32) return Buffer.from(s);
   if (process.env.NODE_ENV === "production") throw new HttpError(500, "SESSION_SECRET is not set");
   // Local and demo mode: a per-process secret, so sessions reset on restart. Fine without real funds.
-  devSecret ??= randomBytes(32);
-  return devSecret;
+  g.__stackDevSessionSecret ??= randomBytes(32);
+  return g.__stackDevSessionSecret;
 }
 
 const b64url = (b: Buffer | string) => Buffer.from(b).toString("base64url");

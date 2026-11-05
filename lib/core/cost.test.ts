@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { checkCost, costBps } from "./cost";
+import { checkCost, costBps, costSkipNote } from "./cost";
 
 // Roadmap: K2.2 · numbers from real dry quotes on 2026-11-04 (ARCHITECTURE §12)
 describe("cost", () => {
@@ -18,6 +18,11 @@ describe("cost", () => {
 
   it("never reports negative cost", () => {
     expect(costBps({ amountInUsd: "10", amountOutUsd: "10.5" })).toBe(0);
+  });
+
+  it("explains skips in plain language", () => {
+    expect(costSkipNote(435, 300)).toBe("Fees were 4.35%, above your 3.00% limit");
+    expect(costSkipNote(null, 300)).toMatch(/didn't include a cost/);
   });
 
   it("checks against the plan limit", () => {

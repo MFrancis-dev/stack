@@ -21,13 +21,13 @@
 | 4. API routes | Nov 8–9 | 100% | ✅ done |
 | 5. Worker (scheduler) | Nov 9–10 | 100% | ✅ done |
 | 6. UI | Nov 9–11 | 100% | ✅ done |
-| 7. Demo mode & dry-run | Nov 11 | 0% | not started |
+| 7. Demo mode & dry-run | Nov 11 | 100% | ✅ done |
 | 8. Hardening & edge cases | Nov 11–12 | 0% | not started |
 | 9. Deploy & real run | Nov 12 | 0% | not started |
 | 10. README & public repo | Nov 12–13 | 14% | in progress |
 | 11. Launch: video, post, submission | Nov 13–14 | 0% | not started |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~55%** | |
+| **Overall (MVP)** | | **~62%** | |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
@@ -148,12 +148,12 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 
 ## Phase 7 — Demo mode & dry-run (Nov 11)
 
-- [ ] **K7.1** [#63](https://github.com/MFrancis-dev/stack/issues/63) Demo adapters (`DemoVaultClient`, demo quote/status)
-- [ ] **K7.2** [#64](https://github.com/MFrancis-dev/stack/issues/64) `seed-demo.ts`: vault with plan, deposits, 3 weeks of buys incl. `skipped_cost`
-- [ ] **K7.3** [#65](https://github.com/MFrancis-dev/stack/issues/65) `pnpm demo`: PGlite + seed + banner; real dry quotes online, fixtures offline
-- [ ] **K7.4** [#66](https://github.com/MFrancis-dev/stack/issues/66) "Fast-forward 30 days"
-- [ ] **K7.5** [#67](https://github.com/MFrancis-dev/stack/issues/67) Fresh-clone check with no `.env`
-- [ ] **K7.6** [#68](https://github.com/MFrancis-dev/stack/issues/68) Playwright journey = PRD §8, in CI
+- [x] **K7.1** [#63](https://github.com/MFrancis-dev/stack/issues/63) Demo adapters (`DemoVaultClient`, demo quote/status) · 2026-11-05: demo quotes (live dry first, calibrated model fallback), time-based demo status, demo vault client (`demo_vaults`, balance from rows), owner actions without a wallet; routes pick adapters by session
+- [x] **K7.2** [#64](https://github.com/MFrancis-dev/stack/issues/64) `seed-demo.ts`: vault with plan, deposits, 3 weeks of buys incl. `skipped_cost` · 2026-11-05: per-visitor demo saver: weekly $100 BTC plan, 2 deposits, 4 weeks of buys incl. a fee-spike skip
+- [x] **K7.3** [#65](https://github.com/MFrancis-dev/stack/issues/65) `pnpm demo`: PGlite + seed + banner; real dry quotes online, fixtures offline · 2026-11-05: `pnpm demo` + `/demo` entry + banner; token list falls back offline; browser-reviewed at 1280/390 px
+- [x] **K7.4** [#66](https://github.com/MFrancis-dev/stack/issues/66) "Fast-forward 30 days" · 2026-11-05: fast-forward 30 days (same cost check, one skip) + start over
+- [x] **K7.5** [#67](https://github.com/MFrancis-dev/stack/issues/67) Fresh-clone check with no `.env` · 2026-11-05: fresh `git clone` → `pnpm install` → `pnpm demo` with no `.env`: demo page 200, start 201, vault/fast-forward/CSV all OK
+- [x] **K7.6** [#68](https://github.com/MFrancis-dev/stack/issues/68) Playwright journey = PRD §8, in CI · 2026-11-05: Playwright PRD §8 journey on desktop + phone (4 passing), CI job with trace upload on failure
 
 ## Phase 8 — Hardening & edge cases (Nov 11–12)
 
@@ -216,6 +216,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-05 · agent · Phase 7 demo mode: per-visitor demo, demo adapters, owner actions without a wallet, fast-forward/reset, worker isolation, offline token fallback, Playwright journey in CI; fixed PGlite bundling + per-route dev session secret found in the browser; 119 unit/route tests + 4 e2e · K7.1–K7.6
 - 2026-11-05 · agent · Phase 6 UI reviewed in the browser (desktop + phone, redirect and signed-out states, no server errors); sign-in button width fix · K6.1–K6.8
 - 2026-11-04 · agent · Phase 6 UI built on branch feat/ui (landing, sign-in, vault creation, fund, plan + cost preview, pause/resume, overview stack, history, settings); visual review pending · K6.1–K6.8
 - 2026-11-04 · agent · Phase 5 worker: pollFunding, scheduleBuys (full safety chain, backoff, insert-before-execute), pollBuys, expireQuotes, keeper gas alert, no-overlap runner; `buys.note` migration; 100 TS tests · K5.1–K5.5

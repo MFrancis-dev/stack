@@ -2,7 +2,7 @@
  * Queries for users. Roadmap: K3.4
  */
 
-import { eq, isNotNull } from "drizzle-orm";
+import { and, eq, isNotNull } from "drizzle-orm";
 import type { Db } from "../client";
 import { users, type User } from "../schema";
 
@@ -27,7 +27,7 @@ export async function setVault(db: Db, userId: string, vaultAccountId: string): 
   await db.update(users).set({ vaultAccountId }).where(eq(users.id, userId));
 }
 
-/** Everyone the scheduler has to look at. */
+/** Everyone the real scheduler has to look at. Demo users never reach real-mode loops. */
 export async function listUsersWithVault(db: Db): Promise<User[]> {
-  return db.select().from(users).where(isNotNull(users.vaultAccountId));
+  return db.select().from(users).where(and(isNotNull(users.vaultAccountId), eq(users.isDemo, false)));
 }

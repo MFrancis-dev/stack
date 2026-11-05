@@ -5,7 +5,7 @@
 import { and, desc, eq, lt, notInArray } from "drizzle-orm";
 import { FUNDING_TERMINAL, type FundingStatus } from "../../core/status";
 import type { Db } from "../client";
-import { fundingAttempts, type FundingAttempt } from "../schema";
+import { fundingAttempts, users, type FundingAttempt } from "../schema";
 
 export type NewFundingAttempt = typeof fundingAttempts.$inferInsert;
 
@@ -22,9 +22,13 @@ export async function listFundingByUser(db: Db, userId: string, limit = 50): Pro
   return db.select().from(fundingAttempts).where(eq(fundingAttempts.userId, userId)).orderBy(desc(fundingAttempts.createdAt)).limit(limit);
 }
 
-/** Attempts the worker still polls. */
+/** Attempts the real worker still polls (demo users excluded). */
 export async function listActiveFunding(db: Db): Promise<FundingAttempt[]> {
-  return db.select().from(fundingAttempts).where(notInArray(fundingAttempts.status, [...FUNDING_TERMINAL]));
+  const demoUsers = db.select({ id: users.id }).from(users).where(eq(users.isDemo, true));
+  return db
+    .select()
+    .from(fundingAttempts)
+    .where(and(notInArray(fundingAttempts.status, [...FUNDING_TERMINAL]), notInArray(fundingAttempts.userId, demoUsers)));
 }
 
 export async function updateFundingStatus(

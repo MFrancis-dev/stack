@@ -11,7 +11,7 @@ const control =
 
 function Wrapper({ id, label, hint, error, children }: FieldProps & { id: string; children: ReactNode }) {
   return (
-    <div className="grid gap-1.5">
+    <div className="grid content-start gap-1.5">
       <label htmlFor={id} className="font-bold">
         {label}
       </label>

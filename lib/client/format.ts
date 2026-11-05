@@ -6,7 +6,12 @@
 import { TARGET_ASSETS, targetByAssetId, USDC_DECIMALS } from "../core/assets";
 import { formatAmount } from "../core/money";
 
-export const formatUsdc = (base: string, maxFraction = 2) => formatAmount(base, USDC_DECIMALS, maxFraction);
+/** Dollars: whole numbers stay whole ("100"), anything with cents shows two decimals ("996.70"). */
+export function formatUsdc(base: string, maxFraction = 2): string {
+  const s = formatAmount(base, USDC_DECIMALS, maxFraction);
+  const [whole, frac] = s.split(".");
+  return frac && maxFraction === 2 ? `${whole}.${frac.padEnd(2, "0")}` : s;
+}
 
 export function formatTarget(base: string | null, assetId: string): string {
   const t = targetByAssetId(assetId);

@@ -2,10 +2,10 @@
  * Queries for buys, including skipped ones. Roadmap: K3.4
  */
 
-import { desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, notInArray } from "drizzle-orm";
 import type { BuyStatus } from "../../core/status";
 import type { Db } from "../client";
-import { buys, type Buy } from "../schema";
+import { buys, users, type Buy } from "../schema";
 
 export type NewBuy = typeof buys.$inferInsert;
 
@@ -22,9 +22,10 @@ export async function listBuysByUser(db: Db, userId: string, limit = 200): Promi
   return db.select().from(buys).where(eq(buys.userId, userId)).orderBy(desc(buys.createdAt)).limit(limit);
 }
 
-/** Buys sent on-chain whose 1Click status isn't final yet. */
+/** Real buys sent on-chain whose 1Click status isn't final yet (demo users excluded). */
 export async function listInFlightBuys(db: Db): Promise<Buy[]> {
-  return db.select().from(buys).where(inArray(buys.status, ["sent", "processing"]));
+  const demoUsers = db.select({ id: users.id }).from(users).where(eq(users.isDemo, true));
+  return db.select().from(buys).where(and(inArray(buys.status, ["sent", "processing"]), notInArray(buys.userId, demoUsers)));
 }
 
 /** Most recent buy row for a user (any status), used for in-flight and retry-backoff checks. */
