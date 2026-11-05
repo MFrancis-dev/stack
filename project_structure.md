@@ -64,6 +64,7 @@ Unit tests next to code (`#[cfg(test)]`); cross-contract tests in `contracts/tes
 ```
 app/
 ├─ layout.tsx · page.tsx · globals.css      # landing: what Stack is, live fee check, demo + sign in
+├─ opengraph-image.tsx · icon.svg            # link preview card (X, chats) and site icon
 ├─ landing.css                              # public pages' look (bottle green + gold, coin motif); app screens use globals.css tokens
 ├─ (dashboard)/
 │  ├─ dashboard/page.tsx                    # balance, next buy, totals, where-is-my-money

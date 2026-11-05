@@ -22,7 +22,7 @@ pnpm demo          # migrates an embedded database, then starts the app on http:
 
 No `.env` is needed. Open **http://localhost:3000/demo** and press **Open the demo**. You get your own example saver: a weekly $100 Bitcoin plan, $1,296.70 deposited from two chains and four weeks of history.
 
-**Hosted demo:** https://stack-savings.vercel.app/demo — same demo, nothing to install. It runs only demo mode; real mode needs the deployed contracts (see Status).
+**Hosted demo:** https://stack-savings.vercel.app/demo — same demo, nothing to install. It runs only demo mode; real mode needs the deployed contracts (see Status). Shared links show a preview card (`app/opengraph-image.tsx`) and the site has its own icon (`app/icon.svg`).
 
 ### What to do, and what you should see
 
