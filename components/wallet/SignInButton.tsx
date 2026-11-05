@@ -13,7 +13,7 @@ export function SignInButton({ next = "/dashboard" }: { next?: string }) {
   const { signIn, busy, error } = useWallet();
   const router = useRouter();
   return (
-    <div className="grid gap-2">
+    <div className="grid justify-items-start gap-2">
       <Button onClick={() => signIn().then(() => router.push(next)).catch(() => undefined)} disabled={busy}>
         {busy ? "Waiting for your wallet…" : "Sign in with NEAR"}
       </Button>

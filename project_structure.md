@@ -94,6 +94,7 @@ lib/
 ├─ oneclick/    # index.ts (QuoteProvider/StatusProvider), client.ts, tokens.ts, quote.ts (funding + buy, fail-closed verify), status.ts, demo.ts, __fixtures__/ (real dry quotes)
 ├─ near/        # index.ts (VaultClient), rpc.ts, nep413.ts, vault.ts (bindings), factory.ts, keeper.ts (server only), events.ts, demo.ts
 ├─ db/          # schema.ts, client.ts (PGlite/Postgres + migrate()), queries/ (users, fundingAttempts, buys), seed-demo.ts
+├─ client/      # browser-only: api.ts (typed fetch + DTOs), hooks.ts (TanStack Query), ownerTx.ts (vault txs for the wallet), format.ts
 └─ server/      # SERVER ONLY: env.ts, session.ts (NEP-413 challenge + HMAC cookies), adapters.ts (getServices seam), context.ts (current user/vault),
                 #   http.ts (JSON, body parsing, error mapping), rateLimit.ts, routes.test.ts (API tests), testing/ (server-only stub for vitest)
 ```

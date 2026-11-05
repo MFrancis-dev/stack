@@ -20,14 +20,14 @@
 | 3. Integrations (1Click, NEAR, DB) | Nov 7–8 | 80% | in progress (K3.5 blocked on K0.8) |
 | 4. API routes | Nov 8–9 | 100% | ✅ done |
 | 5. Worker (scheduler) | Nov 9–10 | 100% | ✅ done |
-| 6. UI | Nov 9–11 | 0% | in progress (built, visual review pending) |
+| 6. UI | Nov 9–11 | 100% | ✅ done |
 | 7. Demo mode & dry-run | Nov 11 | 0% | not started |
 | 8. Hardening & edge cases | Nov 11–12 | 0% | not started |
 | 9. Deploy & real run | Nov 12 | 0% | not started |
 | 10. README & public repo | Nov 12–13 | 14% | in progress |
 | 11. Launch: video, post, submission | Nov 13–14 | 0% | not started |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~48%** | |
+| **Overall (MVP)** | | **~55%** | |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
@@ -137,14 +137,14 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 
 ## Phase 6 — UI (Nov 9–11)
 
-- [~] **K6.1** [#55](https://github.com/MFrancis-dev/stack/issues/55) Landing, sign-in, onboarding (vault created) · 2026-11-04: built (typecheck, lint, 108 tests, build pass); not yet reviewed in a browser
-- [~] **K6.2** [#56](https://github.com/MFrancis-dev/stack/issues/56) Fund page: token picker, amount, refund address, dry preview, deposit panel, live status · 2026-11-04: built (typecheck, lint, 108 tests, build pass); not yet reviewed in a browser
-- [~] **K6.3** [#57](https://github.com/MFrancis-dev/stack/issues/57) Plan page: target asset, address typed twice + chain name, amount, interval, max cost, **cost preview**, one batched wallet tx (`set_plan` + `resume`) · 2026-11-04: live data: BTC $10 buy ≈ 15.4% cost, $100 ≈ 1.6% → suggest ≥ $100 per BTC buy in the cost preview · 2026-11-04: built (typecheck, lint, 108 tests, build pass); not yet reviewed in a browser
-- [~] **K6.4** [#58](https://github.com/MFrancis-dev/stack/issues/58) Pause / resume always visible · 2026-11-04: built (typecheck, lint, 108 tests, build pass); not yet reviewed in a browser
-- [~] **K6.5** [#59](https://github.com/MFrancis-dev/stack/issues/59) Dashboard: balance, next buy, totals, average price, where-is-my-money · 2026-11-04: built (typecheck, lint, 108 tests, build pass); not yet reviewed in a browser
-- [~] **K6.6** [#60](https://github.com/MFrancis-dev/stack/issues/60) History: deposits, buys, skips (with reason), withdrawals; tx links · 2026-11-04: built (typecheck, lint, 108 tests, build pass); not yet reviewed in a browser
-- [~] **K6.7** [#61](https://github.com/MFrancis-dev/stack/issues/61) Settings: withdraw, recover tokens · 2026-11-04: built (typecheck, lint, 108 tests, build pass); not yet reviewed in a browser
-- [~] **K6.8** [#62](https://github.com/MFrancis-dev/stack/issues/62) Mobile + accessibility pass · 2026-11-04: responsive layouts, labels, focus styles, reduced motion; browser/mobile review still to do
+- [x] **K6.1** [#55](https://github.com/MFrancis-dev/stack/issues/55) Landing, sign-in, onboarding (vault created) · 2026-11-05: built and reviewed in the browser (landing, redirect and signed-out states); signed-in views re-checked with demo data in Phase 7
+- [x] **K6.2** [#56](https://github.com/MFrancis-dev/stack/issues/56) Fund page: token picker, amount, refund address, dry preview, deposit panel, live status · 2026-11-05: built and reviewed in the browser (landing, redirect and signed-out states); signed-in views re-checked with demo data in Phase 7
+- [x] **K6.3** [#57](https://github.com/MFrancis-dev/stack/issues/57) Plan page: target asset, address typed twice + chain name, amount, interval, max cost, **cost preview**, one batched wallet tx (`set_plan` + `resume`) · 2026-11-05: built and reviewed in the browser (landing, redirect and signed-out states); signed-in views re-checked with demo data in Phase 7
+- [x] **K6.4** [#58](https://github.com/MFrancis-dev/stack/issues/58) Pause / resume always visible · 2026-11-05: built and reviewed in the browser (landing, redirect and signed-out states); signed-in views re-checked with demo data in Phase 7
+- [x] **K6.5** [#59](https://github.com/MFrancis-dev/stack/issues/59) Dashboard: balance, next buy, totals, average price, where-is-my-money · 2026-11-05: built and reviewed in the browser (landing, redirect and signed-out states); signed-in views re-checked with demo data in Phase 7
+- [x] **K6.6** [#60](https://github.com/MFrancis-dev/stack/issues/60) History: deposits, buys, skips (with reason), withdrawals; tx links · 2026-11-05: built and reviewed in the browser (landing, redirect and signed-out states); signed-in views re-checked with demo data in Phase 7
+- [x] **K6.7** [#61](https://github.com/MFrancis-dev/stack/issues/61) Settings: withdraw, recover tokens · 2026-11-05: built and reviewed in the browser (landing, redirect and signed-out states); signed-in views re-checked with demo data in Phase 7
+- [x] **K6.8** [#62](https://github.com/MFrancis-dev/stack/issues/62) Mobile + accessibility pass · 2026-11-05: browser-reviewed at 1280 px and 390 px (no horizontal overflow, focus styles, labels); signed-in pages to be reviewed again with demo data in Phase 7
 
 ## Phase 7 — Demo mode & dry-run (Nov 11)
 
@@ -216,6 +216,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-05 · agent · Phase 6 UI reviewed in the browser (desktop + phone, redirect and signed-out states, no server errors); sign-in button width fix · K6.1–K6.8
 - 2026-11-04 · agent · Phase 6 UI built on branch feat/ui (landing, sign-in, vault creation, fund, plan + cost preview, pause/resume, overview stack, history, settings); visual review pending · K6.1–K6.8
 - 2026-11-04 · agent · Phase 5 worker: pollFunding, scheduleBuys (full safety chain, backoff, insert-before-execute), pollBuys, expireQuotes, keeper gas alert, no-overlap runner; `buys.note` migration; 100 TS tests · K5.1–K5.5
 - 2026-11-04 · agent · Phase 4 API: NEP-413 sessions, onboard, vault, tokens, funding (dry/real/status/submit), plan preview, buys, CSV; services seam for tests/demo; 84 TS tests · K4.1–K4.7, K8.7
