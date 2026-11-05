@@ -14,7 +14,7 @@ stack/
 ├─ README.md                     # judges + AI screeners; keeper trust assumption; names sister project Settle
 ├─ LICENSE                       # MIT
 ├─ .github/                       # pull_request_template.md (ROADMAP + hackathon-rule checklist), ISSUE_TEMPLATE/roadmap-task.md
-├─ .env.example · .gitignore · .vercelignore
+├─ .env.example · .gitignore · .vercelignore · .gitleaksignore (reviewed false positives only)
 ├─ vercel.json                   # build command (migrate, then build) + daily demo-cleanup cron
 ├─ package.json                  # scripts: dev, worker, demo, test, e2e, lint, typecheck, db:*, contracts:* (exact versions, ESM)
 ├─ pnpm-workspace.yaml · pnpm-lock.yaml   # pnpm 11 settings (allowBuilds) + lockfile — commit both

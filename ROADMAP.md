@@ -218,7 +218,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
-- 2026-11-05 · agent · Hosted the demo on Vercel + Neon (build-time migrations, hosted DB guard, daily cleanup cron, .vercelignore, Node 22); loading states on overview/history; `E2E_BASE_URL` runs the journey against the live site (4/4 pass); README hosted URL; docs synced · K9.1, K9.2, K10.1
+- 2026-11-05 · agent · Hosted the demo on Vercel + Neon (build-time migrations, hosted DB guard, daily cleanup cron, .vercelignore, Node 22); loading states on overview/history; `E2E_BASE_URL` runs the journey against the live site (4/4 pass); README hosted URL; docs synced; `.gitleaksignore` for one fake test value (false positive) · K9.1, K9.2, K10.1
 - 2026-11-05 · agent · Phase 10 README for judges and AI screeners; .env.example completed; README steps verified from a fresh clone of the public repo · K10.1–K10.5, K10.7
 - 2026-11-05 · agent · Phase 8 hardening: wNEAR registration gate for NEAR plans, in-flight withdraw warning, log redaction + security headers, demo cleanup loop (new K8.9); K8.1/4/5/6 verified against existing tests; K8.8 blocked on deploy · K8.1–K8.9
 - 2026-11-05 · agent · Phase 7 demo mode: per-visitor demo, demo adapters, owner actions without a wallet, fast-forward/reset, worker isolation, offline token fallback, Playwright journey in CI; fixed PGlite bundling + per-route dev session secret found in the browser; 119 unit/route tests + 4 e2e · K7.1–K7.6
