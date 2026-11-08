@@ -3,10 +3,10 @@
  * Roadmap: K3.3
  */
 
-import type { VaultClient } from "../core/adapters";
+import { BuyOutcomeUnknownError, type VaultClient } from "../core/adapters";
 import { createVaultFor, getVault } from "./factory";
 import type { NearProvider } from "./rpc";
-import { executeBuy, getUsdcBalance, getVaultState, type KeeperAccount } from "./vault";
+import { executeBuy, getUsdcBalance, getVaultState, isClearTxFailure, type KeeperAccount } from "./vault";
 
 export function nearVaultClient(deps: {
   provider: Pick<NearProvider, "callFunction">;
@@ -26,7 +26,13 @@ export function nearVaultClient(deps: {
       return { vaultAccountId: r.vaultAccountId, txHash: r.txHash };
     },
     async executeBuy(input) {
-      const r = await executeBuy(deps.keeper, input);
+      let r;
+      try {
+        r = await executeBuy(deps.keeper, input);
+      } catch (e) {
+        if (isClearTxFailure(e)) throw e;
+        throw new BuyOutcomeUnknownError(`No clear result from NEAR: ${e instanceof Error ? e.message : String(e)}`);
+      }
       if (!r.sent) throw new Error(`Buy transfer failed on-chain (tx ${r.txHash})`);
       return { txHash: r.txHash };
     },

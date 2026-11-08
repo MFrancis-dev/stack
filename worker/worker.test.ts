@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { BuyOutcomeUnknownError } from "../lib/core/adapters";
 import { USDC_ON_NEAR } from "../lib/core/assets";
 import { asBaseUnits } from "../lib/core/money";
 import type { OneClickStatus } from "../lib/core/status";
@@ -163,6 +164,16 @@ describe("scheduleBuys (K5.3)", () => {
     fakes.executeBuy.mockRejectedValueOnce(new Error("Buy transfer failed on-chain (tx X)"));
     expect((await scheduleBuys(deps())).get(userId)).toBe("failed");
     expect((await listBuysByUser(db, userId))[0]).toMatchObject({ status: "failed", note: "Buy transfer failed on-chain (tx X)" });
+  });
+
+  it("keeps a buy in flight when NEAR gives no clear result, instead of calling it failed", async () => {
+    fakes.executeBuy.mockRejectedValueOnce(new BuyOutcomeUnknownError("No clear result from NEAR: timeout"));
+    expect((await scheduleBuys(deps())).get(userId)).toBe("unclear");
+    const [b] = await listBuysByUser(db, userId);
+    expect(b).toMatchObject({ status: "sent", completedAt: null, depositAddress: "dep-buy-1" });
+    expect(b!.note).toMatch(/Waiting for NEAR Intents to confirm/);
+    expect(logs).toContainEqual({ level: "alert", msg: "execute_buy outcome unclear" });
+    expect((await scheduleBuys(deps())).get(userId)).toBe("in_flight");
   });
 
   it("waits while a buy is in flight, and backs off after a skip", async () => {
