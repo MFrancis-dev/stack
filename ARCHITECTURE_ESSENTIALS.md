@@ -102,4 +102,4 @@ Add an admin withdraw path · use an unverified quote · show unconfirmed status
 `NEAR_RPC_URL FACTORY_ACCOUNT_ID USDC_CONTRACT_ID KEEPER_ACCOUNT_ID KEEPER_PRIVATE_KEY ONECLICK_BASE_URL ONECLICK_JWT DATABASE_URL SESSION_SECRET PUBLIC_APP_URL CRON_SECRET`
 
 ## Hosting
-Vercel (web, `pnpm vercel-build` migrates first) + Neon Postgres + daily cron `/api/cron/cleanup-demo`. Hosted demo: https://stack-savings.vercel.app/demo. Worker needs a long-running host (real mode only).
+Vercel (web; `pnpm vercel-build` migrates only on production builds, and Preview/Development never use production's `DATABASE_URL`, only `PREVIEW_DATABASE_URL`) + Neon Postgres + daily cron `/api/cron/cleanup-demo`. Hosted demo: https://stack-savings.vercel.app/demo. Worker needs a long-running host (real mode only).

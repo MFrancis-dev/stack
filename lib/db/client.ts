@@ -42,12 +42,28 @@ export function createDb({ databaseUrl, pgliteDataDir = DEFAULT_PGLITE_DIR }: Db
 
 let shared: Db | undefined;
 
+/**
+ * Which database this process may use (K13.5). On Vercel only Production uses `DATABASE_URL`: the
+ * Neon integration hands the production URL to Preview and Development too, and a preview must
+ * never read or write production data, so those use `PREVIEW_DATABASE_URL` or nothing.
+ */
+export function databaseUrlFor(env: Record<string, string | undefined>): string | undefined {
+  if (env.VERCEL && env.VERCEL_ENV !== "production") return env.PREVIEW_DATABASE_URL || undefined;
+  return env.DATABASE_URL || undefined;
+}
+
 /** Process-wide client for the app and worker. Tests should call `createDb` directly. */
 export function getDb(): Db {
   if (!shared) {
-    const databaseUrl = process.env.DATABASE_URL || undefined;
+    const databaseUrl = databaseUrlFor(process.env);
     // Hosted platforms have a read-only or throwaway disk: the embedded database would lose data or crash.
-    if (!databaseUrl && process.env.VERCEL) throw new Error("DATABASE_URL is required when hosted (embedded PGlite is for local and CI only)");
+    if (!databaseUrl && process.env.VERCEL) {
+      throw new Error(
+        process.env.VERCEL_ENV === "production"
+          ? "DATABASE_URL is required when hosted (embedded PGlite is for local and CI only)"
+          : "This preview has no database of its own: set PREVIEW_DATABASE_URL (it never uses production's)",
+      );
+    }
     shared = createDb({ databaseUrl });
   }
   return shared;
