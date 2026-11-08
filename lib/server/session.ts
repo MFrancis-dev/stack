@@ -70,7 +70,12 @@ export function readCookie(req: Request, name: string): string | undefined {
   const header = req.headers.get("cookie") ?? "";
   for (const part of header.split(";")) {
     const [k, ...v] = part.trim().split("=");
-    if (k === name) return decodeURIComponent(v.join("="));
+    if (k !== name) continue;
+    try {
+      return decodeURIComponent(v.join("="));
+    } catch {
+      return undefined; // a malformed cookie reads as signed out, not as a server error (K13.8)
+    }
   }
   return undefined;
 }

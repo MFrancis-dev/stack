@@ -6,12 +6,12 @@
 import { z } from "zod";
 import { getFundingAttempt, updateFundingStatus } from "@/lib/db/queries/fundingAttempts";
 import { requireUser } from "@/lib/server/context";
-import { handle, HttpError, json, parseBody } from "@/lib/server/http";
+import { handle, HttpError, json, parseBody, uuidParam } from "@/lib/server/http";
 
 const input = z.object({ txHash: z.string().trim().min(8).max(200) });
 
 export const POST = handle(async (req: Request, ctx: { params: Promise<{ id: string }> }) => {
-  const { id } = await ctx.params;
+  const id = uuidParam((await ctx.params).id);
   const { services, user } = await requireUser(req);
   const { txHash } = await parseBody(req, input);
   const attempt = await getFundingAttempt(services.db, id, user.id);

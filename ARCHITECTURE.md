@@ -147,7 +147,7 @@ The keeper chooses `deposit_address`. A stolen keeper key could redirect at most
 | `GET /api/vault` | session | `get_state()` + `ft_balance_of` + next run |
 | `GET /api/tokens` | public | Cached token list |
 | `POST /api/fund/quote` | session, rate-limited | `{originAsset, amount, refundTo, dry}` → preview or FundingAttempt |
-| `POST /api/fund/:id/submit-tx` · `GET /api/fund/:id/status` | session | |
+| `POST /api/fund/:id/submit-tx` · `GET /api/fund/:id/status` | session | `:id` must be a UUID, else 404 (`uuidParam`, K13.8) |
 | `POST /api/plan/preview` | session | Dry buy quote → expected cost % for a buy size |
 | `GET /api/storage-check?account=` | session, rate-limited | Is the account registered on `wrap.near`? A NEAR plan can't be saved until it is (no refund otherwise); the UI offers a one-tap `storage_deposit` (0.00125 NEAR). Demo: always yes |
 | `GET /api/buys` | session | History |

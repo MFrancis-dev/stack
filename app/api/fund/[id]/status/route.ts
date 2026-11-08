@@ -6,10 +6,10 @@
 import { FUNDING_TERMINAL, fundingStatusFromOneClick, type FundingStatus } from "@/lib/core/status";
 import { getFundingAttempt, updateFundingStatus } from "@/lib/db/queries/fundingAttempts";
 import { requireUser } from "@/lib/server/context";
-import { handle, HttpError, json } from "@/lib/server/http";
+import { handle, HttpError, json, uuidParam } from "@/lib/server/http";
 
 export const GET = handle(async (req: Request, ctx: { params: Promise<{ id: string }> }) => {
-  const { id } = await ctx.params;
+  const id = uuidParam((await ctx.params).id);
   const { services, user } = await requireUser(req);
   const attempt = await getFundingAttempt(services.db, id, user.id);
   if (!attempt) throw new HttpError(404, "Not found");
