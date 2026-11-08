@@ -27,7 +27,7 @@
 | 10. README & public repo | Nov 12–13 | 100% | ✅ done (hosted URL added) |
 | 11. Launch: video, post, submission | Nov 13–14 | 57% | in progress (video, post and submission need the human) |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| 13. Launch review fixes | Nov 8–13 | 78% | in progress (pre-launch security and reliability review) |
+| 13. Launch review fixes | Nov 8–13 | 80% | in progress (K13.3 ⛔ needs a decision; K13.10 needs a real wallet) |
 | **Overall (MVP)** | | **~81%** | |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 15 rows (D + phases 0–13; Phase 13 was added on 2026-11-08, which lowered the overall %). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
@@ -218,7 +218,8 @@ From the pre-launch security and reliability review (2026-11-08), ranked with au
 - [x] **K13.6** [#132](https://github.com/MFrancis-dev/stack/issues/132) Cap demo starts and fast-forwards in the database · 2026-11-08: on the shared limiter (K13.7): new demos 10/min and 30/h per IP plus 600/h overall; per demo 12 fast-forwards and 20 resets a day, 60 owner transactions an hour; messages say what to do; the demo banner now shows reset errors too; 2 tests
 - [x] **K13.7** [#133](https://github.com/MFrancis-dev/stack/issues/133) Rate limits shared across serverless instances · 2026-11-08: `rate_limits` table (migration 0004), one atomic `INSERT … ON CONFLICT` per request, all five limited routes switched; counters older than a day removed by `cleanupDemo`; 5 tests incl. a burst of 8 against a limit of 5
 - [x] **K13.8** [#134](https://github.com/MFrancis-dev/stack/issues/134) Bad ids and malformed cookies return 500 · 2026-11-08: `uuidParam` makes non-UUID funding ids a 404; `readCookie` treats a malformed cookie as signed out; 2 tests, both failed before the fix
-- [ ] **K13.9** [#135](https://github.com/MFrancis-dev/stack/issues/135) Add a Content-Security-Policy
+- [x] **K13.9** [#135](https://github.com/MFrancis-dev/stack/issues/135) Add a Content-Security-Policy · 2026-11-08: enforced `object-src 'none'; frame-ancestors 'none'`; full policy as report-only (wallets run in `srcdoc` sandbox frames that inherit it); production build checked on landing, demo, overview and Add funds: no violations; header test
+- [ ] **K13.10** [#143](https://github.com/MFrancis-dev/stack/issues/143) 👤 Enforce the full CSP after a real-wallet sign-in (and one signed transaction) shows no report-only violations
 
 ---
 
@@ -234,6 +235,7 @@ From the pre-launch security and reliability review (2026-11-08), ranked with au
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-08 · agent · K13.9 Content-Security-Policy (2 directives enforced, full policy report-only, no violations on our pages in a production build); new K13.10 to enforce it after a real-wallet test; README, ARCHITECTURE §7, ESSENTIALS updated · K13.9, K13.10
 - 2026-11-08 · agent · K13.8 non-UUID ids → 404 and malformed cookies → signed out, instead of 500s; README, ARCHITECTURE §4.1 updated · K13.8
 - 2026-11-08 · agent · K13.6 demo actions capped in Postgres (`lib/server/demoLimits.ts`); demo banner shows reset errors; README, ARCHITECTURE §4.1, ESSENTIALS updated · K13.6
 - 2026-11-08 · agent · K13.7 rate limits moved from instance memory to Postgres (`rate_limits`, atomic upsert, daily cleanup); README, ARCHITECTURE §5/§7, ESSENTIALS updated · K13.7

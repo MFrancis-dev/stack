@@ -245,7 +245,7 @@ On-chain vault = truth for plan and balance. DB = history and metadata.
 | Tampered quote | `verifyQuoteSignature()` |
 | Admin rug | No admin path to funds (I5) |
 | Secrets | `.env` only; logged errors pass through `redact()` (env secret values, URL credentials, private-key strings) |
-| Clickjacking, sniffing, leaky referrers | Security headers on every response: `X-Frame-Options: DENY`, `nosniff`, `strict-origin-when-cross-origin`, restrictive `Permissions-Policy`, `COOP: same-origin-allow-popups`, HSTS in production. No CSP yet (wallet connector iframes) |
+| Clickjacking, sniffing, leaky referrers | Security headers on every response: `X-Frame-Options: DENY`, `nosniff`, `strict-origin-when-cross-origin`, restrictive `Permissions-Policy`, `COOP: same-origin-allow-popups`, HSTS in production. CSP (K13.9): enforced `object-src 'none'; frame-ancestors 'none'`; full policy (`default-src 'self'`, scripts/styles self + inline, `connect-src 'self' https: wss:`, `base-uri`/`form-action 'self'`) as `Content-Security-Policy-Report-Only`, because wallets run in `srcdoc` sandbox frames that inherit it; enforce after a real-wallet sign-in shows no violations (K13.10) |
 | CSRF on state-changing routes | Session cookie is `SameSite=Lax` + HTTP-only, so cross-site POSTs carry no session |
 | Request floods | Rate limits on quote, plan preview, onboard, storage check and demo start, kept in Postgres (`rate_limits`, one atomic upsert per request) so every serverless instance shares them; counters older than a day removed by the daily cleanup (K13.7) |
 
