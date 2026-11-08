@@ -82,7 +82,7 @@ On-chain vault = truth for plan + balance.
 `pollFunding` 5 s · `scheduleBuys` 60 s · `pollBuys` 10 s · `expireQuotes` 60 s · keeper gas alert 10 min · `cleanupDemo` 60 min (demo users > 24 h)
 - Hosted (serverless): one pass of each loop per `GET /api/cron/tick` every 5 min (`worker/tick.ts`, GitHub workflow, off until `WORKER_ENABLED=true`)
 - NEAR plans: the destination must be registered on `wrap.near` first (`/api/storage-check`, `wnearRegisterTx`)
-- Log errors through `redact()`; security headers live in next.config.ts
+- Log errors through `redact()`; security headers live in next.config.ts (CSP: two directives enforced, full policy report-only until a real-wallet test, K13.10)
 - Every loop is `(deps) => Promise` (worker/deps.ts) — test one tick with fakes
 - scheduleBuys order: due? → not in flight / not in 15-min backoff → amount = min(per-run, balance) → quote → cost → plan match → **insert row** → execute_buy → submit
 - Every skip/refusal/failure writes `buys.note`; refusals and failures `log.alert`
