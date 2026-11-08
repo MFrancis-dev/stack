@@ -152,7 +152,7 @@ The keeper chooses `deposit_address`. A stolen keeper key could redirect at most
 | `GET /api/storage-check?account=` | session, rate-limited | Is the account registered on `wrap.near`? A NEAR plan can't be saved until it is (no refund otherwise); the UI offers a one-tap `storage_deposit` (0.00125 NEAR). Demo: always yes |
 | `GET /api/buys` | session | History |
 | `GET /api/export.csv` | session | CSV |
-| `POST /api/demo/:action` | demo session | `fast-forward`, `reset` |
+| `POST /api/demo/:action` | demo session | `fast-forward`, `reset`. Capped in Postgres (`lib/server/demoLimits.ts`, K13.6): new demos 10/min and 30/h per IP, 600/h overall; per demo 12 fast-forwards and 20 resets a day, 60 owner transactions an hour |
 | `GET /api/cron/cleanup-demo` | `Bearer $CRON_SECRET` | Vercel Cron (daily 03:00 UTC): same `cleanupDemo` as the worker loop, for hosts without the worker |
 | `GET /api/cron/tick` | `Bearer $CRON_SECRET` | One pass of every worker loop (`worker/tick.ts`), in order: pollFunding → pollBuys → expireQuotes → scheduleBuys → keeper gas. Called every 5 min by `.github/workflows/worker-tick.yml` when `WORKER_ENABLED=true`. Each loop isolated |
 

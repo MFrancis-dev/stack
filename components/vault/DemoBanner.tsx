@@ -29,6 +29,7 @@ export function DemoBanner() {
       setMessage("Back to the start.");
       return done();
     },
+    onError: (e) => setMessage(e.message),
   });
   return (
     <aside className="mt-2 flex flex-wrap items-center justify-between gap-3 rounded-md bg-brass-soft/60 px-4 py-3" aria-label="Demo mode">

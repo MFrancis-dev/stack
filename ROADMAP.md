@@ -27,7 +27,7 @@
 | 10. README & public repo | Nov 12–13 | 100% | ✅ done (hosted URL added) |
 | 11. Launch: video, post, submission | Nov 13–14 | 57% | in progress (video, post and submission need the human) |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| 13. Launch review fixes | Nov 8–13 | 56% | in progress (pre-launch security and reliability review) |
+| 13. Launch review fixes | Nov 8–13 | 67% | in progress (pre-launch security and reliability review) |
 | **Overall (MVP)** | | **~80%** | |
 
 Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 15 rows (D + phases 0–13; Phase 13 was added on 2026-11-08, which lowered the overall %). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
@@ -215,7 +215,7 @@ From the pre-launch security and reliability review (2026-11-08), ranked with au
 - [ ] **K13.3** [#129](https://github.com/MFrancis-dev/stack/issues/129) ⛔ Vault creation spends the factory's NEAR for anyone who signs in (~1.5 NEAR per vault): owner pays storage, or create after the first deposit
 - [x] **K13.4** [#130](https://github.com/MFrancis-dev/stack/issues/130) Make sessions revocable (sign-out only cleared the cookie) · 2026-11-08 (with a CI fix: retry the `cargo-near` download, then build it from crates.io, after GitHub releases kept answering 504): sessions carry an issued-at time; sign-out sets `users.sessions_valid_after` (migration 0003) and every older session is rejected, real and demo; test signs in, signs out, checks the copied cookie fails and a new sign-in works
 - [x] **K13.5** [#131](https://github.com/MFrancis-dev/stack/issues/131) Keep preview and development off the production database · 2026-11-08: `scripts/vercel-build.mjs` migrates only on production builds; `databaseUrlFor()` ignores `DATABASE_URL` on Preview/Development (uses `PREVIEW_DATABASE_URL` or refuses to start); `pnpm demo` clears `DATABASE_URL` (checked: Next keeps the empty value over `.env.local`); 3 tests
-- [ ] **K13.6** [#132](https://github.com/MFrancis-dev/stack/issues/132) Cap demo starts and fast-forwards in the database
+- [x] **K13.6** [#132](https://github.com/MFrancis-dev/stack/issues/132) Cap demo starts and fast-forwards in the database · 2026-11-08: on the shared limiter (K13.7): new demos 10/min and 30/h per IP plus 600/h overall; per demo 12 fast-forwards and 20 resets a day, 60 owner transactions an hour; messages say what to do; the demo banner now shows reset errors too; 2 tests
 - [x] **K13.7** [#133](https://github.com/MFrancis-dev/stack/issues/133) Rate limits shared across serverless instances · 2026-11-08: `rate_limits` table (migration 0004), one atomic `INSERT … ON CONFLICT` per request, all five limited routes switched; counters older than a day removed by `cleanupDemo`; 5 tests incl. a burst of 8 against a limit of 5
 - [ ] **K13.8** [#134](https://github.com/MFrancis-dev/stack/issues/134) Bad ids and malformed cookies return 500
 - [ ] **K13.9** [#135](https://github.com/MFrancis-dev/stack/issues/135) Add a Content-Security-Policy
@@ -234,6 +234,7 @@ From the pre-launch security and reliability review (2026-11-08), ranked with au
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-08 · agent · K13.6 demo actions capped in Postgres (`lib/server/demoLimits.ts`); demo banner shows reset errors; README, ARCHITECTURE §4.1, ESSENTIALS updated · K13.6
 - 2026-11-08 · agent · K13.7 rate limits moved from instance memory to Postgres (`rate_limits`, atomic upsert, daily cleanup); README, ARCHITECTURE §5/§7, ESSENTIALS updated · K13.7
 - 2026-11-08 · agent · K13.5 previews and `pnpm demo` can't touch the production database (migrate on production builds only, `databaseUrlFor`, `PREVIEW_DATABASE_URL`); README, ARCHITECTURE, ESSENTIALS, `.env.example` updated · K13.5
 - 2026-11-08 · agent · K13.4 revocable sessions: issued-at in the token, sign-out revokes every older session (`sessions_valid_after`, migration 0003); README status, ARCHITECTURE §4.1/§5, ESSENTIALS updated · K13.4
