@@ -150,6 +150,16 @@ describe("session (K4.1)", () => {
     await expect(signIn()).rejects.toThrow();
   });
 
+  it("treats a malformed session cookie as signed out, not a server error (K13.8)", async () => {
+    expect((await vaultRoute.GET(req("/api/vault", { cookie: "stack_session=%E0%A4%A" }))).status).toBe(401);
+  });
+
+  it("answers 404, not 500, for funding ids that aren't UUIDs (K13.8)", async () => {
+    const cookie = await signIn();
+    expect((await fundStatusRoute.GET(req("/api/fund/not-a-uuid/status", { cookie }), params("not-a-uuid"))).status).toBe(404);
+    expect((await submitTxRoute.POST(req("/api/fund/1;drop/submit-tx", { method: "POST", cookie, body: { txHash: "5xYzTxHash123" } }), params("1;drop"))).status).toBe(404);
+  });
+
   it("requires a session for user routes", async () => {
     expect((await vaultRoute.GET(req("/api/vault"))).status).toBe(401);
     expect((await onboardRoute.POST(req("/api/onboard", { method: "POST", cookie: "stack_session=forged.token" }))).status).toBe(401);

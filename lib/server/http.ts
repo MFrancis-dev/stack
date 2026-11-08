@@ -41,6 +41,14 @@ export async function parseBody<S extends z.ZodTypeAny>(req: Request, schema: S)
   return r.data;
 }
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** A path id for a uuid column. Anything else is 404, not a database error (K13.8). */
+export function uuidParam(id: string): string {
+  if (!UUID.test(id)) throw new HttpError(404, "Not found");
+  return id;
+}
+
 export function clientIp(req: Request): string {
   return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || "local";
 }
