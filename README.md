@@ -93,6 +93,8 @@ Other protections: real quotes are refused unless their signature verifies (fail
 
 Being honest about what is and isn't live:
 
+- **Pre-launch review (2026-11-08):** a security and reliability review found nine issues; they are fixed one at a time and tracked as ROADMAP Phase 13. Fixed so far: a buy whose deposit never reaches NEAR Intents now expires after 30 minutes instead of blocking the plan forever.
+
 - **Contracts are built and tested but not deployed yet** (ROADMAP K1.13). Real mode needs deployed contracts, funded keeper/factory accounts and a 1Click partner JWT.
 - **Quote signatures:** real 1Click quotes work without a partner key, but `verifyQuoteSignature()` in the newest SDK (0.1.26) returns false on dry and real quotes (tested 2026-11-05). Real mode refuses unverified quotes, so real funding and buys stay closed until 1Click confirms the current signing key or hash (ROADMAP K3.5). The demo is not affected.
 - **Fees without a partner key:** 1Click adds about 0.25%. A real $100 Bitcoin quote came to about 2.0%, against 1.75% in the fee estimates shown in the demo and on the landing page.

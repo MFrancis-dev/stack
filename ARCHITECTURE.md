@@ -193,7 +193,7 @@ On a long-running host `pnpm worker` runs the loops below on their intervals. On
 |---|---|---|
 | `pollFunding` | 5 s | Non-final funding attempts → 1Click status; PENDING past deadline → `expired`; alert on `underpaid`. One failing attempt never stops the others |
 | `scheduleBuys` | 60 s | Per vault: skip if paused / not due / a buy is in flight / within the 15-min backoff after a skip or failure / vault empty. Amount = min(`amount_per_run`, balance). Real quote (fails closed on signature, K3.5) → cost check (`skipped_cost` + note) → plan match (`failed` "refused: …" + alert) → **insert row first** → `execute_buy` → `submitDepositTx` (best effort) |
-| `pollBuys` | 10 s | In-flight buys → final status; on success the actual `amountOut` and destination tx from `swapDetails`; refunds noted with 1Click's reason |
+| `pollBuys` | 10 s | In-flight buys → final status; on success the actual `amountOut` and destination tx from `swapDetails`; refunds noted with 1Click's reason. Still `PENDING_DEPOSIT` 30 min after the buy (quote deadline 10 min + margin) → `expired`, so a lost deposit never blocks the plan |
 | `expireQuotes` | 60 s | DB-only expiry of unpaid funding quotes (works while 1Click is down) |
 | `keeperBalance` | 10 min | Alert below 1 NEAR — buys stop without gas |
 | `cleanupDemo` | 60 min | Delete demo users older than 24 h with their rows (never real users) |
