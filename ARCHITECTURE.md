@@ -142,7 +142,7 @@ The keeper chooses `deposit_address`. A stolen keeper key could redirect at most
 |---|---|---|
 | `GET /api/session` | public | Challenge: 32-byte nonce + message + recipient (app host), in a signed 5-min cookie |
 | `POST /api/session` | NEP-413 | Verify signature (full-access key, matching nonce/message/recipient) → upsert user → HMAC-signed HTTP-only session cookie (7 days) |
-| `DELETE /api/session` | – | Sign out |
+| `DELETE /api/session` | session | Sign out everywhere: sets `users.sessions_valid_after`, so every session issued before now is rejected (K13.4) |
 | `POST /api/onboard` | session | Keeper `create_vault_for(owner)` (once) |
 | `GET /api/vault` | session | `get_state()` + `ft_balance_of` + next run |
 | `GET /api/tokens` | public | Cached token list |
@@ -206,7 +206,7 @@ Runner: a loop never overlaps itself, errors are logged and the loop continues, 
 
 ```sql
 users (id uuid pk, near_account_id text unique not null, vault_account_id text unique,
-       is_demo boolean default false, created_at timestamptz default now())
+       is_demo boolean default false, sessions_valid_after timestamptz, created_at timestamptz default now())
 
 funding_attempts (id uuid pk, user_id uuid fk, origin_asset text not null, amount_in numeric(78,0) not null,
        expected_out numeric(78,0) not null, refund_to text not null, deposit_address text unique not null,

@@ -48,3 +48,8 @@ export async function deleteStaleDemoUsers(db: Db, olderThan: Date): Promise<num
   await db.delete(users).where(and(inArray(users.id, ids), eq(users.isDemo, true))); // demo_vaults cascade
   return ids.length;
 }
+
+/** Signs the user out everywhere: every session issued before `at` stops working (K13.4). */
+export async function revokeSessions(db: Db, userId: string, at: Date): Promise<void> {
+  await db.update(users).set({ sessionsValidAfter: at }).where(eq(users.id, userId));
+}

@@ -69,7 +69,7 @@ Rust near-sdk =5.30.0 + cargo-near 0.22 + near-workspaces =0.24.0 · Next.js 15.
 | no route | – | no_quote |
 
 ## Data model (amounts numeric(78,0))
-`users` (near_account_id, vault_account_id, is_demo) · `funding_attempts` (deposit_address uniq, quote_raw, signature, status) · `buys` (quote_ref uniq, cost_bps, deposit_address, status)
+`users` (near_account_id, vault_account_id, is_demo, sessions_valid_after) · `funding_attempts` (deposit_address uniq, quote_raw, signature, status) · `buys` (quote_ref uniq, cost_bps, deposit_address, status)
 On-chain vault = truth for plan + balance.
 
 ## API

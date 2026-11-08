@@ -14,6 +14,8 @@ export const users = pgTable("users", {
   nearAccountId: text("near_account_id").notNull().unique(),
   vaultAccountId: text("vault_account_id").unique(),
   isDemo: boolean("is_demo").notNull().default(false),
+  /** Sessions issued before this time are rejected; set on sign-out (K13.4). */
+  sessionsValidAfter: ts("sessions_valid_after"),
   createdAt: ts("created_at").notNull().defaultNow(),
 });
 

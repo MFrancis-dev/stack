@@ -19,6 +19,8 @@ export interface Session {
   userId: string;
   accountId: string;
   demo: boolean;
+  /** Issued at, unix seconds. Older tokens have none: `issuedAtS` derives it from `exp`. */
+  iat?: number;
   exp: number;
 }
 
@@ -92,8 +94,18 @@ export function requireSession(req: Request): Session {
   return s;
 }
 
-export function sessionCookie(data: Omit<Session, "exp">, now = Date.now()): string {
-  return cookie(SESSION_COOKIE, signToken({ ...data, exp: Math.floor(now / 1000) + SESSION_TTL_S }), SESSION_TTL_S);
+export function sessionCookie(data: Omit<Session, "exp" | "iat">, now = Date.now()): string {
+  const iat = Math.floor(now / 1000);
+  return cookie(SESSION_COOKIE, signToken({ ...data, iat, exp: iat + SESSION_TTL_S }), SESSION_TTL_S);
+}
+
+function issuedAtS(s: Session): number {
+  return s.iat ?? s.exp - SESSION_TTL_S;
+}
+
+/** True when the user signed out (or was signed out) after this session was issued (K13.4). */
+export function sessionRevoked(session: Session, sessionsValidAfter: Date | null): boolean {
+  return sessionsValidAfter !== null && issuedAtS(session) < Math.floor(sessionsValidAfter.getTime() / 1000);
 }
 
 /** The NEP-413 `recipient`: this app's host, so a signature for another site can't be replayed here. */

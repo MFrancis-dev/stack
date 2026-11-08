@@ -5,11 +5,11 @@
  */
 
 import { sessionInput } from "@/lib/core/schemas";
-import { upsertUser } from "@/lib/db/queries/users";
+import { revokeSessions, upsertUser } from "@/lib/db/queries/users";
 import { verifySignIn } from "@/lib/near/nep413";
 import { getServices, requireNear } from "@/lib/server/adapters";
 import { handle, HttpError, json, parseBody } from "@/lib/server/http";
-import { CHALLENGE_COOKIE, clearCookie, newChallenge, readChallenge, SESSION_COOKIE, sessionCookie } from "@/lib/server/session";
+import { CHALLENGE_COOKIE, clearCookie, getSession, newChallenge, readChallenge, SESSION_COOKIE, sessionCookie } from "@/lib/server/session";
 
 export const GET = handle(async () => {
   const { challenge, setCookie } = newChallenge();
@@ -40,4 +40,9 @@ export const POST = handle(async (req: Request) => {
   return json({ accountId: user.nearAccountId, vaultAccountId: user.vaultAccountId }, { headers });
 });
 
-export const DELETE = handle(async () => json({ ok: true }, { headers: { "set-cookie": clearCookie(SESSION_COOKIE) } }));
+/** Signs out on every device: sessions issued before now are rejected from here on (K13.4). */
+export const DELETE = handle(async (req: Request) => {
+  const session = getSession(req);
+  if (session) await revokeSessions((await getServices()).db, session.userId, new Date());
+  return json({ ok: true }, { headers: { "set-cookie": clearCookie(SESSION_COOKIE) } });
+});

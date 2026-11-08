@@ -158,8 +158,27 @@ describe("session (K4.1)", () => {
   });
 
   it("signs out", async () => {
-    const res = await sessionRoute.DELETE();
+    const res = await sessionRoute.DELETE(req("/api/session", { method: "DELETE" }));
     expect(res.headers.get("set-cookie")).toContain("Max-Age=0");
+  });
+
+  it("signing out revokes the session everywhere, even if the cookie was copied (K13.4)", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    try {
+      vi.setSystemTime(new Date("2026-11-08T10:00:00Z"));
+      const stolen = await signIn();
+      expect((await vaultRoute.GET(req("/api/vault", { cookie: stolen }))).status).toBe(200);
+
+      vi.setSystemTime(new Date("2026-11-08T10:05:00Z"));
+      expect((await sessionRoute.DELETE(req("/api/session", { method: "DELETE", cookie: stolen }))).status).toBe(200);
+      expect((await vaultRoute.GET(req("/api/vault", { cookie: stolen }))).status).toBe(401);
+
+      vi.setSystemTime(new Date("2026-11-08T10:06:00Z"));
+      const fresh = await signIn();
+      expect((await vaultRoute.GET(req("/api/vault", { cookie: fresh }))).status).toBe(200);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 
