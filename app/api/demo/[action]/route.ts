@@ -11,7 +11,7 @@ import { applyOwnerTx, DemoRuleError } from "@/lib/near/demo";
 import { getServices } from "@/lib/server/adapters";
 import { clientIp, handle, HttpError, json, parseBody } from "@/lib/server/http";
 import { rateLimit } from "@/lib/server/rateLimit";
-import { requireSession, sessionCookie } from "@/lib/server/session";
+import { requireSession, sessionCookie, sessionRevoked } from "@/lib/server/session";
 
 const ownerTxInput = z.object({
   tx: z.object({
@@ -33,7 +33,7 @@ async function demoUser(req: Request) {
   if (!session.demo) throw new HttpError(403, "Only available in demo mode");
   const { db } = await getServices();
   const user = await getUserById(db, session.userId);
-  if (!user?.isDemo) throw new HttpError(401, "Demo expired, start it again");
+  if (!user?.isDemo || sessionRevoked(session, user.sessionsValidAfter)) throw new HttpError(401, "Demo expired, start it again");
   return { db, user };
 }
 

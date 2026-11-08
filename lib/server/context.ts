@@ -8,7 +8,7 @@ import { getUserById } from "../db/queries/users";
 import type { User } from "../db/schema";
 import { servicesFor, type Services } from "./adapters";
 import { HttpError } from "./http";
-import { requireSession, type Session } from "./session";
+import { requireSession, sessionRevoked, type Session } from "./session";
 
 export interface UserContext {
   session: Session;
@@ -20,7 +20,7 @@ export async function requireUser(req: Request): Promise<UserContext> {
   const session = requireSession(req);
   const services = await servicesFor(session);
   const user = await getUserById(services.db, session.userId);
-  if (!user || user.isDemo !== session.demo) throw new HttpError(401, "Sign in again");
+  if (!user || user.isDemo !== session.demo || sessionRevoked(session, user.sessionsValidAfter)) throw new HttpError(401, "Sign in again");
   return { session, services, user };
 }
 

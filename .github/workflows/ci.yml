@@ -73,7 +73,15 @@ jobs:
           workspaces: contracts
       # The sandbox tests build the contracts with `cargo near` (near-workspaces compile_project).
       - name: Install cargo-near 0.22.0
-        run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/near/cargo-near/releases/download/cargo-near-v0.22.0/cargo-near-installer.sh | sh
+        # GitHub's release download sometimes answers 504: retry, then build from crates.io instead of failing.
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if curl --proto '=https' --tlsv1.2 -LsSf https://github.com/near/cargo-near/releases/download/cargo-near-v0.22.0/cargo-near-installer.sh | sh; then exit 0; fi
+            echo "cargo-near download failed (attempt $attempt of 5), retrying in 20 s"
+            sleep 20
+          done
+          echo "GitHub release download unavailable; building cargo-near 0.22.0 from crates.io instead"
+          cargo install cargo-near --version 0.22.0 --locked
       - run: cargo check --workspace --all-targets
       - run: cargo test --workspace
 
