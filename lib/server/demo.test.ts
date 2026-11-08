@@ -1,5 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as demoRoute from "@/app/api/demo/[action]/route";
+import { DEMO_LIMITS } from "./demoLimits";
+import { rateLimits } from "../db/schema";
 import * as fundQuoteRoute from "@/app/api/fund/quote/route";
 import * as vaultRoute from "@/app/api/vault/route";
 import { planTx, pauseTx, recoverTokenTx, resumeTx, withdrawTx } from "../client/ownerTx";
@@ -136,6 +138,23 @@ describe("demo routes", () => {
     const realCookie = sessionCookie({ userId: real.id, accountId: "alice.near", demo: false }).split(";")[0];
     expect((await demoRoute.POST(req("/api/demo/reset", { cookie: realCookie }), action("reset"))).status).toBe(403);
     expect((await demoRoute.POST(req("/api/demo/nope", { cookie }), action("nope"))).status).toBe(404);
+  });
+
+  it("caps fast-forward per demo, with a message that says what to do (K13.6)", async () => {
+    const cookie = cookieOf(await demoRoute.POST(req("/api/demo/start"), action("start")));
+    for (let i = 0; i < DEMO_LIMITS.fastForwardPerDemo; i++) {
+      expect((await demoRoute.POST(req("/api/demo/fast-forward", { cookie }), action("fast-forward"))).status).toBe(200);
+    }
+    const over = await demoRoute.POST(req("/api/demo/fast-forward", { cookie }), action("fast-forward"));
+    expect(over.status).toBe(429);
+    expect((await over.json()).error).toMatch(/Start a new demo/);
+  });
+
+  it("caps new demos across every visitor once the hourly total is reached (K13.6)", async () => {
+    await db.insert(rateLimits).values({ key: "demo-start:all", windowStart: new Date(), count: DEMO_LIMITS.startAllHour });
+    const res = await demoRoute.POST(req("/api/demo/start"), action("start"));
+    expect(res.status).toBe(429);
+    expect((await res.json()).error).toMatch(/busy/);
   });
 
   it("rejects a session whose demo flag doesn't match the user", async () => {

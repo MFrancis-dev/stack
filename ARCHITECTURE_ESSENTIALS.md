@@ -90,7 +90,7 @@ On-chain vault = truth for plan + balance.
 ## Demo & dry-run
 `pnpm demo` = zero secrets, PGlite (verified from a fresh clone). `/demo` → per-visitor demo saver + demo session; Never moves funds.
 - Demo sessions use `servicesFor(session)` → demo quotes (live dry first, calibrated model fallback in `lib/core/feeModel.ts`, also used by the landing page's fee check), demo status (time-based), demo vault (`demo_vaults` + balance from rows)
-- Owner actions in demo → `POST /api/demo/owner-tx`, same rules as the contract; `fast-forward` 30 days, `reset`
+- Owner actions in demo → `POST /api/demo/owner-tx`, same rules as the contract; `fast-forward` 30 days, `reset`; every demo action capped in Postgres (`lib/server/demoLimits.ts`)
 - Real worker queries **exclude demo users**; `demo-` hashes never link to explorers
 - `pnpm e2e` = Playwright PRD §8 journey on demo mode, desktop + phone, in CI
 - Keep `@electric-sql/pglite` in `serverExternalPackages`; keep the dev session secret on `globalThis`

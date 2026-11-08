@@ -10,7 +10,14 @@ import type { Db } from "../db/client";
 import { rateLimits } from "../db/schema";
 import { HttpError } from "./http";
 
-export async function rateLimit(db: Db, key: string, limit: number, windowMs: number, now = Date.now()): Promise<void> {
+export async function rateLimit(
+  db: Db,
+  key: string,
+  limit: number,
+  windowMs: number,
+  now = Date.now(),
+  message = "Too many requests, try again shortly",
+): Promise<void> {
   const at = new Date(now);
   const windowOpenedBefore = new Date(now - windowMs);
   const expired = sql`${rateLimits.windowStart} <= ${windowOpenedBefore.toISOString()}::timestamptz`;
@@ -25,7 +32,7 @@ export async function rateLimit(db: Db, key: string, limit: number, windowMs: nu
       },
     })
     .returning({ count: rateLimits.count });
-  if ((row?.count ?? 0) > limit) throw new HttpError(429, "Too many requests, try again shortly");
+  if ((row?.count ?? 0) > limit) throw new HttpError(429, message);
 }
 
 /** Drops counters whose window is long over (run daily with the demo cleanup). */
