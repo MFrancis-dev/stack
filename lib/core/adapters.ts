@@ -19,6 +19,17 @@ export interface StatusProvider {
   submitDepositTx(depositAddress: string, txHash: string): Promise<void>;
 }
 
+/**
+ * `executeBuy` sent the transaction but can't tell whether it landed (timeout, network error).
+ * The USDC may already have left, so the buy must stay in flight until 1Click's status settles it.
+ */
+export class BuyOutcomeUnknownError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "BuyOutcomeUnknownError";
+  }
+}
+
 export interface VaultClient {
   /** The owner's vault per the factory, if one exists. */
   findVault(owner: string): Promise<string | null>;

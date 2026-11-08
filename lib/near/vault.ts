@@ -2,6 +2,7 @@
  * Typed vault bindings: views (anyone) and execute_buy (keeper). Roadmap: K3.3 · Spec: ARCHITECTURE.md §3.3
  */
 
+import { ContractExecutionError, InvalidTransactionError, TransactionExecutionError } from "near-api-js/rpc-errors";
 import { actions } from "near-api-js";
 import { asBaseUnits } from "../core/money";
 import type { BaseUnits, VaultState } from "../core/types";
@@ -59,6 +60,15 @@ export interface BuyResult {
   txHash: string;
   sent: boolean;
   events: NearEvent[];
+}
+
+/**
+ * True when NEAR gave a clear answer that the buy did not happen: the contract refused it, an
+ * action failed, or the transaction was rejected before it ran. Anything else (timeouts, network
+ * errors, RPC trouble) leaves the outcome unknown.
+ */
+export function isClearTxFailure(e: unknown): boolean {
+  return e instanceof ContractExecutionError || e instanceof TransactionExecutionError || e instanceof InvalidTransactionError;
 }
 
 export async function executeBuy(

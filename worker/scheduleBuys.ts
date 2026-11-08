@@ -5,6 +5,7 @@
  */
 
 import { randomUUID } from "node:crypto";
+import { BuyOutcomeUnknownError } from "../lib/core/adapters";
 import { checkCost, costSkipNote } from "../lib/core/cost";
 import { minUnits } from "../lib/core/money";
 import { quoteMatchesPlan } from "../lib/core/planMatch";
@@ -17,7 +18,7 @@ import { errorMessage, type WorkerDeps } from "./deps";
 /** After a skipped or failed attempt, wait this long before trying the same run again. */
 export const RETRY_BACKOFF_MS = 15 * 60 * 1000;
 
-export type BuyOutcome = "not_due" | "in_flight" | "backoff" | "empty" | "no_quote" | "skipped_cost" | "refused" | "failed" | "sent";
+export type BuyOutcome = "not_due" | "in_flight" | "backoff" | "empty" | "no_quote" | "skipped_cost" | "refused" | "failed" | "sent" | "unclear";
 
 export async function scheduleBuys(deps: WorkerDeps): Promise<Map<string, BuyOutcome>> {
   const outcomes = new Map<string, BuyOutcome>();
@@ -129,6 +130,13 @@ async function execute(
     }
     return "sent";
   } catch (e) {
+    if (e instanceof BuyOutcomeUnknownError) {
+      // The USDC may already have left. Stay in flight: pollBuys settles it from 1Click's status, and
+      // a deposit 1Click never sees expires after BUY_EXPIRY_MS (K13.2).
+      await updateBuy(deps.db, row.id, { note: `Waiting for NEAR Intents to confirm: ${errorMessage(e)}` });
+      deps.log.alert("execute_buy outcome unclear", { userId: user.id, quoteRef: row.quoteRef, error: errorMessage(e) });
+      return "unclear";
+    }
     await updateBuy(deps.db, row.id, { status: "failed", note: errorMessage(e), completedAt: new Date(deps.now()) });
     deps.log.alert("execute_buy failed", { userId: user.id, quoteRef: row.quoteRef, error: errorMessage(e) });
     return "failed";
