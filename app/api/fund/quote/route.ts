@@ -13,7 +13,7 @@ import { rateLimit } from "@/lib/server/rateLimit";
 
 export const POST = handle(async (req: Request) => {
   const { services, user, vaultAccountId } = await requireVaultOwner(req);
-  rateLimit(`fund-quote:${user.id}:${clientIp(req)}`, 20, 60_000);
+  await rateLimit(services.db, `fund-quote:${user.id}:${clientIp(req)}`, 20, 60_000);
   const body = await parseBody(req, fundQuoteInput);
 
   const quote = await services.quotes.fundingQuote(

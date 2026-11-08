@@ -21,7 +21,6 @@ import { createDb, type Db } from "../db/client";
 import { insertBuy } from "../db/queries/buys";
 import { getUserByAccount } from "../db/queries/users";
 import { setServicesForTest, type Services } from "./adapters";
-import { resetRateLimits } from "./rateLimit";
 
 // Roadmap: K4.7 — real handlers, in-memory PGlite, fake 1Click/NEAR
 const BASE = "http://localhost:3000";
@@ -97,7 +96,6 @@ beforeEach(async () => {
   db = createDb({ pgliteDataDir: "memory://" });
   await db.migrate();
   setServicesForTest(services());
-  resetRateLimits();
   oneClickStatus = "PENDING_DEPOSIT";
   vi.clearAllMocks();
 });

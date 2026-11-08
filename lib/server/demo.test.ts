@@ -13,7 +13,6 @@ import { fastForward, seedDemoUser } from "../db/seed-demo";
 import { applyOwnerTx, demoBalance, demoVaultClient, DemoRuleError } from "../near/demo";
 import { demoStatusAt, modelCostBps } from "../oneclick/demo";
 import { setServicesForTest, type Services } from "./adapters";
-import { resetRateLimits } from "./rateLimit";
 import { sessionCookie } from "./session";
 
 // Roadmap: K7.1–K7.4
@@ -21,7 +20,6 @@ let db: Db;
 beforeEach(async () => {
   db = createDb({ pgliteDataDir: "memory://" });
   await db.migrate();
-  resetRateLimits();
   // Real-mode services that must never be touched by a demo session.
   const untouchable = () => {
     throw new Error("real service used in demo mode");

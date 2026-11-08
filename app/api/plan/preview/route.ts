@@ -23,7 +23,7 @@ const PREVIEW_RECIPIENT = {
 
 export const POST = handle(async (req: Request) => {
   const { services, user } = await requireUser(req);
-  rateLimit(`plan-preview:${user.id}`, 30, 60_000);
+  await rateLimit(services.db, `plan-preview:${user.id}`, 30, 60_000);
   const body = await parseBody(req, planPreviewInput);
   const target = TARGET_ASSETS[body.target];
   const amountIn = asBaseUnits(body.amountPerRun);
