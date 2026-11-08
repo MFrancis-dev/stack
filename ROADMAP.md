@@ -190,7 +190,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 
 ## Phase 11 — Launch (Nov 13–14)
 
-- [x] **K11.1** [#90](https://github.com/MFrancis-dev/stack/issues/90) Video script: saver's problem → fund from another chain → buy lands in own wallet → NEAR's role → next step · 2026-11-05: `docs/launch/VIDEO_SCRIPT.md` (90 s, hosted demo, shot list)
+- [x] **K11.1** [#90](https://github.com/MFrancis-dev/stack/issues/90) Video script: saver's problem → fund from another chain → buy lands in own wallet → NEAR's role → next step · 2026-11-05: `docs/launch/VIDEO_SCRIPT.md` (90 s, hosted demo, shot list) · 2026-11-06: alternative story-led script in `docs/launch/VIDEO_SCRIPT_ONE_SAVER.md`
 - [ ] **K11.2** [#91](https://github.com/MFrancis-dev/stack/issues/91) 👤 Record the video
 - [x] **K11.3** [#92](https://github.com/MFrancis-dev/stack/issues/92) Draft the X post (@NEARProtocol #NEARHackathon, optional @NearLegion @NearBuilders, repo + demo links) · 2026-11-05: `docs/launch/X_POST.md` (one-post and two-post versions) · 2026-11-05: link preview card + site icon so the post's links show the product (`app/opengraph-image.tsx`, `app/icon.svg`)
 - [ ] **K11.4** [#93](https://github.com/MFrancis-dev/stack/issues/93) 👤 Publish; paste URL here
@@ -219,6 +219,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-06 · agent · Added an alternative demo video script ("One saver, one month") · K11.1
 - 2026-11-05 · agent · Real-quote findings: works without a JWT (K0.8 dropped), signature check false on real quotes (K3.5 reason changed), refund-account behaviour, fee gap documented; README status updated · K0.8, K0.9, K3.5
 - 2026-11-05 · agent · Link preview card (Open Graph + X large card, display font with fallback), site icon, page title/description; README updated · K11.3
 - 2026-11-05 · agent · Hosted worker: `worker/tick.ts` + `GET /api/cron/tick` (cron-secret protected, loops isolated, in-flight work first) + scheduled `Worker tick` workflow, off until enabled; shared `cronAuthorized`; 4 tests; README/ARCHITECTURE updated · K9.2
