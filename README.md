@@ -93,14 +93,14 @@ Other protections: real quotes are refused unless their signature verifies (fail
 
 Being honest about what is and isn't live:
 
-- **Pre-launch review (2026-11-08):** a security and reliability review found nine issues; they are fixed one at a time and tracked as ROADMAP Phase 13. Fixed so far: a buy whose deposit never reaches NEAR Intents now expires after 30 minutes instead of blocking the plan forever; when NEAR gives no clear result for a buy (a timeout after sending), it stays in flight until NEAR Intents confirms it, instead of being shown as failed with nothing spent; signing out now ends the session on every device, so a copied session cookie stops working; preview deployments and `pnpm demo` can no longer read or migrate the production database.
+- **Pre-launch review (2026-11-08):** a security and reliability review found nine issues; they are fixed one at a time and tracked as ROADMAP Phase 13. Fixed so far: a buy whose deposit never reaches NEAR Intents now expires after 30 minutes instead of blocking the plan forever; when NEAR gives no clear result for a buy (a timeout after sending), it stays in flight until NEAR Intents confirms it, instead of being shown as failed with nothing spent; signing out now ends the session on every device, so a copied session cookie stops working; preview deployments and `pnpm demo` can no longer read or migrate the production database; rate limits now live in Postgres and apply across all serverless instances.
 
 - **Contracts are built and tested but not deployed yet** (ROADMAP K1.13). Real mode needs deployed contracts, funded keeper/factory accounts and a 1Click partner JWT.
 - **Quote signatures:** real 1Click quotes work without a partner key, but `verifyQuoteSignature()` in the newest SDK (0.1.26) returns false on dry and real quotes (tested 2026-11-05). Real mode refuses unverified quotes, so real funding and buys stay closed until 1Click confirms the current signing key or hash (ROADMAP K3.5). The demo is not affected.
 - **Fees without a partner key:** 1Click adds about 0.25%. A real $100 Bitcoin quote came to about 2.0%, against 1.75% in the fee estimates shown in the demo and on the landing page.
 - **Demo mode** uses live dry quotes when NEAR Intents is reachable and a fee model calibrated on real quotes otherwise; demo deposits complete on a timer. It never moves funds.
 - **No Content-Security-Policy yet** — the wallet connector loads wallets in sandboxed iframes.
-- Rate limits are in-memory (per app instance).
+- Rate limits live in Postgres, so all serverless instances share them (quote, plan preview, onboard, storage check, demo start).
 - **Hosting:** the web app runs on Vercel with a Neon Postgres database; demo cleanup runs as a daily Vercel Cron job. On the hosted app the worker runs as one pass every 5 minutes (`GET /api/cron/tick`, called by the `Worker tick` GitHub workflow). It stays off until real mode is configured: set the repository variable `WORKER_ENABLED=true` and the secret `CRON_SECRET`.
 
 ## Running for real
@@ -117,7 +117,7 @@ Contracts: `pnpm contracts:build` (cargo-near 0.22 → `contracts/target/near/`)
 ## Tests
 
 ```bash
-pnpm typecheck && pnpm lint && pnpm test   # 127 unit + API route tests (in-memory database, fake 1Click/NEAR)
+pnpm typecheck && pnpm lint && pnpm test   # 146 unit + API route tests (in-memory database, fake 1Click/NEAR)
 pnpm e2e                                    # Playwright judge journey on demo mode, desktop + phone
 E2E_BASE_URL=https://stack-savings.vercel.app pnpm e2e   # same journey against the hosted demo
 pnpm contracts:test                         # 49 contract tests: 24 vault + 9 factory unit, 16 sandbox (I1–I7 and more)

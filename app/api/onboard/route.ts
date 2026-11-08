@@ -13,7 +13,7 @@ export const POST = handle(async (req: Request) => {
   const { services, user } = await requireUser(req);
   if (user.vaultAccountId) return json({ vaultAccountId: user.vaultAccountId, created: false });
 
-  rateLimit(`onboard:${user.id}`, 3, 60 * 60 * 1000);
+  await rateLimit(services.db, `onboard:${user.id}`, 3, 60 * 60 * 1000);
   const vaults = requireVaultClient(services);
   const existing = await vaults.findVault(user.nearAccountId);
   const vaultAccountId = existing ?? (await vaults.createVaultFor(user.nearAccountId)).vaultAccountId;

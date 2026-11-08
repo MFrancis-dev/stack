@@ -18,7 +18,7 @@ export const GET = handle(async (req: Request) => {
   const account = new URL(req.url).searchParams.get("account")?.trim() ?? "";
   if (!isValidNearAccount(account)) throw new HttpError(400, "Not a valid NEAR account");
   if (session.demo) return json({ account, registered: true });
-  rateLimit(`storage-check:${user.id}`, 30, 60_000);
+  await rateLimit(services.db, `storage-check:${user.id}`, 30, 60_000);
   const balance = await view<unknown>(requireNear(services), WNEAR_CONTRACT, "storage_balance_of", { account_id: account });
   return json({ account, registered: balance !== null && balance !== undefined });
 });

@@ -88,3 +88,10 @@ export type User = typeof users.$inferSelect;
 export type FundingAttempt = typeof fundingAttempts.$inferSelect;
 export type Buy = typeof buys.$inferSelect;
 export type DemoVault = typeof demoVaults.$inferSelect;
+
+/** Rate-limit counters shared by every serverless instance (K13.7). One fixed window per key. */
+export const rateLimits = pgTable("rate_limits", {
+  key: text("key").primaryKey(),
+  windowStart: ts("window_start").notNull(),
+  count: integer("count").notNull(),
+});

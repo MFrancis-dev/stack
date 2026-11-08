@@ -221,6 +221,7 @@ buys (id uuid pk, user_id uuid fk, quote_ref text unique not null, amount_in num
        status text not null,          -- skipped_cost|no_quote|sent|processing|success|refunded|failed|expired
        note text,                     -- why it was skipped, refused, failed or refunded (migration 0001)
        destination_tx_hash text, created_at timestamptz default now(), completed_at timestamptz)
+rate_limits (key text pk, window_start timestamptz not null, count int not null)   -- K13.7, shared fixed windows
 ```
 On-chain vault = truth for plan and balance. DB = history and metadata.
 
@@ -246,7 +247,7 @@ On-chain vault = truth for plan and balance. DB = history and metadata.
 | Secrets | `.env` only; logged errors pass through `redact()` (env secret values, URL credentials, private-key strings) |
 | Clickjacking, sniffing, leaky referrers | Security headers on every response: `X-Frame-Options: DENY`, `nosniff`, `strict-origin-when-cross-origin`, restrictive `Permissions-Policy`, `COOP: same-origin-allow-popups`, HSTS in production. No CSP yet (wallet connector iframes) |
 | CSRF on state-changing routes | Session cookie is `SameSite=Lax` + HTTP-only, so cross-site POSTs carry no session |
-| Request floods | In-memory rate limits on quote, plan preview, onboard, storage check and demo start (single instance) |
+| Request floods | Rate limits on quote, plan preview, onboard, storage check and demo start, kept in Postgres (`rate_limits`, one atomic upsert per request) so every serverless instance shares them; counters older than a day removed by the daily cleanup (K13.7) |
 
 ---
 

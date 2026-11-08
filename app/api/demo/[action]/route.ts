@@ -42,8 +42,8 @@ export const POST = handle(async (req: Request, ctx: { params: Promise<{ action:
   try {
     switch (action) {
       case "start": {
-        rateLimit(`demo-start:${clientIp(req)}`, 10, 60_000);
         const { db } = await getServices();
+        await rateLimit(db, `demo-start:${clientIp(req)}`, 10, 60_000);
         const user = await seedDemoUser(db);
         return json(
           { accountId: user.nearAccountId, vaultAccountId: user.vaultAccountId },
