@@ -15,7 +15,7 @@ import { listBuysByUser as buysOf } from "../lib/db/queries/buys";
 import { getUserByAccount } from "../lib/db/queries/users";
 import type { Logger, WorkerDeps } from "./deps";
 import { expireQuotes } from "./expireQuotes";
-import { pollBuys } from "./pollBuys";
+import { BUY_EXPIRY_MS, pollBuys } from "./pollBuys";
 import { pollFunding } from "./pollFunding";
 import { startLoops } from "./runner";
 import { RETRY_BACKOFF_MS, scheduleBuys } from "./scheduleBuys";
@@ -204,6 +204,31 @@ describe("pollBuys (K5.4)", () => {
     rawStatus = { swapDetails: { refundReason: "price moved" } };
     await pollBuys(deps());
     expect((await listBuysByUser(db, userId))[0]).toMatchObject({ status: "refunded", note: "refunded to the vault: price moved" });
+  });
+
+  it("expires a buy whose deposit never reached 1Click, so the plan can run again", async () => {
+    await insertBuy(db, { userId, quoteRef: "q-old", amountIn: asBaseUnits("100000000"), targetAsset: "nep141:btc.omft.near", destinationAddress: DEST, depositAddress: "dep-old", status: "sent", createdAt: new Date(NOW - BUY_EXPIRY_MS - 60_000) });
+    statusOf = () => "PENDING_DEPOSIT";
+    await pollBuys(deps());
+    const [b] = await listBuysByUser(db, userId);
+    expect(b).toMatchObject({ status: "expired", oneclickStatus: "PENDING_DEPOSIT" });
+    expect(b!.completedAt).not.toBeNull();
+    expect(b!.note).toMatch(/never reached NEAR Intents/);
+    expect((await scheduleBuys(deps())).get(userId)).not.toBe("in_flight");
+  });
+
+  it("keeps waiting for a recent buy that 1Click hasn't seen yet", async () => {
+    await insertBuy(db, { userId, quoteRef: "q-new", amountIn: asBaseUnits("100000000"), targetAsset: "nep141:btc.omft.near", destinationAddress: DEST, depositAddress: "dep-new", status: "sent", createdAt: new Date(NOW - 5 * 60_000) });
+    statusOf = () => "PENDING_DEPOSIT";
+    await pollBuys(deps());
+    expect((await listBuysByUser(db, userId))[0]).toMatchObject({ status: "sent", completedAt: null });
+  });
+
+  it("never expires a buy once 1Click has seen its deposit", async () => {
+    await insertBuy(db, { userId, quoteRef: "q-seen", amountIn: asBaseUnits("100000000"), targetAsset: "nep141:btc.omft.near", destinationAddress: DEST, depositAddress: "dep-seen", status: "sent", createdAt: new Date(NOW - 3 * BUY_EXPIRY_MS) });
+    statusOf = () => "KNOWN_DEPOSIT_TX";
+    await pollBuys(deps());
+    expect((await listBuysByUser(db, userId))[0]).toMatchObject({ status: "sent", oneclickStatus: "KNOWN_DEPOSIT_TX" });
   });
 
   it("keeps polling processing buys", async () => {

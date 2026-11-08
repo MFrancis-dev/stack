@@ -27,9 +27,10 @@
 | 10. README & public repo | Nov 12–13 | 100% | ✅ done (hosted URL added) |
 | 11. Launch: video, post, submission | Nov 13–14 | 57% | in progress (video, post and submission need the human) |
 | 12. After submission | Nov 14–25 | 0% | not started |
-| **Overall (MVP)** | | **~81%** | |
+| 13. Launch review fixes | Nov 8–13 | 11% | in progress (pre-launch security and reliability review) |
+| **Overall (MVP)** | | **~77%** | |
 
-Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 14 rows (D + phases 0–12). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
+Phase % = done tasks ÷ non-dropped tasks in that phase. Overall = average of all 15 rows (D + phases 0–13; Phase 13 was added on 2026-11-08, which lowered the overall %). (Earlier entries over-estimated the overall %; recalculated 2026-11-04.)
 
 ## Definition of 100% readiness
 
@@ -205,6 +206,20 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 - [ ] **K12.3** [#99](https://github.com/MFrancis-dev/stack/issues/99) Repo public through judging; no breaking changes to the demo
 - [ ] **K12.4** [#100](https://github.com/MFrancis-dev/stack/issues/100) Watch Discord/X for judge questions
 
+## Phase 13 — Launch review fixes (Nov 8–13)
+
+From the pre-launch security and reliability review (2026-11-08), ranked with auth, payments and user data first. One fix per PR. A tenth finding (a failed vault transfer recorded as sent) turned out to be handled already in `lib/near/index.ts:30`.
+
+- [x] **K13.1** [#127](https://github.com/MFrancis-dev/stack/issues/127) Expire buys whose deposit never reaches 1Click · 2026-11-08: `pollBuys` marks a buy `expired` when 1Click still shows `PENDING_DEPOSIT` 30 min after it (quote deadline 10 min + margin); buys 1Click has seen are never expired; 3 tests
+- [ ] **K13.2** [#128](https://github.com/MFrancis-dev/stack/issues/128) Unclear `execute_buy` errors must not be recorded as failed (a timeout after broadcast showed "Nothing spent" while USDC left)
+- [ ] **K13.3** [#129](https://github.com/MFrancis-dev/stack/issues/129) ⛔ Vault creation spends the factory's NEAR for anyone who signs in (~1.5 NEAR per vault): owner pays storage, or create after the first deposit
+- [ ] **K13.4** [#130](https://github.com/MFrancis-dev/stack/issues/130) Make sessions revocable (sign-out only cleared the cookie)
+- [ ] **K13.5** [#131](https://github.com/MFrancis-dev/stack/issues/131) Keep preview and development off the production database
+- [ ] **K13.6** [#132](https://github.com/MFrancis-dev/stack/issues/132) Cap demo starts and fast-forwards in the database
+- [ ] **K13.7** [#133](https://github.com/MFrancis-dev/stack/issues/133) Rate limits shared across serverless instances
+- [ ] **K13.8** [#134](https://github.com/MFrancis-dev/stack/issues/134) Bad ids and malformed cookies return 500
+- [ ] **K13.9** [#135](https://github.com/MFrancis-dev/stack/issues/135) Add a Content-Security-Policy
+
 ---
 
 ## Stretch (only after Phase 11 or explicitly approved)
@@ -219,6 +234,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-08 · agent · Pre-launch review: new Phase 13 (9 tasks, issues #127–#135); K13.1 buys whose deposit never reaches 1Click expire after 30 min; README status updated · K13.1
 - 2026-11-06 · agent · Added an alternative demo video script ("One saver, one month") · K11.1
 - 2026-11-05 · agent · Real-quote findings: works without a JWT (K0.8 dropped), signature check false on real quotes (K3.5 reason changed), refund-account behaviour, fee gap documented; README status updated · K0.8, K0.9, K3.5
 - 2026-11-05 · agent · Link preview card (Open Graph + X large card, display font with fallback), site icon, page title/description; README updated · K11.3
