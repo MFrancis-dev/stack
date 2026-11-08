@@ -280,7 +280,7 @@ PUBLIC_APP_URL=
 CRON_SECRET=                 # ≥ 16 chars; Vercel sends it to the cron route
 ```
 
-**Hosting (K9.1, decided 2026-11-05):** web on Vercel (project `stack-savings`, Node 22), Postgres on Neon (via the Vercel integration, pooled `DATABASE_URL`). `pnpm vercel-build` runs `drizzle-kit migrate` before `next build`; migrations SQL is traced into the API functions; `getDb()` refuses to start hosted without `DATABASE_URL`. `.vercelignore` keeps contracts and local data out of the upload. The worker needs a long-running host; it is only needed for real mode.
+**Hosting (K9.1, decided 2026-11-05):** web on Vercel (project `stack-savings`, Node 22), Postgres on Neon (via the Vercel integration, pooled `DATABASE_URL`). `pnpm vercel-build` (`scripts/vercel-build.mjs`) runs `drizzle-kit migrate` before `next build` on production builds only. The Neon integration also gives Preview and Development the production `DATABASE_URL`; `databaseUrlFor()` ignores it there and uses only `PREVIEW_DATABASE_URL` (K13.5). `pnpm demo` clears `DATABASE_URL`, so a pulled `.env.local` can't point the demo at production; migrations SQL is traced into the API functions; `getDb()` refuses to start hosted without `DATABASE_URL`. `.vercelignore` keeps contracts and local data out of the upload. The worker needs a long-running host; it is only needed for real mode.
 
 ---
 

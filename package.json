@@ -11,10 +11,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "vercel-build": "drizzle-kit migrate && next build",
+    "vercel-build": "node scripts/vercel-build.mjs",
     "start": "next start",
     "worker": "tsx --conditions=react-server worker/index.ts",
-    "demo": "tsx --conditions=react-server scripts/seed-demo.ts && next dev",
+    "demo": "DATABASE_URL= tsx --conditions=react-server scripts/seed-demo.ts && DATABASE_URL= next dev",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",
