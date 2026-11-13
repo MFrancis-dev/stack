@@ -192,7 +192,7 @@ Format: `- [task id] what blocks it · who can unblock · since date`
 ## Phase 11 — Launch (Nov 13–14)
 
 - [x] **K11.1** [#90](https://github.com/MFrancis-dev/stack/issues/90) Video script: saver's problem → fund from another chain → buy lands in own wallet → NEAR's role → next step · 2026-11-05: `docs/launch/VIDEO_SCRIPT.md` (90 s, hosted demo, shot list) · 2026-11-06: alternative story-led script in `docs/launch/VIDEO_SCRIPT_ONE_SAVER.md`
-- [ ] **K11.2** [#91](https://github.com/MFrancis-dev/stack/issues/91) 👤 Record the video
+- [ ] **K11.2** [#91](https://github.com/MFrancis-dev/stack/issues/91) 👤 Record the video · 2026-11-13: recordings exist on disk (`docs/launch/*.mp4`, `public/demo.mp4`, `public/one_saver_demo.mp4`) but stay **out of git** — `.gitignore` excludes ~170 MB of renders; publishing the URL (K11.4) is still the human's step
 - [x] **K11.3** [#92](https://github.com/MFrancis-dev/stack/issues/92) Draft the X post (@NEARProtocol #NEARHackathon, optional @NearLegion @NearBuilders, repo + demo links) · 2026-11-05: `docs/launch/X_POST.md` (one-post and two-post versions) · 2026-11-05: link preview card + site icon so the post's links show the product (`app/opengraph-image.tsx`, `app/icon.svg`)
 - [ ] **K11.4** [#93](https://github.com/MFrancis-dev/stack/issues/93) 👤 Publish; paste URL here
 - [x] **K11.5** [#94](https://github.com/MFrancis-dev/stack/issues/94) Re-read live HACKATHON.md · 2026-11-05: re-read; new since the design: Q-006 says a 1Click JWT is not required (0.2% fee without it), Q-012 keep the hosted demo up to 11-18 (ideally 11-25), Q-017 AI screening. Re-read again on submission day
@@ -235,6 +235,7 @@ From the pre-launch security and reliability review (2026-11-08), ranked with au
 ## Update log
 One line per contribution, newest first: `YYYY-MM-DD · who/agent · what changed · tasks`
 
+- 2026-11-13 · agent · Housekeeping: ~170 MB of launch media (recorded renders, `public/*.mp4`, unused `gold-coin.jpg`) excluded via `.gitignore` so an `git add -A` can't commit it; scripts and thumbnails stay tracked · K11.2
 - 2026-11-08 · agent · K13.9 Content-Security-Policy (2 directives enforced, full policy report-only, no violations on our pages in a production build); new K13.10 to enforce it after a real-wallet test; README, ARCHITECTURE §7, ESSENTIALS updated · K13.9, K13.10
 - 2026-11-08 · agent · K13.8 non-UUID ids → 404 and malformed cookies → signed out, instead of 500s; README, ARCHITECTURE §4.1 updated · K13.8
 - 2026-11-08 · agent · K13.6 demo actions capped in Postgres (`lib/server/demoLimits.ts`); demo banner shows reset errors; README, ARCHITECTURE §4.1, ESSENTIALS updated · K13.6

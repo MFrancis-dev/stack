@@ -31,3 +31,11 @@ test-results/
 
 # one-off local checks
 .scratch/
+
+# launch media — recorded video and stills stay on disk, never in git (~170 MB).
+# Scripts and thumbnails are small and tracked; the renders are not.
+docs/launch/video/
+docs/launch/video_one_saver/
+docs/launch/*.mp4
+public/*.mp4
+public/images/gold-coin.jpg
